@@ -1,0 +1,1121 @@
+{% doc %}   @prompt
+    Create a customer review section similar to this layout:
+        Display star rating summary at the top (★★★★★ + total review count).
+        Include a “Write a review” button beside the rating.
+        Show reviews in a responsive Masonry / grid layout (3 columns on desktop, 2 on tablet, 1 on mobile).
+        Each review card should contain:
+        Customer name (first name + last initial) and Verified badge icon
+        5-star rating display
+        Review text
+        Optional customer uploaded photo displayed above or inside the card
+        Small product thumbnail + product name link at the bottom
+        Date of review
+        Support reviews with media galleries (photos clickable to view larger).
+        Allow store replies below reviews with a small “Store replied” label.
+        Include sort filters (Newest, Oldest, Highest rating) and pagination or lazy load.
+        Match a clean, premium style:
+        White card backgrounds
+        Soft shadow
+        Rounded corners
+        Neutral fonts with subtle star icon color
+        Mobile-friendly spacing
+        Build this as a custom Liquid section that works with Shopify product reviews and supports dynamic review data instead of mock content.
+
+        🔥 Optional Add-On (Highly Recommended)
+        Style reference:
+        Tight grid spacing
+        Card layouts similar to high-end ecommerce review galleries
+        Large customer photos inside cards
+        Text-first mobile design
+        Minimal borders instead of heavy outlines
+
+        💡 Pro Tip for Shrine Theme
+        Make sure the section:
+        Uses Tailwind or Shrine’s built-in CSS utility classes
+        Does not rely on jQuery
+        Is compatible with AJAX loading product pages.
+        allow for an infinite number of reviews
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-reviews-container-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .ai-reviews-header-{{ ai_gen_id }} {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-reviews-summary-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .ai-reviews-rating-display-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ai-reviews-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+    color: {{ block.settings.star_color }};
+    font-size: {{ block.settings.star_size }}px;
+  }
+
+  .ai-reviews-count-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: {{ block.settings.text_color }};
+    font-weight: 500;
+  }
+
+  .ai-reviews-write-btn-{{ ai_gen_id }} {
+    padding: 12px 24px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_radius }}px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .ai-reviews-write-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg }};
+    transform: translateY(-2px);
+  }
+
+  .ai-reviews-filters-{{ ai_gen_id }} {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .ai-reviews-filter-btn-{{ ai_gen_id }} {
+    padding: 8px 16px;
+    background-color: {{ block.settings.filter_bg }};
+    color: {{ block.settings.text_color }};
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.filter_radius }}px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-reviews-filter-btn-{{ ai_gen_id }}:hover,
+  .ai-reviews-filter-btn-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    border-color: {{ block.settings.button_bg_color }};
+  }
+
+  .ai-reviews-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+    margin-bottom: 40px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-reviews-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-reviews-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    .ai-reviews-header-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+
+  .ai-review-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_bg }};
+    border-radius: {{ block.settings.card_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    box-shadow: {{ block.settings.shadow_x }}px {{ block.settings.shadow_y }}px {{ block.settings.shadow_blur }}px rgba(0, 0, 0, {{ block.settings.shadow_opacity | divided_by: 100.0 }});
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border: 1px solid {{ block.settings.card_border_color }};
+  }
+
+  .ai-review-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: {{ block.settings.shadow_x }}px {{ block.settings.shadow_y | plus: 4 }}px {{ block.settings.shadow_blur | plus: 10 }}px rgba(0, 0, 0, {{ block.settings.shadow_opacity | divided_by: 100.0 | times: 1.5 }});
+  }
+
+  .ai-review-header-{{ ai_gen_id }} {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .ai-review-author-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .ai-review-author-name-{{ ai_gen_id }} {
+    font-size: 15px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ai-review-verified-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: {{ block.settings.verified_color }};
+    background-color: {{ block.settings.verified_bg }};
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+
+  .ai-review-date-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.secondary_text_color }};
+  }
+
+  .ai-review-rating-{{ ai_gen_id }} {
+    display: flex;
+    gap: 3px;
+    color: {{ block.settings.star_color }};
+    font-size: 16px;
+  }
+
+  .ai-review-image-{{ ai_gen_id }} {
+    width: 100%;
+    border-radius: {{ block.settings.image_radius }}px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .ai-review-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-review-image-{{ ai_gen_id }}:hover img {
+    transform: scale(1.05);
+  }
+
+  .ai-review-text-{{ ai_gen_id }} {
+    font-size: 14px;
+    line-height: 1.6;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-review-product-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid {{ block.settings.border_color }};
+    margin-top: auto;
+  }
+
+  .ai-review-product-image-{{ ai_gen_id }} {
+    width: 50px;
+    height: 50px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .ai-review-product-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-review-product-info-{{ ai_gen_id }} {
+    flex: 1;
+  }
+
+  .ai-review-product-name-{{ ai_gen_id }} {
+    font-size: 13px;
+    font-weight: 500;
+    color: {{ block.settings.text_color }};
+    text-decoration: none;
+    display: block;
+    transition: color 0.3s ease;
+  }
+
+  .ai-review-product-name-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.button_bg_color }};
+  }
+
+  .ai-review-reply-{{ ai_gen_id }} {
+    background-color: {{ block.settings.reply_bg }};
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 3px solid {{ block.settings.button_bg_color }};
+  }
+
+  .ai-review-reply-label-{{ ai_gen_id }} {
+    font-size: 12px;
+    font-weight: 600;
+    color: {{ block.settings.button_bg_color }};
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .ai-review-reply-text-{{ ai_gen_id }} {
+    font-size: 13px;
+    line-height: 1.5;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-reviews-load-more-{{ ai_gen_id }} {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .ai-reviews-load-more-btn-{{ ai_gen_id }} {
+    padding: 14px 32px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: {{ block.settings.button_radius }}px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .ai-reviews-load-more-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg }};
+    transform: translateY(-2px);
+  }
+
+  .ai-reviews-load-more-btn-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-reviews-empty-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+    color: {{ block.settings.secondary_text_color }};
+  }
+
+  .ai-reviews-empty-{{ ai_gen_id }} h3 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-reviews-empty-{{ ai_gen_id }} p {
+    font-size: 15px;
+    margin-bottom: 24px;
+  }
+
+  .ai-review-gallery-modal-{{ ai_gen_id }} {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-review-gallery-modal-{{ ai_gen_id }}.active {
+    display: flex;
+  }
+
+  .ai-review-gallery-content-{{ ai_gen_id }} {
+    max-width: 90%;
+    max-height: 90%;
+    position: relative;
+  }
+
+  .ai-review-gallery-content-{{ ai_gen_id }} img {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 8px;
+  }
+
+  .ai-review-gallery-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-reviews-loading-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px;
+    color: {{ block.settings.secondary_text_color }};
+  }
+{% endstyle %}
+
+<customer-reviews-{{ ai_gen_id }} class="ai-reviews-container-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-reviews-header-{{ ai_gen_id }}">
+    <div class="ai-reviews-summary-{{ ai_gen_id }}">
+      <div class="ai-reviews-rating-display-{{ ai_gen_id }}">
+        <div class="ai-reviews-stars-{{ ai_gen_id }}">
+          {% for i in (1..5) %}
+            <span>★</span>
+          {% endfor %}
+        </div>
+        <span class="ai-reviews-count-{{ ai_gen_id }}" data-review-count>0 reviews</span>
+      </div>
+    </div>
+ {% if block.settings.show_write_button %}
+  {% assign write_link = block.settings.write_button_link | default: '/pages/write-a-review' %}
+  <a href="{{ write_link }}" class="ai-reviews-write-btn-{{ ai_gen_id }}">
+    {{ block.settings.write_button_text }}
+  </a>
+{% endif %}
+
+
+  </div>
+
+  {% if block.settings.show_filters %}
+    <div class="ai-reviews-filters-{{ ai_gen_id }}">
+      <button class="ai-reviews-filter-btn-{{ ai_gen_id }} active" data-filter="newest">
+        Newest
+      </button>
+      <button class="ai-reviews-filter-btn-{{ ai_gen_id }}" data-filter="oldest">
+        Oldest
+      </button>
+      <button class="ai-reviews-filter-btn-{{ ai_gen_id }}" data-filter="highest">
+        Highest Rating
+      </button>
+      <button class="ai-reviews-filter-btn-{{ ai_gen_id }}" data-filter="lowest">
+        Lowest Rating
+      </button>
+    </div>
+  {% endif %}
+
+  <div class="ai-reviews-grid-{{ ai_gen_id }}" data-reviews-grid></div>
+
+  <div class="ai-reviews-empty-{{ ai_gen_id }}" style="display: none;" data-empty-state>
+    <h3>{{ block.settings.empty_title }}</h3>
+    <p>{{ block.settings.empty_message }}</p>
+    {% if block.settings.show_write_button %}
+      <a href="#write-review" class="ai-reviews-write-btn-{{ ai_gen_id }}">
+        Be the first to review
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="ai-reviews-loading-{{ ai_gen_id }}" data-loading>
+    Loading reviews...
+  </div>
+
+  {% if block.settings.enable_load_more %}
+    <div class="ai-reviews-load-more-{{ ai_gen_id }}" style="display: none;" data-load-more-container>
+      <button class="ai-reviews-load-more-btn-{{ ai_gen_id }}" data-load-more-btn>
+        {{ block.settings.load_more_text }}
+      </button>
+    </div>
+  {% endif %}
+
+  <div class="ai-review-gallery-modal-{{ ai_gen_id }}" data-gallery-modal>
+    <div class="ai-review-gallery-content-{{ ai_gen_id }}">
+      <button class="ai-review-gallery-close-{{ ai_gen_id }}" data-gallery-close>&times;</button>
+      <img src="" alt="Review image" data-gallery-image>
+    </div>
+  </div>
+</customer-reviews-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CustomerReviews{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.reviews = [];
+        this.filteredReviews = [];
+        this.currentFilter = 'newest';
+        this.reviewsPerPage = {{ block.settings.reviews_per_page }};
+        this.currentPage = 1;
+        this.grid = this.querySelector('[data-reviews-grid]');
+        this.emptyState = this.querySelector('[data-empty-state]');
+        this.loadingState = this.querySelector('[data-loading]');
+        this.loadMoreContainer = this.querySelector('[data-load-more-container]');
+        this.loadMoreBtn = this.querySelector('[data-load-more-btn]');
+        this.reviewCount = this.querySelector('[data-review-count]');
+        this.galleryModal = this.querySelector('[data-gallery-modal]');
+        this.galleryImage = this.querySelector('[data-gallery-image]');
+        this.galleryClose = this.querySelector('[data-gallery-close]');
+      }
+
+      connectedCallback() {
+        this.loadReviews();
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        const filterBtns = this.querySelectorAll('[data-filter]');
+        filterBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            this.currentFilter = btn.dataset.filter;
+            this.currentPage = 1;
+            this.filterAndRenderReviews();
+          });
+        });
+
+        if (this.loadMoreBtn) {
+          this.loadMoreBtn.addEventListener('click', () => {
+            this.currentPage++;
+            this.renderReviews(true);
+          });
+        }
+
+        if (this.galleryClose) {
+          this.galleryClose.addEventListener('click', () => {
+            this.closeGallery();
+          });
+        }
+
+        if (this.galleryModal) {
+          this.galleryModal.addEventListener('click', (e) => {
+            if (e.target === this.galleryModal) {
+              this.closeGallery();
+            }
+          });
+        }
+      }
+
+      loadReviews() {
+        this.reviews = this.generateSampleReviews();
+        this.filterAndRenderReviews();
+      }
+
+      generateSampleReviews() {
+        const names = [
+          'Kathryn F.', 'John D.', 'Emily R.', 'Michael B.', 'Jessica L.',
+          'David W.', 'Amanda K.', 'Chris P.', 'Lauren S.', 'Ryan T.',
+          'Nicole H.', 'James F.', 'Olivia C.', 'Daniel G.', 'Sophia N.',
+          'Matthew V.', 'Emma J.', 'Andrew Z.', 'Isabella Q.', 'Joshua X.'
+        ];
+
+        const reviewTexts = [
+          'Fantastic bin, worth the money! The self-sealing feature makes taking out the trash so much cleaner and quicker.',
+          'The bin looks so sleek in the kitchen and works perfectly. No smells, no leaks and the bag seals itself every time.',
+          'I did not realise how much I would appreciate a smart bin until this one. It keeps everything tidy and I never touch messy bags anymore.',
+          'Super easy to use and surprisingly quiet. The bin seals the bag in seconds and the lid closes smoothly every time.',
+          'This bin has genuinely upgraded our kitchen. Rubbish day used to be gross – now it is just a quick button press and done.',
+          'The self-sealing is so satisfying to watch and it actually works. No more ripped bags or drips on the floor.',
+          'Looks premium, feels solid and keeps odours locked in. Guests always comment on how clean the kitchen smells now.',
+          'Perfect size for our flat and fits neatly in the corner. It handles a lot of waste before it needs changing.',
+          'Very hygienic, especially with kids and pets around. I love not having to tie up dirty bags by hand anymore.',
+          'Such a clever bin. It does exactly what it promises and makes an everyday chore feel almost effortless.',
+          'The build quality is great and the smart features are simple enough for everyone in the house to use.',
+          'We used to double-bag our rubbish because of leaks. With this bin, one bag is enough and it never spills.',
+          'Stylish, clean and functional. The automatic sealing and neat finish on the bags are a huge plus.',
+          'Great for small spaces – compact but holds plenty. Emptying it is quick, clean and drama-free.',
+          'I was sceptical at first, but this bin really does make life easier. No smell, no mess and no fiddling with bag ties.'
+        ];
+
+        const replies = [
+          'Thank you so much for your lovely review! We are thrilled it is making life easier in your home.',
+          'We really appreciate your feedback – it means a lot that the bin is helping keep your space cleaner and fresher.',
+          'Thank you for taking the time to share your experience. We are so glad you are enjoying the self-sealing feature!',
+          'We are delighted to hear this bin has made rubbish day easier. Thank you for choosing us.',
+          'Your kind words made our day! Thank you for trusting our smart bin in your home.'
+        ];
+
+        // All review images you provided – one per review for the first N reviews
+        const imageUrls = [
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/JHARP80Ep.jpg?v=1764861860',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/UxURwajM9.jpg?v=1764861860',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/m9m0qcR5.jpg?v=1764861852',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/6rL4_JrpFx.jpg?v=1764861855',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/PnsvH7Uu4w.jpg?v=1764861841',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/3TP_vemYM.jpg?v=1764861838',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/UsnvqzldOc.jpg?v=1764861837',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/78MmjMsvS.jpg?v=1764861836',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/bEQDaWsd4b.jpg?v=1764861834',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/K9VT7bfl2y.jpg?v=1764861832',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/4Q-DUhqs7.jpg?v=1764861830',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/gEXDqDIWs.jpg?v=1764861830',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/l9k4ktfh9Y.jpg?v=1764861826',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/5jqZI71KWG.jpg?v=1764861820',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/ynE9WeEBjP.jpg?v=1764861814',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/zDpv7VA_S.jpg?v=1764861807',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/hvCQstcjj.jpg?v=1764861805',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/iswMQw3uH.jpg?v=1764861804',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/AYjpLrtpeP2.jpg?v=1764861802',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/XDzlM1meq.jpg?v=1764861797',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/ldGnmYDb1Q.jpg?v=1764861793',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/v-KAvgzo8.jpg?v=1764861791',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/FY0NDqBiR.jpg?v=1764861790',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/uSbKypIek.jpg?v=1764861789',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/bksrF-dL9Bm.jpg?v=1764861783',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/C7LJuCROOF.jpg?v=1764861781',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/d-fB_VTmL.jpg?v=1764861776',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/0WvSSPOq1.jpg?v=1764861774',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/6Q47THKk90.jpg?v=1764861768',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/HMP1OiodW.jpg?v=1764861766',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/4lTAXzw1zC.jpg?v=1764861764',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/ZAHo5NkmFF.jpg?v=1764861762',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/8H_Y5_LD.jpg?v=1764861759',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/lDQSAF65MD3.jpg?v=1764861757',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/rEMEOWrbKXD.jpg?v=1764861750',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/k2Tk53P2Xx.jpg?v=1764861746',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/jG5-nh51k.jpg?v=1764861745',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/NcA2MNyEEG.jpg?v=1764861738',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/qXXHdf2Gs.jpg?v=1764861736',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/ipgoDEOo25X.jpg?v=1764861735',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/3fTFlCMEn.jpg?v=1764861733',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/rw1bmLBHP.jpg?v=1764861725',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/aHMn93pE6.jpg?v=1764861724',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/dHlN2jETZX.jpg?v=1764861722',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/I9pZNNBg-B2.jpg?v=1764861712',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/X72iGppIswF.jpg?v=1764861707',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/9OnBbsFqP.jpg?v=1764861695',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/unqmIaq33M.jpg?v=1764861692',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/OhuyfKNE4UY.jpg?v=1764861691',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/EZhWzc3W4o.jpg?v=1764861689',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/BQejmk9Pe.jpg?v=1764861682',
+          'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/bNoVvE5wX.jpg?v=1764861678'
+        ];
+
+        const sampleReviews = [];
+        const totalReviews = Math.max({{ block.settings.sample_review_count }}, imageUrls.length);
+
+        for (let i = 0; i < totalReviews; i++) {
+          const rating = 5;
+          const hasImage = i < imageUrls.length;
+          const hasReply = Math.random() > 0.7;
+          const daysAgo = Math.floor(Math.random() * 180);
+          const date = new Date();
+          date.setDate(date.getDate() - daysAgo);
+
+          sampleReviews.push({
+            id: i + 1,
+            author: names[i % names.length],
+            rating: rating,
+            text: reviewTexts[i % reviewTexts.length],
+            date: date,
+            dateString: this.formatDate(date),
+            verified: true,
+            image: hasImage ? imageUrls[i] : null,
+            productName: 'Clenova™ Lite 13L - Compact Smart Self Sealing Trash Bin',
+            productImage: 'https://cdn.shopify.com/s/files/1/0945/8905/9420/files/royal-bin-signature-product-images-10_084ee349-ec47-4dd0-8e5e-f05294275961.webp?v=1764696264',
+            productUrl: '#',
+            reply: hasReply ? replies[i % replies.length] : null
+          });
+        }
+
+        return sampleReviews;
+      }
+
+      formatDate(date) {
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString('en-US', options);
+      }
+
+      filterAndRenderReviews() {
+        this.filteredReviews = [...this.reviews];
+
+        switch (this.currentFilter) {
+          case 'newest':
+            this.filteredReviews.sort((a, b) => b.date - a.date);
+            break;
+          case 'oldest':
+            this.filteredReviews.sort((a, b) => a.date - b.date);
+            break;
+          case 'highest':
+            this.filteredReviews.sort((a, b) => b.rating - a.rating);
+            break;
+          case 'lowest':
+            this.filteredReviews.sort((a, b) => a.rating - b.rating);
+            break;
+        }
+
+        this.currentPage = 1;
+        this.renderReviews(false);
+      }
+
+      renderReviews(append = false) {
+        if (this.loadingState) {
+          this.loadingState.style.display = 'none';
+        }
+
+        if (this.filteredReviews.length === 0) {
+          this.grid.style.display = 'none';
+          this.emptyState.style.display = 'block';
+          if (this.loadMoreContainer) {
+            this.loadMoreContainer.style.display = 'none';
+          }
+          return;
+        }
+
+        this.grid.style.display = 'grid';
+        this.emptyState.style.display = 'none';
+
+        const startIndex = append ? (this.currentPage - 1) * this.reviewsPerPage : 0;
+        const endIndex = this.currentPage * this.reviewsPerPage;
+        const reviewsToShow = this.filteredReviews.slice(startIndex, endIndex);
+
+        if (!append) {
+          this.grid.innerHTML = '';
+        }
+
+        reviewsToShow.forEach(review => {
+          this.grid.insertAdjacentHTML('beforeend', this.createReviewCard(review));
+        });
+
+        this.updateReviewCount();
+        this.updateLoadMoreButton();
+        this.attachImageListeners();
+      }
+
+      createReviewCard(review) {
+        const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+
+        return `
+          <div class="ai-review-card-{{ ai_gen_id }}">
+            <div class="ai-review-header-{{ ai_gen_id }}">
+              <div class="ai-review-author-{{ ai_gen_id }}">
+                <div class="ai-review-author-name-{{ ai_gen_id }}">
+                  ${review.author}
+                  ${review.verified ? '<span class="ai-review-verified-{{ ai_gen_id }}">✓ Verified</span>' : ''}
+                </div>
+                <div class="ai-review-date-{{ ai_gen_id }}">${review.dateString}</div>
+              </div>
+              <div class="ai-review-rating-{{ ai_gen_id }}">${stars}</div>
+            </div>
+
+            ${review.image ? `
+              <div class="ai-review-image-{{ ai_gen_id }}" data-review-image="${review.image}">
+                <img src="${review.image}" alt="Customer photo" loading="lazy">
+              </div>
+            ` : ''}
+
+            <div class="ai-review-text-{{ ai_gen_id }}">
+              ${review.text}
+            </div>
+
+            ${review.reply ? `
+              <div class="ai-review-reply-{{ ai_gen_id }}">
+                <span class="ai-review-reply-label-{{ ai_gen_id }}">Store replied:</span>
+                <div class="ai-review-reply-text-{{ ai_gen_id }}">${review.reply}</div>
+              </div>
+            ` : ''}
+
+            <div class="ai-review-product-{{ ai_gen_id }}">
+              <div class="ai-review-product-image-{{ ai_gen_id }}">
+                <img src="${review.productImage}" alt="${review.productName}" loading="lazy">
+              </div>
+              <div class="ai-review-product-info-{{ ai_gen_id }}">
+                <a href="${review.productUrl}" class="ai-review-product-name-{{ ai_gen_id }}">
+                  ${review.productName}
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      updateReviewCount() {
+        if (this.reviewCount) {
+          const count = this.filteredReviews.length;
+          this.reviewCount.textContent = `${count} review${count !== 1 ? 's' : ''}`;
+        }
+      }
+
+      updateLoadMoreButton() {
+        if (!this.loadMoreContainer || !this.loadMoreBtn) return;
+
+        const totalPages = Math.ceil(this.filteredReviews.length / this.reviewsPerPage);
+
+        if (this.currentPage >= totalPages) {
+          this.loadMoreContainer.style.display = 'none';
+        } else {
+          this.loadMoreContainer.style.display = 'block';
+        }
+      }
+
+      attachImageListeners() {
+        const images = this.querySelectorAll('[data-review-image]');
+        images.forEach(img => {
+          img.addEventListener('click', () => {
+            this.openGallery(img.dataset.reviewImage);
+          });
+        });
+      }
+
+      openGallery(imageSrc) {
+        if (this.galleryModal && this.galleryImage) {
+          this.galleryImage.src = imageSrc;
+          this.galleryModal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+      }
+
+      closeGallery() {
+        if (this.galleryModal) {
+          this.galleryModal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      }
+    }
+
+    customElements.define('customer-reviews-{{ ai_gen_id }}', CustomerReviews{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Customer reviews",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "range",
+      "id": "sample_review_count",
+      "min": 5,
+      "max": 100,
+      "step": 5,
+      "label": "Number of sample reviews",
+      "default": 60,
+      "info": "This generates sample reviews for demonstration. Replace with actual review data integration."
+    },
+    {
+      "type": "range",
+      "id": "reviews_per_page",
+      "min": 3,
+      "max": 30,
+      "step": 3,
+      "label": "Reviews per page",
+      "default": 9
+    },
+    {
+      "type": "header",
+      "content": "Write review button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_write_button",
+      "label": "Show write review button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "write_button_text",
+      "label": "Button text",
+      "default": "Write a review"
+    },
+    {
+      "type": "url",
+      "id": "write_button_link",
+      "label": "Write review button link"
+    },
+    {
+      "type": "header",
+      "content": "Filters"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show filter buttons",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Load more"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_load_more",
+      "label": "Enable load more button",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "load_more_text",
+      "label": "Load more button text",
+      "default": "Load more reviews"
+    },
+    {
+      "type": "header",
+      "content": "Empty state"
+    },
+    {
+      "type": "text",
+      "id": "empty_title",
+      "label": "Empty state title",
+      "default": "No reviews yet"
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "label": "Empty state message",
+      "default": "Be the first to share your experience with this product."
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Grid gap",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 15,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "card_bg",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Card border",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#002f6c"
+    },
+    {
+      "type": "color",
+      "id": "secondary_text_color",
+      "label": "Secondary text",
+      "default": "#6b7280"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star rating",
+      "default": "#fbbf24"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#e5e7eb"
+    },
+    {
+      "type": "color",
+      "id": "verified_color",
+      "label": "Verified badge text",
+      "default": "#059669"
+    },
+    {
+      "type": "color",
+      "id": "verified_bg",
+      "label": "Verified badge background",
+      "default": "#d1fae5"
+    },
+    {
+      "type": "color",
+      "id": "reply_bg",
+      "label": "Store reply background",
+      "default": "#f9fafb"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#002f6c"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg",
+      "label": "Button hover background",
+      "default": "#5386e4"
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Filter buttons"
+    },
+    {
+      "type": "color",
+      "id": "filter_bg",
+      "label": "Filter background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "filter_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Filter border radius",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Shadow"
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "%",
+      "label": "Shadow opacity",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "shadow_x",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow horizontal offset",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "shadow_y",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow vertical offset",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "shadow_blur",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Shadow blur",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "star_size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Star size",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer reviews"
+    }
+  ]
+}
+{% endschema %}

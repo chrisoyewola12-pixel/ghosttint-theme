@@ -1,0 +1,756 @@
+{% doc %}
+  @prompt
+    Create a centered hero-style refill promotion block with a rounded light-blue background. Use a large rounded rectangle container with soft sky-blue gradient or sky background like the screenshot. At the top center add a bold navy (#002B5B) headline: “Never Run Out of Trash Bags Again”. Below add a light gray subtext: “Stay stocked effortlessly with automatic refill options — so your Royal Bin™ is always ready.” Below that create a horizontal row of 3 small feature items, each with a small icon and bold dark text: “Subscribe & Save”, “Flexible Delivery”, “Fast, Free Shipping”. Icons should be minimal black line icons matching the screenshot style. Below features, add a centered pill-shaped button with text “GET REFILLS”, navy background (#032B5B), white text, fully rounded (border-radius 9999px). Below the button, place an image of stacked refill rings on the bottom center. Entire section must be clean, minimal, and closely match the layout, spacing, and colors shown., Create a centered refill promotion section with a large rounded rectangular container. Do not generate a blue sky background; instead leave the background area clean and allow inserting my own custom background image. Top center headline: “Never Run Out of Trash Bags Again” in bold navy (#002B5B). Below it add a light gray subtext: “Stay stocked effortlessly with automatic refill options — so your Royal Bin™ is always ready.” Below subtext add a horizontal row of 3 feature items, each with a small icon and bold text: “Subscribe & Save”, “Flexible Delivery”, “Fast, Free Shipping”. Icons should be simple, minimal, black line icons. Below features add a centered pill-shaped button with text “GET REFILLS”, navy background (#032B5B), white text, fully rounded (border-radius 9999px). Below the button add a dedicated product image slot where I can upload my own refill product image. Maintain a premium, minimal, balanced layout with generous spacing and clean modern typography, matching the exact structure described above.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-refill-promo-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: {{ block.settings.section_padding_top }}px {{ block.settings.section_padding_horizontal }}px {{ block.settings.section_padding_bottom }}px;
+    width: 100%;
+    position: relative;
+  }
+
+  .ai-refill-promo-bg-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .ai-refill-promo-bg-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-refill-promo-bg-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.fallback_bg_color }};
+  }
+
+  .ai-refill-promo-container-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 1;
+    max-width: {{ block.settings.container_max_width }}px;
+    width: 100%;
+    background: {{ block.settings.container_bg_color }};
+    border-radius: {{ block.settings.container_border_radius }}px;
+    padding: {{ block.settings.container_padding_top }}px {{ block.settings.container_padding_horizontal }}px {{ block.settings.container_padding_bottom }}px;
+    text-align: center;
+    box-shadow: {{ block.settings.container_shadow_horizontal }}px {{ block.settings.container_shadow_vertical }}px {{ block.settings.container_shadow_blur }}px rgba(0, 0, 0, {{ block.settings.container_shadow_opacity | divided_by: 100.0 }});
+  }
+
+  .ai-refill-promo-headline-{{ ai_gen_id }} {
+    color: {{ block.settings.headline_color }};
+    font-size: {{ block.settings.headline_size }}px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 {{ block.settings.headline_margin_bottom }}px;
+    max-width: {{ block.settings.headline_max_width }}px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ai-refill-promo-subtext-{{ ai_gen_id }} {
+    color: {{ block.settings.subtext_color }};
+    font-size: {{ block.settings.subtext_size }}px;
+    line-height: 1.6;
+    margin: 0 0 {{ block.settings.subtext_margin_bottom }}px;
+    max-width: {{ block.settings.subtext_max_width }}px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ai-refill-promo-features-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: {{ block.settings.features_gap }}px;
+    margin-bottom: {{ block.settings.features_margin_bottom }}px;
+    flex-wrap: wrap;
+  }
+
+  .ai-refill-promo-feature-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ block.settings.feature_icon_gap }}px;
+  }
+
+  .ai-refill-promo-feature-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.feature_icon_size }}px;
+    height: {{ block.settings.feature_icon_size }}px;
+    flex-shrink: 0;
+  }
+
+  .ai-refill-promo-feature-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: {{ block.settings.feature_icon_color }};
+    fill: none;
+  }
+
+  .ai-refill-promo-feature-text-{{ ai_gen_id }} {
+    color: {{ block.settings.feature_text_color }};
+    font-size: {{ block.settings.feature_text_size }}px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .ai-refill-promo-button-{{ ai_gen_id }} {
+    display: inline-block;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    font-size: {{ block.settings.button_text_size }}px;
+    font-weight: 600;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    border-radius: 9999px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-bottom: {{ block.settings.button_margin_bottom }}px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-refill-promo-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 43, 91, 0.3);
+  }
+
+  .ai-refill-promo-image-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: {{ block.settings.image_margin_top }}px;
+  }
+
+  .ai-refill-promo-image-{{ ai_gen_id }} {
+    max-width: {{ block.settings.image_max_width }}px;
+    width: 100%;
+    height: auto;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-refill-promo-image-placeholder-{{ ai_gen_id }} {
+    max-width: {{ block.settings.image_max_width }}px;
+    width: 100%;
+    background-color: #f9fafb;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 250px;
+    border: 2px dashed #d1d5db;
+  }
+
+  .ai-refill-promo-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 200px;
+    opacity: 0.2;
+  }
+
+  .ai-refill-promo-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #9ca3af;
+    text-align: center;
+    pointer-events: none;
+    font-weight: 500;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-refill-promo-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_top | times: 0.6 }}px {{ block.settings.section_padding_horizontal | times: 0.6 }}px {{ block.settings.section_padding_bottom | times: 0.6 }}px;
+    }
+
+    .ai-refill-promo-container-{{ ai_gen_id }} {
+      padding: {{ block.settings.container_padding_top | times: 0.7 }}px {{ block.settings.container_padding_horizontal | times: 0.7 }}px {{ block.settings.container_padding_bottom | times: 0.7 }}px;
+      border-radius: {{ block.settings.container_border_radius | times: 0.7 }}px;
+    }
+
+    .ai-refill-promo-headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.headline_size | times: 0.65 }}px;
+    }
+
+    .ai-refill-promo-subtext-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtext_size | times: 0.9 }}px;
+    }
+
+    .ai-refill-promo-features-{{ ai_gen_id }} {
+      gap: {{ block.settings.features_gap | times: 0.5 }}px;
+      flex-direction: column;
+    }
+
+    .ai-refill-promo-feature-icon-{{ ai_gen_id }} {
+      width: {{ block.settings.feature_icon_size | times: 0.85 }}px;
+      height: {{ block.settings.feature_icon_size | times: 0.85 }}px;
+    }
+
+    .ai-refill-promo-feature-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.feature_text_size | times: 0.9 }}px;
+    }
+
+    .ai-refill-promo-button-{{ ai_gen_id }} {
+      font-size: {{ block.settings.button_text_size | times: 0.9 }}px;
+      padding: {{ block.settings.button_padding_vertical | times: 0.85 }}px {{ block.settings.button_padding_horizontal | times: 0.85 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-refill-promo-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-refill-promo-bg-{{ ai_gen_id }}">
+    {% if block.settings.background_image %}
+      <img
+        src="{{ block.settings.background_image | image_url: width: 2000 }}"
+        alt="{{ block.settings.background_image.alt | escape }}"
+        loading="lazy"
+        width="{{ block.settings.background_image.width }}"
+        height="{{ block.settings.background_image.height }}"
+      >
+    {% else %}
+      <div class="ai-refill-promo-bg-placeholder-{{ ai_gen_id }}"></div>
+    {% endif %}
+  </div>
+
+  <div class="ai-refill-promo-container-{{ ai_gen_id }}">
+    {% if block.settings.headline != blank %}
+      <h2 class="ai-refill-promo-headline-{{ ai_gen_id }}">{{ block.settings.headline }}</h2>
+    {% endif %}
+
+    {% if block.settings.subtext != blank %}
+      <p class="ai-refill-promo-subtext-{{ ai_gen_id }}">{{ block.settings.subtext }}</p>
+    {% endif %}
+
+    <div class="ai-refill-promo-features-{{ ai_gen_id }}">
+      {% if block.settings.feature_1_text != blank %}
+        <div class="ai-refill-promo-feature-{{ ai_gen_id }}">
+          <div class="ai-refill-promo-feature-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <span class="ai-refill-promo-feature-text-{{ ai_gen_id }}">{{ block.settings.feature_1_text }}</span>
+        </div>
+      {% endif %}
+
+      {% if block.settings.feature_2_text != blank %}
+        <div class="ai-refill-promo-feature-{{ ai_gen_id }}">
+          <div class="ai-refill-promo-feature-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+          </div>
+          <span class="ai-refill-promo-feature-text-{{ ai_gen_id }}">{{ block.settings.feature_2_text }}</span>
+        </div>
+      {% endif %}
+
+      {% if block.settings.feature_3_text != blank %}
+        <div class="ai-refill-promo-feature-{{ ai_gen_id }}">
+          <div class="ai-refill-promo-feature-icon-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
+          </div>
+          <span class="ai-refill-promo-feature-text-{{ ai_gen_id }}">{{ block.settings.feature_3_text }}</span>
+        </div>
+      {% endif %}
+    </div>
+
+    {% if block.settings.button_text != blank %}
+      <a href="{{ block.settings.button_link }}" class="ai-refill-promo-button-{{ ai_gen_id }}">
+        {{ block.settings.button_text }}
+      </a>
+    {% endif %}
+
+    <div class="ai-refill-promo-image-wrapper-{{ ai_gen_id }}">
+      {% if block.settings.product_image %}
+        <img
+          src="{{ block.settings.product_image | image_url: width: 1000 }}"
+          alt="{{ block.settings.product_image.alt | escape }}"
+          class="ai-refill-promo-image-{{ ai_gen_id }}"
+          loading="lazy"
+          width="{{ block.settings.product_image.width }}"
+          height="{{ block.settings.product_image.height }}"
+        >
+      {% else %}
+        <div class="ai-refill-promo-image-placeholder-{{ ai_gen_id }}">
+          {{ 'product-1' | placeholder_svg_tag }}
+          <div class="ai-refill-promo-empty-state-{{ ai_gen_id }}">
+            Add your refill product image
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Refill promotion",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "color",
+      "id": "fallback_bg_color",
+      "label": "Fallback background color",
+      "default": "#F0F9FF"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Never Run Out of Trash Bags Again"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Stay stocked effortlessly with automatic refill options — so your Royal Bin™ is always ready."
+    },
+    {
+      "type": "header",
+      "content": "Features"
+    },
+    {
+      "type": "text",
+      "id": "feature_1_text",
+      "label": "Feature 1 text",
+      "default": "Subscribe & Save"
+    },
+    {
+      "type": "text",
+      "id": "feature_2_text",
+      "label": "Feature 2 text",
+      "default": "Flexible Delivery"
+    },
+    {
+      "type": "text",
+      "id": "feature_3_text",
+      "label": "Feature 3 text",
+      "default": "Fast, Free Shipping"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "GET REFILLS"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Product image"
+    },
+    {
+      "type": "image_picker",
+      "id": "product_image",
+      "label": "Product image"
+    },
+    {
+      "type": "range",
+      "id": "image_max_width",
+      "min": 200,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Image max width",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "image_margin_top",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Image top margin",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "container_bg_color",
+      "label": "Container background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline",
+      "default": "#002B5B"
+    },
+    {
+      "type": "color",
+      "id": "subtext_color",
+      "label": "Subtext",
+      "default": "#6B7280"
+    },
+    {
+      "type": "color",
+      "id": "feature_icon_color",
+      "label": "Feature icon",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "feature_text_color",
+      "label": "Feature text",
+      "default": "#1F2937"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#002B5B"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background",
+      "default": "#001A3D"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "header",
+      "content": "Container style"
+    },
+    {
+      "type": "range",
+      "id": "container_max_width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "label": "Max width",
+      "default": 1000
+    },
+    {
+      "type": "range",
+      "id": "container_border_radius",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "container_shadow_horizontal",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Shadow horizontal offset",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "container_shadow_vertical",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Shadow vertical offset",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "container_shadow_blur",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Shadow blur",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "container_shadow_opacity",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Shadow opacity",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Section bottom padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Section horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "container_padding_top",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Container top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "container_padding_bottom",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Container bottom padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "container_padding_horizontal",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Container horizontal padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "headline_margin_bottom",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Headline bottom margin",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "subtext_margin_bottom",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Subtext bottom margin",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "features_margin_bottom",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Features bottom margin",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "button_margin_bottom",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Button bottom margin",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "headline_max_width",
+      "min": 400,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Headline max width",
+      "default": 750
+    },
+    {
+      "type": "range",
+      "id": "subtext_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtext size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "subtext_max_width",
+      "min": 400,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Subtext max width",
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "feature_text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Feature text size",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "feature_icon_size",
+      "min": 16,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Feature icon size",
+      "default": 22
+    },
+    {
+      "type": "range",
+      "id": "feature_icon_gap",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Feature icon gap",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "features_gap",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Features gap",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Button text size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "min": 10,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Button vertical padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "min": 24,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Button horizontal padding",
+      "default": 48
+    }
+  ],
+  "presets": [
+    {
+      "name": "Refill promotion"
+    }
+  ]
+}
+{% endschema %}

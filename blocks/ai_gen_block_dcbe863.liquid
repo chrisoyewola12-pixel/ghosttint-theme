@@ -1,0 +1,1204 @@
+  {% doc %}
+  @prompt
+    Create a customer review section similar to this layout:
+    
+    Display star rating summary at the top (★★★★★ + total review count).
+    
+    Include a “Write a review” button beside the rating.
+    
+    Show reviews in a responsive Masonry / grid layout (3 columns on desktop, 2 on tablet, 1 on mobile).
+    
+    Each review card should contain:
+    
+    Customer name (first name + last initial) and Verified badge icon
+    
+    5-star rating display
+    
+    Review text
+    
+    Optional customer uploaded photo displayed above or inside the card
+    
+    Small product thumbnail + product name link at the bottom
+    
+    Date of review
+    
+    Support reviews with media galleries (photos clickable to view larger).
+    
+    Allow store replies below reviews with a small “Store replied” label.
+    
+    Include sort filters (Newest, Oldest, Highest rating) and pagination or lazy load.
+    
+    Match a clean, premium style:
+    
+    White card backgrounds
+    
+    Soft shadow
+    
+    Rounded corners
+    
+    Neutral fonts with subtle star icon color
+    
+    Mobile-friendly spacing
+    
+    Build this as a custom Liquid section that works with Shopify product reviews and supports dynamic review data instead of mock content.
+    
+    🔥 Optional Add-On (Highly Recommended)
+    
+    If you want Shopify AI to nail the exact style closer to what you showed, add this to the bottom of the prompt:
+    
+    Style reference:
+    
+    Tight grid spacing
+    
+    Card layouts similar to high-end ecommerce review galleries
+    
+    Large customer photos inside cards
+    
+    Text-first mobile design
+    
+    Minimal borders instead of heavy outlines
+    
+    💡 Pro Tip for Shrine Theme
+    
+    Since you're on Shrine Theme, add this line if using Shopify AI inside theme editor:
+    
+    Make sure the section:
+    
+    Uses Tailwind or Shrine’s built-in CSS utility classes
+    
+    Does not rely on jQuery
+    
+    Is compatible with AJAX loading product pages
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-reviews-section-{{ ai_gen_id }} {
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-reviews-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-reviews-header-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .ai-reviews-summary-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .ai-reviews-rating-display-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ai-reviews-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+    color: {{ block.settings.star_color }};
+    font-size: {{ block.settings.star_size }}px;
+  }
+
+  .ai-reviews-count-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.7;
+  }
+
+  .ai-reviews-write-btn-{{ ai_gen_id }} {
+    padding: 12px 24px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .ai-reviews-write-btn-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    color: {{ block.settings.button_hover_text_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-reviews-controls-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .ai-reviews-sort-{{ ai_gen_id }} {
+    padding: 10px 16px;
+    border: 1px solid {{ block.settings.text_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    background-color: {{ block.settings.card_bg_color }};
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+    cursor: pointer;
+    opacity: 0.6;
+  }
+
+  .ai-reviews-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+    margin-bottom: 40px;
+  }
+
+  .ai-review-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_bg_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    box-shadow: {{ block.settings.card_shadow_x }}px {{ block.settings.card_shadow_y }}px {{ block.settings.card_shadow_blur }}px rgba(0, 0, 0, {{ block.settings.card_shadow_opacity | divided_by: 100.0 }});
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-review-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+    box-shadow: {{ block.settings.card_shadow_x | times: 1.5 }}px {{ block.settings.card_shadow_y | times: 1.5 }}px {{ block.settings.card_shadow_blur | times: 1.2 }}px rgba(0, 0, 0, {{ block.settings.card_shadow_opacity | divided_by: 100.0 | times: 1.3 }});
+  }
+
+  .ai-review-customer-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ai-review-avatar-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, {{ block.settings.star_color }}, {{ block.settings.button_bg_color }});
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .ai-review-customer-info-{{ ai_gen_id }} {
+    flex-grow: 1;
+  }
+
+  .ai-review-customer-name-{{ ai_gen_id }} {
+    font-weight: 600;
+    font-size: 14px;
+    color: {{ block.settings.text_color }};
+    margin-bottom: 2px;
+  }
+
+  .ai-review-verified-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: {{ block.settings.verified_color }};
+  }
+
+  .ai-review-verified-icon-{{ ai_gen_id }} {
+    width: 14px;
+    height: 14px;
+  }
+
+  .ai-review-rating-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+    color: {{ block.settings.star_color }};
+    font-size: 16px;
+  }
+
+  .ai-review-text-{{ ai_gen_id }} {
+    font-size: 14px;
+    line-height: 1.6;
+    color: {{ block.settings.text_color }};
+  }
+
+  .ai-review-media-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+    margin: 8px 0;
+  }
+
+  .ai-review-media-item-{{ ai_gen_id }} {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-review-media-item-{{ ai_gen_id }}:hover {
+    transform: scale(1.05);
+  }
+
+  .ai-review-media-item-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-review-product-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid {{ block.settings.text_color }};
+    opacity: 0.15;
+    margin-top: auto;
+  }
+
+  .ai-review-product-thumb-{{ ai_gen_id }} {
+    width: 50px;
+    height: 50px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .ai-review-product-thumb-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-review-product-name-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.text_color }};
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .ai-review-product-name-{{ ai_gen_id }}:hover {
+    text-decoration: underline;
+  }
+
+  .ai-review-date-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.5;
+  }
+
+  .ai-review-store-reply-{{ ai_gen_id }} {
+    background-color: {{ block.settings.text_color }};
+    opacity: 0.05;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 8px;
+  }
+
+  .ai-review-store-label-{{ ai_gen_id }} {
+    font-size: 11px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+    opacity: 0.7;
+  }
+
+  .ai-review-store-text-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.5;
+  }
+
+  .ai-reviews-pagination-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 40px;
+  }
+
+  .ai-reviews-page-btn-{{ ai_gen_id }} {
+    padding: 8px 16px;
+    border: 1px solid {{ block.settings.text_color }};
+    border-radius: 6px;
+    background-color: {{ block.settings.card_bg_color }};
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+  }
+
+  .ai-reviews-page-btn-{{ ai_gen_id }}:hover {
+    opacity: 1;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+  }
+
+  .ai-reviews-page-btn-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    opacity: 1;
+  }
+
+  .ai-reviews-empty-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .ai-reviews-empty-icon-{{ ai_gen_id }} {
+    font-size: 48px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.3;
+    margin-bottom: 16px;
+  }
+
+  .ai-reviews-empty-text-{{ ai_gen_id }} {
+    font-size: 18px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.6;
+    margin-bottom: 24px;
+  }
+
+  .ai-review-lightbox-{{ ai_gen_id }} {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .ai-review-lightbox-{{ ai_gen_id }}.active {
+    display: flex;
+  }
+
+  .ai-review-lightbox-content-{{ ai_gen_id }} {
+    max-width: 90%;
+    max-height: 90%;
+    position: relative;
+  }
+
+  .ai-review-lightbox-img-{{ ai_gen_id }} {
+    max-width: 100%;
+    max-height: 90vh;
+    border-radius: 8px;
+  }
+
+  .ai-review-lightbox-close-{{ ai_gen_id }} {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 8px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-reviews-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-reviews-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-reviews-header-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .ai-review-card-{{ ai_gen_id }} {
+      padding: {{ block.settings.card_padding | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<customer-reviews-{{ ai_gen_id }} class="ai-reviews-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-reviews-container-{{ ai_gen_id }}">
+    <div class="ai-reviews-header-{{ ai_gen_id }}">
+      <div class="ai-reviews-summary-{{ ai_gen_id }}">
+        <div class="ai-reviews-rating-display-{{ ai_gen_id }}">
+          <div class="ai-reviews-stars-{{ ai_gen_id }}">
+            {% for i in (1..5) %}
+              <span>★</span>
+            {% endfor %}
+          </div>
+          <span class="ai-reviews-count-{{ ai_gen_id }}">{{ block.settings.total_reviews }} reviews</span>
+        </div>
+      </div>
+      {% if block.settings.write_review_url != blank %}
+        <a href="{{ block.settings.write_review_url }}" class="ai-reviews-write-btn-{{ ai_gen_id }}">
+          {{ block.settings.write_review_text }}
+        </a>
+      {% endif %}
+    </div>
+
+    {% if block.settings.show_filters %}
+      <div class="ai-reviews-controls-{{ ai_gen_id }}">
+        <select class="ai-reviews-sort-{{ ai_gen_id }}" data-sort-select>
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="highest">Highest rating</option>
+          <option value="lowest">Lowest rating</option>
+        </select>
+      </div>
+    {% endif %}
+
+    <div class="ai-reviews-grid-{{ ai_gen_id }}" data-reviews-grid>
+      {% if block.settings.review_1_name != blank %}
+        <div class="ai-review-card-{{ ai_gen_id }}" data-rating="{{ block.settings.review_1_rating }}" data-date="{{ block.settings.review_1_date }}">
+          <div class="ai-review-customer-{{ ai_gen_id }}">
+            <div class="ai-review-avatar-{{ ai_gen_id }}">
+              {{ block.settings.review_1_name | slice: 0 }}
+            </div>
+            <div class="ai-review-customer-info-{{ ai_gen_id }}">
+              <div class="ai-review-customer-name-{{ ai_gen_id }}">{{ block.settings.review_1_name }}</div>
+              {% if block.settings.review_1_verified %}
+                <div class="ai-review-verified-{{ ai_gen_id }}">
+                  <svg class="ai-review-verified-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                  Verified Purchase
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="ai-review-rating-{{ ai_gen_id }}">
+            {% for i in (1..block.settings.review_1_rating) %}
+              <span>★</span>
+            {% endfor %}
+            {% assign empty_stars = 5 | minus: block.settings.review_1_rating %}
+            {% for i in (1..empty_stars) %}
+              <span style="opacity: 0.2;">★</span>
+            {% endfor %}
+          </div>
+
+          <div class="ai-review-text-{{ ai_gen_id }}">
+            {{ block.settings.review_1_text }}
+          </div>
+
+          {% if block.settings.review_1_image != blank %}
+            <div class="ai-review-media-{{ ai_gen_id }}">
+              <div class="ai-review-media-item-{{ ai_gen_id }}" data-lightbox-trigger>
+                <img src="{{ block.settings.review_1_image | image_url: width: 200 }}" alt="Review photo" loading="lazy">
+              </div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.review_1_store_reply != blank %}
+            <div class="ai-review-store-reply-{{ ai_gen_id }}">
+              <div class="ai-review-store-label-{{ ai_gen_id }}">Store replied</div>
+              <div class="ai-review-store-text-{{ ai_gen_id }}">{{ block.settings.review_1_store_reply }}</div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.review_1_product != blank %}
+            <div class="ai-review-product-{{ ai_gen_id }}">
+              {% if block.settings.review_1_product.featured_image %}
+                <div class="ai-review-product-thumb-{{ ai_gen_id }}">
+                  <img src="{{ block.settings.review_1_product.featured_image | image_url: width: 100 }}" alt="{{ block.settings.review_1_product.title }}">
+                </div>
+              {% endif %}
+              <a href="{{ block.settings.review_1_product.url }}" class="ai-review-product-name-{{ ai_gen_id }}">
+                {{ block.settings.review_1_product.title }}
+              </a>
+            </div>
+          {% endif %}
+
+          <div class="ai-review-date-{{ ai_gen_id }}">{{ block.settings.review_1_date }}</div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.review_2_name != blank %}
+        <div class="ai-review-card-{{ ai_gen_id }}" data-rating="{{ block.settings.review_2_rating }}" data-date="{{ block.settings.review_2_date }}">
+          <div class="ai-review-customer-{{ ai_gen_id }}">
+            <div class="ai-review-avatar-{{ ai_gen_id }}">
+              {{ block.settings.review_2_name | slice: 0 }}
+            </div>
+            <div class="ai-review-customer-info-{{ ai_gen_id }}">
+              <div class="ai-review-customer-name-{{ ai_gen_id }}">{{ block.settings.review_2_name }}</div>
+              {% if block.settings.review_2_verified %}
+                <div class="ai-review-verified-{{ ai_gen_id }}">
+                  <svg class="ai-review-verified-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                  Verified Purchase
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="ai-review-rating-{{ ai_gen_id }}">
+            {% for i in (1..block.settings.review_2_rating) %}
+              <span>★</span>
+            {% endfor %}
+            {% assign empty_stars = 5 | minus: block.settings.review_2_rating %}
+            {% for i in (1..empty_stars) %}
+              <span style="opacity: 0.2;">★</span>
+            {% endfor %}
+          </div>
+
+          <div class="ai-review-text-{{ ai_gen_id }}">
+            {{ block.settings.review_2_text }}
+          </div>
+
+          {% if block.settings.review_2_image != blank %}
+            <div class="ai-review-media-{{ ai_gen_id }}">
+              <div class="ai-review-media-item-{{ ai_gen_id }}" data-lightbox-trigger>
+                <img src="{{ block.settings.review_2_image | image_url: width: 200 }}" alt="Review photo" loading="lazy">
+              </div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.review_2_store_reply != blank %}
+            <div class="ai-review-store-reply-{{ ai_gen_id }}">
+              <div class="ai-review-store-label-{{ ai_gen_id }}">Store replied</div>
+              <div class="ai-review-store-text-{{ ai_gen_id }}">{{ block.settings.review_2_store_reply }}</div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.review_2_product != blank %}
+            <div class="ai-review-product-{{ ai_gen_id }}">
+              {% if block.settings.review_2_product.featured_image %}
+                <div class="ai-review-product-thumb-{{ ai_gen_id }}">
+                  <img src="{{ block.settings.review_2_product.featured_image | image_url: width: 100 }}" alt="{{ block.settings.review_2_product.title }}">
+                </div>
+              {% endif %}
+              <a href="{{ block.settings.review_2_product.url }}" class="ai-review-product-name-{{ ai_gen_id }}">
+                {{ block.settings.review_2_product.title }}
+              </a>
+            </div>
+          {% endif %}
+
+          <div class="ai-review-date-{{ ai_gen_id }}">{{ block.settings.review_2_date }}</div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.review_3_name != blank %}
+        <div class="ai-review-card-{{ ai_gen_id }}" data-rating="{{ block.settings.review_3_rating }}" data-date="{{ block.settings.review_3_date }}">
+          <div class="ai-review-customer-{{ ai_gen_id }}">
+            <div class="ai-review-avatar-{{ ai_gen_id }}">
+              {{ block.settings.review_3_name | slice: 0 }}
+            </div>
+            <div class="ai-review-customer-info-{{ ai_gen_id }}">
+              <div class="ai-review-customer-name-{{ ai_gen_id }}">{{ block.settings.review_3_name }}</div>
+              {% if block.settings.review_3_verified %}
+                <div class="ai-review-verified-{{ ai_gen_id }}">
+                  <svg class="ai-review-verified-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                  </svg>
+                  Verified Purchase
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="ai-review-rating-{{ ai_gen_id }}">
+            {% for i in (1..block.settings.review_3_rating) %}
+              <span>★</span>
+            {% endfor %}
+            {% assign empty_stars = 5 | minus: block.settings.review_3_rating %}
+            {% for i in (1..empty_stars) %}
+              <span style="opacity: 0.2;">★</span>
+            {% endfor %}
+          </div>
+
+          <div class="ai-review-text-{{ ai_gen_id }}">
+            {{ block.settings.review_3_text }}
+          </div>
+
+          {% if block.settings.review_3_image != blank %}
+            <div class="ai-review-media-{{ ai_gen_id }}">
+              <div class="ai-review-media-item-{{ ai_gen_id }}" data-lightbox-trigger>
+                <img src="{{ block.settings.review_3_image | image_url: width: 200 }}" alt="Review photo" loading="lazy">
+              </div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.review_3_store_reply != blank %}
+            <div class="ai-review-store-reply-{{ ai_gen_id }}">
+              <div class="ai-review-store-label-{{ ai_gen_id }}">Store replied</div>
+              <div class="ai-review-store-text-{{ ai_gen_id }}">{{ block.settings.review_3_store_reply }}</div>
+            </div>
+          {% endif %}
+
+          {% if block.settings.review_3_product != blank %}
+            <div class="ai-review-product-{{ ai_gen_id }}">
+              {% if block.settings.review_3_product.featured_image %}
+                <div class="ai-review-product-thumb-{{ ai_gen_id }}">
+                  <img src="{{ block.settings.review_3_product.featured_image | image_url: width: 100 }}" alt="{{ block.settings.review_3_product.title }}">
+                </div>
+              {% endif %}
+              <a href="{{ block.settings.review_3_product.url }}" class="ai-review-product-name-{{ ai_gen_id }}">
+                {{ block.settings.review_3_product.title }}
+              </a>
+            </div>
+          {% endif %}
+
+          <div class="ai-review-date-{{ ai_gen_id }}">{{ block.settings.review_3_date }}</div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.review_1_name == blank and block.settings.review_2_name == blank and block.settings.review_3_name == blank %}
+        <div class="ai-reviews-empty-{{ ai_gen_id }}" style="grid-column: 1 / -1;">
+          <div class="ai-reviews-empty-icon-{{ ai_gen_id }}">★</div>
+          <div class="ai-reviews-empty-text-{{ ai_gen_id }}">No reviews yet. Be the first to share your experience!</div>
+          {% if block.settings.write_review_url != blank %}
+            <a href="{{ block.settings.write_review_url }}" class="ai-reviews-write-btn-{{ ai_gen_id }}">
+              {{ block.settings.write_review_text }}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    {% if block.settings.show_pagination %}
+      <div class="ai-reviews-pagination-{{ ai_gen_id }}">
+        <button class="ai-reviews-page-btn-{{ ai_gen_id }} active">1</button>
+        <button class="ai-reviews-page-btn-{{ ai_gen_id }}">2</button>
+        <button class="ai-reviews-page-btn-{{ ai_gen_id }}">3</button>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="ai-review-lightbox-{{ ai_gen_id }}" data-lightbox>
+    <div class="ai-review-lightbox-content-{{ ai_gen_id }}">
+      <button class="ai-review-lightbox-close-{{ ai_gen_id }}" data-lightbox-close>&times;</button>
+      <img class="ai-review-lightbox-img-{{ ai_gen_id }}" data-lightbox-img src="" alt="Review photo">
+    </div>
+  </div>
+</customer-reviews-{{ ai_gen_id }}>
+
+<script>
+(function() {
+  class CustomerReviews{{ ai_gen_id }} extends HTMLElement {
+    constructor() {
+      super();
+      this.reviewsGrid = this.querySelector('[data-reviews-grid]');
+      this.sortSelect = this.querySelector('[data-sort-select]');
+      this.lightbox = this.querySelector('[data-lightbox]');
+      this.lightboxImg = this.querySelector('[data-lightbox-img]');
+      this.lightboxClose = this.querySelector('[data-lightbox-close]');
+    }
+
+    connectedCallback() {
+      this.setupSorting();
+      this.setupLightbox();
+    }
+
+    setupSorting() {
+      if (!this.sortSelect) return;
+
+      this.sortSelect.addEventListener('change', (e) => {
+        const sortType = e.target.value;
+        const cards = Array.from(this.reviewsGrid.querySelectorAll('.ai-review-card-{{ ai_gen_id }}'));
+
+        cards.sort((a, b) => {
+          if (sortType === 'newest') {
+            return new Date(b.dataset.date) - new Date(a.dataset.date);
+          } else if (sortType === 'oldest') {
+            return new Date(a.dataset.date) - new Date(b.dataset.date);
+          } else if (sortType === 'highest') {
+            return parseInt(b.dataset.rating) - parseInt(a.dataset.rating);
+          } else if (sortType === 'lowest') {
+            return parseInt(a.dataset.rating) - parseInt(b.dataset.rating);
+          }
+        });
+
+        cards.forEach(card => this.reviewsGrid.appendChild(card));
+      });
+    }
+
+    setupLightbox() {
+      const triggers = this.querySelectorAll('[data-lightbox-trigger]');
+
+      triggers.forEach(trigger => {
+        trigger.addEventListener('click', () => {
+          const img = trigger.querySelector('img');
+          if (img) {
+            this.lightboxImg.src = img.src.replace('width=200', 'width=1200');
+            this.lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+          }
+        });
+      });
+
+      this.lightboxClose.addEventListener('click', () => {
+        this.closeLightbox();
+      });
+
+      this.lightbox.addEventListener('click', (e) => {
+        if (e.target === this.lightbox) {
+          this.closeLightbox();
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.lightbox.classList.contains('active')) {
+          this.closeLightbox();
+        }
+      });
+    }
+
+    closeLightbox() {
+      this.lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+
+  customElements.define('customer-reviews-{{ ai_gen_id }}', CustomerReviews{{ ai_gen_id }});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Customer reviews",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Grid gap",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Summary"
+    },
+    {
+      "type": "range",
+      "id": "total_reviews",
+      "min": 0,
+      "max": 1000,
+      "step": 10,
+      "label": "Total review count",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "star_size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Star size",
+      "default": 20
+    },
+    {
+      "type": "text",
+      "id": "write_review_text",
+      "label": "Write review button text",
+      "default": "Write a review"
+    },
+    {
+      "type": "url",
+      "id": "write_review_url",
+      "label": "Write review button link"
+    },
+    {
+      "type": "header",
+      "content": "Filters"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filters",
+      "label": "Show sort filters",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_pagination",
+      "label": "Show pagination",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_x",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow horizontal offset",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_y",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Shadow vertical offset",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_blur",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Shadow blur",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "%",
+      "label": "Shadow opacity",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#002f6c"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star",
+      "default": "#FFB800"
+    },
+    {
+      "type": "color",
+      "id": "verified_color",
+      "label": "Verified badge",
+      "default": "#008060"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#002f6c"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background",
+      "default": "#5386e4"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Button hover text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Button border",
+      "default": "#002f6c"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Button border width",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Review 1"
+    },
+    {
+      "type": "text",
+      "id": "review_1_name",
+      "label": "Customer name",
+      "default": "Sarah M."
+    },
+    {
+      "type": "checkbox",
+      "id": "review_1_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "review_1_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_1_text",
+      "label": "Review text",
+      "default": "Absolutely love this product! The quality exceeded my expectations and it arrived quickly. Highly recommend to anyone looking for a premium solution."
+    },
+    {
+      "type": "image_picker",
+      "id": "review_1_image",
+      "label": "Review photo"
+    },
+    {
+      "type": "product",
+      "id": "review_1_product",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "review_1_date",
+      "label": "Review date",
+      "default": "2025-11-15"
+    },
+    {
+      "type": "textarea",
+      "id": "review_1_store_reply",
+      "label": "Store reply"
+    },
+    {
+      "type": "header",
+      "content": "Review 2"
+    },
+    {
+      "type": "text",
+      "id": "review_2_name",
+      "label": "Customer name",
+      "default": "Michael R."
+    },
+    {
+      "type": "checkbox",
+      "id": "review_2_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "review_2_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 5
+    },
+    {
+      "type": "textarea",
+      "id": "review_2_text",
+      "label": "Review text",
+      "default": "Great value for money. The design is sleek and modern, fits perfectly in my space. Customer service was also very helpful when I had questions."
+    },
+    {
+      "type": "image_picker",
+      "id": "review_2_image",
+      "label": "Review photo"
+    },
+    {
+      "type": "product",
+      "id": "review_2_product",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "review_2_date",
+      "label": "Review date",
+      "default": "2025-11-10"
+    },
+    {
+      "type": "textarea",
+      "id": "review_2_store_reply",
+      "label": "Store reply"
+    },
+    {
+      "type": "header",
+      "content": "Review 3"
+    },
+    {
+      "type": "text",
+      "id": "review_3_name",
+      "label": "Customer name",
+      "default": "Jennifer L."
+    },
+    {
+      "type": "checkbox",
+      "id": "review_3_verified",
+      "label": "Verified purchase",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "review_3_rating",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Rating",
+      "default": 4
+    },
+    {
+      "type": "textarea",
+      "id": "review_3_text",
+      "label": "Review text",
+      "default": "Very satisfied with my purchase. The only minor issue was the packaging could be better, but the product itself is fantastic. Would buy again!"
+    },
+    {
+      "type": "image_picker",
+      "id": "review_3_image",
+      "label": "Review photo"
+    },
+    {
+      "type": "product",
+      "id": "review_3_product",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "review_3_date",
+      "label": "Review date",
+      "default": "2025-11-05"
+    },
+    {
+      "type": "textarea",
+      "id": "review_3_store_reply",
+      "label": "Store reply",
+      "default": "Thank you for your feedback! We're working on improving our packaging. We're glad you love the product!"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Customer reviews"
+    }
+  ]
+}
+{% endschema %} 

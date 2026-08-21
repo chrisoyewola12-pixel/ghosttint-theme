@@ -1,0 +1,413 @@
+{% doc %}
+  @prompt
+    FAQ Section Prompt
+    
+    Create a centered FAQ accordion section on pure white background #FFFFFF. Add headline “Got questions? We’ve got answers.” in bold navy #002B5B with small gray subtitle below: “Here’s everything you need to know before you upgrade to the Royal Bin™ lifestyle.” Below add stacked accordion cards with rounded corners, thin border #E6E6E6, and right-aligned chevron icons. Questions should be bold navy #002B5B, answers medium gray #555555.
+    
+    Use these FAQs:
+    
+    How does the Royal Bin™ auto-seal the trash bag?
+    Our SmartRing™ system automatically seals the bag with heat technology — no tying, no leaks, no mess.
+    
+    How is the Royal Bin™ Ultra different?
+    The only 30L bin that seals bags, drops in a fresh liner, locks in odors, and opens with a wave. Bigger, smarter cleanup.
+    
+    How does the bag system work?
+    Each ring holds up to 25 liners. When full, the bin seals the bag and reloads a fresh liner automatically. No tying, no touching trash.
+    
+    How long does the battery last?
+    Up to 70 days per charge. Full charge takes about 1 hour via USB-C.
+    
+    What size is the Ultra?
+    30 liters. Ideal for kitchens, living rooms, and shared spaces. Larger than the Signature model.
+    
+    Is it safe for kids or pets?
+    Yes. The motion sensor activates only at the top, so accidental triggers won’t set it off.
+    
+    Can it handle messy or wet trash?
+    Yes. Sealed bags are leak-proof and odor-lock technology keeps smells contained.
+    
+    What if I don’t love it?
+    Covered by our 30-day money-back guarantee. Full refund, no questions asked.
+    
+    Mobile behavior: Stack all accordion cards full-width with large tap targets and keep the headline centered at the top.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-faq-section-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    padding: 60px 20px;
+    width: 100%;
+  }
+
+  .ai-faq-container-{{ ai_gen_id }} {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .ai-faq-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-faq-headline-{{ ai_gen_id }} {
+    font-size: 32px;
+    font-weight: 700;
+    color: #0B0B0B;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+  }
+
+  .ai-faq-subtitle-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: #4B5563;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .ai-faq-list-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }} {
+    border: 1px solid #E6E6E6;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #FFFFFF;
+  }
+
+  .ai-faq-question-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 20px 24px;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transition: background-color 0.2s ease;
+  }
+
+  .ai-faq-question-{{ ai_gen_id }}:hover {
+    background-color: #F9F9F9;
+  }
+
+  .ai-faq-question-text-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0B0B0B;
+    margin: 0;
+    flex: 1;
+    line-height: 1.4;
+  }
+
+  .ai-faq-chevron-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+    color: #0B0B0B;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-chevron-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-faq-answer-wrapper-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} {
+    padding: 0 24px 20px 24px;
+    font-size: 15px;
+    color: #4B5563;
+    line-height: 1.6;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-faq-section-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+
+    .ai-faq-headline-{{ ai_gen_id }} {
+      font-size: 26px;
+    }
+
+    .ai-faq-subtitle-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+
+    .ai-faq-question-{{ ai_gen_id }} {
+      padding: 18px 20px;
+      min-height: 60px;
+    }
+
+    .ai-faq-question-text-{{ ai_gen_id }} {
+      font-size: 15px;
+    }
+
+    .ai-faq-answer-{{ ai_gen_id }} {
+      padding: 0 20px 18px 20px;
+      font-size: 14px;
+    }
+  }
+{% endstyle %}
+
+<faq-accordion-{{ ai_gen_id }} class="ai-faq-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-faq-container-{{ ai_gen_id }}">
+    <div class="ai-faq-header-{{ ai_gen_id }}">
+      <h2 class="ai-faq-headline-{{ ai_gen_id }}">{{ block.settings.headline }}</h2>
+      <p class="ai-faq-subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</p>
+    </div>
+
+    <div class="ai-faq-list-{{ ai_gen_id }}">
+      {% for i in (1..8) %}
+        {% liquid
+          assign question_key = 'faq_' | append: i | append: '_question'
+          assign answer_key = 'faq_' | append: i | append: '_answer'
+          assign question = block.settings[question_key]
+          assign answer = block.settings[answer_key]
+        %}
+
+        {% if question != blank and answer != blank %}
+          <div class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
+            <button
+              class="ai-faq-question-{{ ai_gen_id }}"
+              aria-expanded="false"
+              data-faq-button
+            >
+              <span class="ai-faq-question-text-{{ ai_gen_id }}">{{ question }}</span>
+              <svg
+                class="ai-faq-chevron-{{ ai_gen_id }}"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="ai-faq-answer-wrapper-{{ ai_gen_id }}" data-faq-answer>
+              <div class="ai-faq-answer-{{ ai_gen_id }}">{{ answer }}</div>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</faq-accordion-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class FaqAccordion{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.items = this.querySelectorAll('[data-faq-item]');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.items.forEach((item) => {
+          const button = item.querySelector('[data-faq-button]');
+          const answerWrapper = item.querySelector('[data-faq-answer]');
+
+          button.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+
+            this.items.forEach((otherItem) => {
+              if (otherItem !== item) {
+                otherItem.classList.remove('active');
+                const otherButton = otherItem.querySelector('[data-faq-button]');
+                const otherAnswer = otherItem.querySelector('[data-faq-answer]');
+                otherButton.setAttribute('aria-expanded', 'false');
+                otherAnswer.style.maxHeight = '0px';
+              }
+            });
+
+            if (isActive) {
+              item.classList.remove('active');
+              button.setAttribute('aria-expanded', 'false');
+              answerWrapper.style.maxHeight = '0px';
+            } else {
+              item.classList.add('active');
+              button.setAttribute('aria-expanded', 'true');
+              answerWrapper.style.maxHeight = answerWrapper.scrollHeight + 'px';
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('faq-accordion-{{ ai_gen_id }}', FaqAccordion{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ accordion",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Got questions? We've got answers."
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Here's everything you need to know before you upgrade to the Royal Bin™ lifestyle."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 1"
+    },
+    {
+      "type": "text",
+      "id": "faq_1_question",
+      "label": "Question",
+      "default": "How does the Royal Bin™ auto-seal the trash bag?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_1_answer",
+      "label": "Answer",
+      "default": "Our SmartRing™ system automatically seals the bag with heat technology — no tying, no leaks, no mess."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 2"
+    },
+    {
+      "type": "text",
+      "id": "faq_2_question",
+      "label": "Question",
+      "default": "How is the Royal Bin™ Ultra different?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_2_answer",
+      "label": "Answer",
+      "default": "The only 30L bin that seals bags, drops in a fresh liner, locks in odors, and opens with a wave. Bigger, smarter cleanup."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 3"
+    },
+    {
+      "type": "text",
+      "id": "faq_3_question",
+      "label": "Question",
+      "default": "How does the bag system work?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_3_answer",
+      "label": "Answer",
+      "default": "Each ring holds up to 25 liners. When full, the bin seals the bag and reloads a fresh liner automatically. No tying, no touching trash."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 4"
+    },
+    {
+      "type": "text",
+      "id": "faq_4_question",
+      "label": "Question",
+      "default": "How long does the battery last?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_4_answer",
+      "label": "Answer",
+      "default": "Up to 70 days per charge. Full charge takes about 1 hour via USB-C."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 5"
+    },
+    {
+      "type": "text",
+      "id": "faq_5_question",
+      "label": "Question",
+      "default": "What size is the Ultra?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_5_answer",
+      "label": "Answer",
+      "default": "30 liters. Ideal for kitchens, living rooms, and shared spaces. Larger than the Signature model."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 6"
+    },
+    {
+      "type": "text",
+      "id": "faq_6_question",
+      "label": "Question",
+      "default": "Is it safe for kids or pets?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_6_answer",
+      "label": "Answer",
+      "default": "Yes. The motion sensor activates only at the top, so accidental triggers won't set it off."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 7"
+    },
+    {
+      "type": "text",
+      "id": "faq_7_question",
+      "label": "Question",
+      "default": "Can it handle messy or wet trash?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_7_answer",
+      "label": "Answer",
+      "default": "Yes. Sealed bags are leak-proof and odor-lock technology keeps smells contained."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 8"
+    },
+    {
+      "type": "text",
+      "id": "faq_8_question",
+      "label": "Question",
+      "default": "What if I don't love it?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_8_answer",
+      "label": "Answer",
+      "default": "Covered by our 30-day money-back guarantee. Full refund, no questions asked."
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ accordion"
+    }
+  ]
+}
+{% endschema %}

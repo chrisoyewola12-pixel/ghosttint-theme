@@ -1,0 +1,446 @@
+{% doc %}
+  @prompt
+    Create a full-width FAQ section on a white background (#FFFFFF) with a centered top heading “Got questions?” in bold navy #002B5B, followed by a second line “We've got answers.” also in navy. Below that add a small subtext paragraph in gray #777777: “Here’s everything you need to know before you upgrade to the Royal Bin™ lifestyle.”
+    
+    Under the heading create a vertical stack of accordion dropdowns. Each accordion should be a rounded white container with a thin light gray border (#E5E5E5), subtle shadow, and an arrow icon on the right that rotates when opened. The question text should be bold navy #002B5B. The answer text inside each expanded section should be regular gray #555555 with clear spacing.
+    
+    Use these exact FAQ items:
+    
+    How does the Royal Bin™ auto-seal the trash bag?
+    Answer: “Inside the Royal Bin™ is a sealing element built into the SmartRing™ system. When the bin is full, hold the button for 3 seconds. From there the lid lifts automatically, and the SmartRing™ tightens the bag, then uses heat to fuse the bag closed at the top — creating a clean, airtight seal. There’s no twisting, tying, or touching required. Once sealed, the bin preps a new one to load — ready for the next use.”
+    
+    How long does the battery last after a full charge?
+    Answer: “The battery lasts up to 50+ days with a single USB-C charge. Nearly two months of not thinking about your trash — exactly how it should be.”
+    
+    What’s the difference between the Signature and Lite models?
+    Answer: Provide an empty placeholder answer so the store owner can add details.
+    
+    Do I need special refill bags?
+    Answer: “Technically yes. Royal Bin™ uses SmartRing™ refills that auto-seal and reload your trash bags. It’s how the magic happens. And to make your life easier, we include a 1-month supply right in the box.”
+    
+    How easy is it to install new refill rings?
+    Answer: “Super easy — lift the lid, pop in the SmartRing™, and you’re ready. Takes less than 10 seconds.”
+    
+    What if I run out of refill rings?
+    Answer: “Short ans
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-faq-section-{{ ai_gen_id }} {
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: 60px 20px;
+  }
+
+  .ai-faq-container-{{ ai_gen_id }} {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .ai-faq-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .ai-faq-title-{{ ai_gen_id }} {
+    font-size: 42px;
+    font-weight: 700;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 8px 0;
+    line-height: 1.2;
+  }
+
+  .ai-faq-subtitle-{{ ai_gen_id }} {
+    font-size: 42px;
+    font-weight: 400;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+  }
+
+  .ai-faq-description-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: {{ block.settings.description_color }};
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .ai-faq-list-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-faq-question-{{ ai_gen_id }} {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 28px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    gap: 20px;
+  }
+
+  .ai-faq-question-text-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: 700;
+    color: {{ block.settings.question_color }};
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .ai-faq-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-faq-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: {{ block.settings.question_color }};
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-icon-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.4s ease;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-answer-{{ ai_gen_id }} {
+    max-height: 1000px;
+  }
+
+  .ai-faq-answer-content-{{ ai_gen_id }} {
+    padding: 0 28px 24px 28px;
+    font-size: 16px;
+    color: {{ block.settings.answer_color }};
+    line-height: 1.7;
+  }
+
+  .ai-faq-empty-state-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999999;
+    font-style: italic;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-faq-section-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+
+    .ai-faq-title-{{ ai_gen_id }},
+    .ai-faq-subtitle-{{ ai_gen_id }} {
+      font-size: 32px;
+    }
+
+    .ai-faq-description-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+
+    .ai-faq-question-{{ ai_gen_id }} {
+      padding: 20px 20px;
+    }
+
+    .ai-faq-question-text-{{ ai_gen_id }} {
+      font-size: 16px;
+    }
+
+    .ai-faq-answer-content-{{ ai_gen_id }} {
+      padding: 0 20px 20px 20px;
+      font-size: 14px;
+    }
+  }
+{% endstyle %}
+
+<faq-accordion-{{ ai_gen_id }} class="ai-faq-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-faq-container-{{ ai_gen_id }}">
+    <div class="ai-faq-header-{{ ai_gen_id }}">
+      <h2 class="ai-faq-title-{{ ai_gen_id }}">{{ block.settings.main_heading }}</h2>
+      <h3 class="ai-faq-subtitle-{{ ai_gen_id }}">{{ block.settings.sub_heading }}</h3>
+      <p class="ai-faq-description-{{ ai_gen_id }}">{{ block.settings.description }}</p>
+    </div>
+
+    {% assign has_faqs = false %}
+    {% for i in (1..6) %}
+      {% assign question_key = 'faq_' | append: i | append: '_question' %}
+      {% assign answer_key = 'faq_' | append: i | append: '_answer' %}
+      {% assign question = block.settings[question_key] %}
+      {% if question != blank %}
+        {% assign has_faqs = true %}
+      {% endif %}
+    {% endfor %}
+
+    {% if has_faqs %}
+      <div class="ai-faq-list-{{ ai_gen_id }}">
+        {% for i in (1..6) %}
+          {% assign question_key = 'faq_' | append: i | append: '_question' %}
+          {% assign answer_key = 'faq_' | append: i | append: '_answer' %}
+          {% assign question = block.settings[question_key] %}
+          {% assign answer = block.settings[answer_key] %}
+
+          {% if question != blank %}
+            <div class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
+              <button class="ai-faq-question-{{ ai_gen_id }}" aria-expanded="false">
+                <h4 class="ai-faq-question-text-{{ ai_gen_id }}">{{ question }}</h4>
+                <span class="ai-faq-icon-{{ ai_gen_id }}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </span>
+              </button>
+              <div class="ai-faq-answer-{{ ai_gen_id }}">
+                <div class="ai-faq-answer-content-{{ ai_gen_id }}">
+                  {% if answer != blank %}
+                    {{ answer }}
+                  {% else %}
+                    <em>Add your answer here in the theme editor.</em>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="ai-faq-empty-state-{{ ai_gen_id }}">
+        Next, add your FAQ questions and answers in the block settings
+      </div>
+    {% endif %}
+  </div>
+</faq-accordion-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class FaqAccordion{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.items = this.querySelectorAll('[data-faq-item]');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.items.forEach((item) => {
+          const button = item.querySelector('.ai-faq-question-{{ ai_gen_id }}');
+          
+          button.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+            
+            this.items.forEach((otherItem) => {
+              if (otherItem !== item) {
+                otherItem.classList.remove('active');
+                const otherButton = otherItem.querySelector('.ai-faq-question-{{ ai_gen_id }}');
+                otherButton.setAttribute('aria-expanded', 'false');
+              }
+            });
+            
+            if (isActive) {
+              item.classList.remove('active');
+              button.setAttribute('aria-expanded', 'false');
+            } else {
+              item.classList.add('active');
+              button.setAttribute('aria-expanded', 'true');
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('faq-accordion-{{ ai_gen_id }}', FaqAccordion{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ accordion",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "main_heading",
+      "label": "Main heading",
+      "default": "Got questions?"
+    },
+    {
+      "type": "text",
+      "id": "sub_heading",
+      "label": "Sub heading",
+      "default": "We've got answers."
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Here's everything you need to know before you upgrade to the Royal Bin™ lifestyle."
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#002B5B"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description",
+      "default": "#777777"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Question",
+      "default": "#002B5B"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Answer",
+      "default": "#555555"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#E5E5E5"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 1"
+    },
+    {
+      "type": "text",
+      "id": "faq_1_question",
+      "label": "Question",
+      "default": "How does the Royal Bin™ auto-seal the trash bag?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_1_answer",
+      "label": "Answer",
+      "default": "Inside the Royal Bin™ is a sealing element built into the SmartRing™ system. When the bin is full, hold the button for 3 seconds. From there the lid lifts automatically, and the SmartRing™ tightens the bag, then uses heat to fuse the bag closed at the top — creating a clean, airtight seal. There's no twisting, tying, or touching required. Once sealed, the bin preps a new one to load — ready for the next use."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 2"
+    },
+    {
+      "type": "text",
+      "id": "faq_2_question",
+      "label": "Question",
+      "default": "How long does the battery last after a full charge?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_2_answer",
+      "label": "Answer",
+      "default": "The battery lasts up to 50+ days with a single USB-C charge. Nearly two months of not thinking about your trash — exactly how it should be."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 3"
+    },
+    {
+      "type": "text",
+      "id": "faq_3_question",
+      "label": "Question",
+      "default": "What's the difference between the Signature and Lite models?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_3_answer",
+      "label": "Answer"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 4"
+    },
+    {
+      "type": "text",
+      "id": "faq_4_question",
+      "label": "Question",
+      "default": "Do I need special refill bags?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_4_answer",
+      "label": "Answer",
+      "default": "Technically yes. Royal Bin™ uses SmartRing™ refills that auto-seal and reload your trash bags. It's how the magic happens. And to make your life easier, we include a 1-month supply right in the box."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 5"
+    },
+    {
+      "type": "text",
+      "id": "faq_5_question",
+      "label": "Question",
+      "default": "How easy is it to install new refill rings?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_5_answer",
+      "label": "Answer",
+      "default": "Super easy — lift the lid, pop in the SmartRing™, and you're ready. Takes less than 10 seconds."
+    },
+    {
+      "type": "header",
+      "content": "FAQ 6"
+    },
+    {
+      "type": "text",
+      "id": "faq_6_question",
+      "label": "Question",
+      "default": "What if I run out of refill rings?"
+    },
+    {
+      "type": "textarea",
+      "id": "faq_6_answer",
+      "label": "Answer"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ accordion"
+    }
+  ]
+}
+{% endschema %}

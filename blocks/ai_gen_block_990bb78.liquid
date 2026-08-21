@@ -1,0 +1,399 @@
+{% doc %}
+  @prompt
+    Create a two-column split content section on a pure white background (#FFFFFF). Left column should contain all text content aligned left. Add a large bold navy headline (#002B5B) reading exactly “We Set the Bar for Clean — And Keep Raising It”. Below it place a paragraph in dark gray (#555555): “At Trash King™, we don’t believe in ‘just good enough.’” followed by a second paragraph: “From engineering to materials to everyday use, the Royal Bin™ is obsessively designed to solve the problems traditional trash cans ignored.” Under the paragraphs create a 2x2 stat grid with large bold navy numbers and smaller gray captions beneath each: “1” with caption “Bin, perfected for daily life”, “0” with caption “Bags to load. Ever.”, “60+” with caption “Days of power on a single charge”, and “10k+” with caption “Homes already upgraded”. Below the stats add a pill-shaped CTA button with text “Why People Love the Royal Bin™”, navy background (#032B5B), white text, and full border-radius 9999px. Right column should be a tall rounded rectangular container with border-radius around 24px that uses an uploaded image as its background (merchant-provided via theme section image picker). The image must fully cover the card using object-fit:cover without stretching, and no product overlays or extra text should be added on top of the image — the card is image-only. Maintain generous padding between columns and overall premium spacing to match the reference layout.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-split-content-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    padding: 80px 20px;
+  }
+
+  .ai-split-content-container-{{ ai_gen_id }} {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .ai-split-content-left-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .ai-split-content-headline-{{ ai_gen_id }} {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #002B5B;
+    margin: 0;
+  }
+
+  .ai-split-content-paragraphs-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-split-content-paragraph-{{ ai_gen_id }} {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #555555;
+    margin: 0;
+  }
+
+  .ai-split-content-stats-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 16px;
+  }
+
+  .ai-split-content-stat-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-split-content-stat-number-{{ ai_gen_id }} {
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1;
+    color: #002B5B;
+    margin: 0;
+  }
+
+  .ai-split-content-stat-caption-{{ ai_gen_id }} {
+    font-size: 14px;
+    line-height: 1.4;
+    color: #555555;
+    margin: 0;
+  }
+
+  .ai-split-content-cta-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    background-color: #002B5B;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    align-self: flex-start;
+  }
+
+  .ai-split-content-cta-{{ ai_gen_id }}:hover {
+    background-color: #001a3d;
+    transform: translateY(-2px);
+  }
+
+  .ai-split-content-right-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+  }
+
+  .ai-split-content-image-card-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  .ai-split-content-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-split-content-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-split-content-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 400px;
+    max-height: 400px;
+  }
+
+  .ai-split-content-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-split-content-{{ ai_gen_id }} {
+      padding: 60px 20px;
+    }
+
+    .ai-split-content-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 48px;
+    }
+
+    .ai-split-content-headline-{{ ai_gen_id }} {
+      font-size: 36px;
+    }
+
+    .ai-split-content-stat-number-{{ ai_gen_id }} {
+      font-size: 48px;
+    }
+
+    .ai-split-content-right-{{ ai_gen_id }} {
+      min-height: 500px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-split-content-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+
+    .ai-split-content-headline-{{ ai_gen_id }} {
+      font-size: 28px;
+    }
+
+    .ai-split-content-paragraph-{{ ai_gen_id }} {
+      font-size: 16px;
+    }
+
+    .ai-split-content-stats-{{ ai_gen_id }} {
+      gap: 24px;
+    }
+
+    .ai-split-content-stat-number-{{ ai_gen_id }} {
+      font-size: 40px;
+    }
+
+    .ai-split-content-stat-caption-{{ ai_gen_id }} {
+      font-size: 13px;
+    }
+
+    .ai-split-content-cta-{{ ai_gen_id }} {
+      padding: 14px 28px;
+      font-size: 15px;
+    }
+
+    .ai-split-content-right-{{ ai_gen_id }} {
+      min-height: 400px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-split-content-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-split-content-container-{{ ai_gen_id }}">
+    <div class="ai-split-content-left-{{ ai_gen_id }}">
+      <h2 class="ai-split-content-headline-{{ ai_gen_id }}">
+        {{ block.settings.headline }}
+      </h2>
+
+      <div class="ai-split-content-paragraphs-{{ ai_gen_id }}">
+        <p class="ai-split-content-paragraph-{{ ai_gen_id }}">
+          {{ block.settings.paragraph_1 }}
+        </p>
+        <p class="ai-split-content-paragraph-{{ ai_gen_id }}">
+          {{ block.settings.paragraph_2 }}
+        </p>
+      </div>
+
+      <div class="ai-split-content-stats-{{ ai_gen_id }}">
+        <div class="ai-split-content-stat-{{ ai_gen_id }}">
+          <div class="ai-split-content-stat-number-{{ ai_gen_id }}">
+            {{ block.settings.stat_1_number }}
+          </div>
+          <div class="ai-split-content-stat-caption-{{ ai_gen_id }}">
+            {{ block.settings.stat_1_caption }}
+          </div>
+        </div>
+
+        <div class="ai-split-content-stat-{{ ai_gen_id }}">
+          <div class="ai-split-content-stat-number-{{ ai_gen_id }}">
+            {{ block.settings.stat_2_number }}
+          </div>
+          <div class="ai-split-content-stat-caption-{{ ai_gen_id }}">
+            {{ block.settings.stat_2_caption }}
+          </div>
+        </div>
+
+        <div class="ai-split-content-stat-{{ ai_gen_id }}">
+          <div class="ai-split-content-stat-number-{{ ai_gen_id }}">
+            {{ block.settings.stat_3_number }}
+          </div>
+          <div class="ai-split-content-stat-caption-{{ ai_gen_id }}">
+            {{ block.settings.stat_3_caption }}
+          </div>
+        </div>
+
+        <div class="ai-split-content-stat-{{ ai_gen_id }}">
+          <div class="ai-split-content-stat-number-{{ ai_gen_id }}">
+            {{ block.settings.stat_4_number }}
+          </div>
+          <div class="ai-split-content-stat-caption-{{ ai_gen_id }}">
+            {{ block.settings.stat_4_caption }}
+          </div>
+        </div>
+      </div>
+
+      <a href="{{ block.settings.cta_link }}" class="ai-split-content-cta-{{ ai_gen_id }}">
+        {{ block.settings.cta_text }}
+      </a>
+    </div>
+
+    <div class="ai-split-content-right-{{ ai_gen_id }}">
+      <div class="ai-split-content-image-card-{{ ai_gen_id }}">
+        {% if block.settings.image %}
+          <img
+            src="{{ block.settings.image | image_url: width: 1200 }}"
+            alt="{{ block.settings.image.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.image.width }}"
+            height="{{ block.settings.image.height }}"
+            class="ai-split-content-image-{{ ai_gen_id }}"
+          >
+        {% else %}
+          <div class="ai-split-content-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+            <div class="ai-split-content-empty-state-{{ ai_gen_id }}">
+              Add an image to complete this section
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Split content",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "We Set the Bar for Clean — And Keep Raising It"
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph_1",
+      "label": "First paragraph",
+      "default": "At Trash King™, we don't believe in 'just good enough.'"
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph_2",
+      "label": "Second paragraph",
+      "default": "From engineering to materials to everyday use, the Royal Bin™ is obsessively designed to solve the problems traditional trash cans ignored."
+    },
+    {
+      "type": "header",
+      "content": "Statistics"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_number",
+      "label": "Stat 1 number",
+      "default": "1"
+    },
+    {
+      "type": "text",
+      "id": "stat_1_caption",
+      "label": "Stat 1 caption",
+      "default": "Bin, perfected for daily life"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_number",
+      "label": "Stat 2 number",
+      "default": "0"
+    },
+    {
+      "type": "text",
+      "id": "stat_2_caption",
+      "label": "Stat 2 caption",
+      "default": "Bags to load. Ever."
+    },
+    {
+      "type": "text",
+      "id": "stat_3_number",
+      "label": "Stat 3 number",
+      "default": "60+"
+    },
+    {
+      "type": "text",
+      "id": "stat_3_caption",
+      "label": "Stat 3 caption",
+      "default": "Days of power on a single charge"
+    },
+    {
+      "type": "text",
+      "id": "stat_4_number",
+      "label": "Stat 4 number",
+      "default": "10k+"
+    },
+    {
+      "type": "text",
+      "id": "stat_4_caption",
+      "label": "Stat 4 caption",
+      "default": "Homes already upgraded"
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "Why People Love the Royal Bin™"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Split content"
+    }
+  ]
+}
+{% endschema %}

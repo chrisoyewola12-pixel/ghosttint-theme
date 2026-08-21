@@ -1,0 +1,614 @@
+{% doc %}
+  @prompt
+    Create a 3-card promotional section with rounded rectangular cards, each using an uploaded background image as the full card background. Do not generate any background colors or product images. The top card is a large horizontal hero card with left-aligned bold headline: “Your Royal Upgrade Awaits.” Below it add a pill-shaped button reading “GET THE ROYAL BIN™ TODAY”, fully rounded (border-radius 9999px). Below the hero card, add two smaller side-by-side cards, each also using uploaded background images only. Left bottom card: headline “Fast, Free Shipping On All Orders.” with a pill button reading “SHIPS IN 1 DAY”. Right bottom card: headline “COMES WITH 1 MONTH SUPPLY” with a smaller subline below it and a pill button reading “SHOP NOW”. All text should be clean, modern, well-spaced, and cards must look premium and minimal with soft rounded corners.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-promo-cards-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    padding: {{ block.settings.section_padding }}px 20px;
+  }
+
+  .ai-promo-cards__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: {{ block.settings.card_gap }}px;
+  }
+
+  .ai-promo-card-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ block.settings.card_border_radius }}px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: {{ block.settings.card_padding }}px;
+  }
+
+  .ai-promo-card-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 1;
+  }
+
+  .ai-promo-card__bg-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+  }
+
+  .ai-promo-card__content-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 2;
+  }
+
+  .ai-promo-card--hero-{{ ai_gen_id }} {
+    min-height: {{ block.settings.hero_height }}px;
+    text-align: left;
+  }
+
+  .ai-promo-card--small-{{ ai_gen_id }} {
+    min-height: {{ block.settings.small_card_height }}px;
+  }
+
+  .ai-promo-card__headline-{{ ai_gen_id }} {
+    font-size: {{ block.settings.hero_headline_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 {{ block.settings.headline_spacing }}px 0;
+    line-height: 1.2;
+    max-width: {{ block.settings.hero_text_max_width }}px;
+  }
+
+  .ai-promo-card__headline--small-{{ ai_gen_id }} {
+    font-size: {{ block.settings.small_headline_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 {{ block.settings.headline_spacing }}px 0;
+    line-height: 1.2;
+  }
+
+  .ai-promo-card__subline-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subline_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 {{ block.settings.headline_spacing }}px 0;
+    line-height: 1.4;
+    opacity: 0.9;
+  }
+
+  .ai-promo-card__button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: {{ block.settings.button_padding_y }}px {{ block.settings.button_padding_x }}px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: 9999px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .ai-promo-card__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-promo-cards__bottom-row-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: {{ block.settings.card_gap }}px;
+  }
+
+  .ai-promo-card--left-{{ ai_gen_id }},
+  .ai-promo-card--right-{{ ai_gen_id }} {
+    text-align: {{ block.settings.small_card_text_align }};
+  }
+
+  .ai-promo-card__placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    z-index: 0;
+  }
+
+  .ai-promo-card__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+    text-align: center;
+    z-index: 3;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 16px;
+    border-radius: 4px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-promo-cards__bottom-row-{{ ai_gen_id }} {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .ai-promo-card__headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.hero_headline_size | times: 1.2 }}px;
+    }
+
+    .ai-promo-card__headline--small-{{ ai_gen_id }} {
+      font-size: {{ block.settings.small_headline_size | times: 1.1 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-promo-card-{{ ai_gen_id }} {
+      min-height: 250px;
+      padding: {{ block.settings.card_padding | times: 0.7 }}px;
+    }
+
+    .ai-promo-card--hero-{{ ai_gen_id }} {
+      min-height: {{ block.settings.hero_height | times: 0.7 }}px;
+    }
+
+    .ai-promo-card--small-{{ ai_gen_id }} {
+      min-height: {{ block.settings.small_card_height | times: 0.8 }}px;
+    }
+
+    .ai-promo-card__button-{{ ai_gen_id }} {
+      font-size: {{ block.settings.button_font_size | times: 0.9 }}px;
+      padding: {{ block.settings.button_padding_y | times: 0.9 }}px {{ block.settings.button_padding_x | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-promo-cards-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-promo-cards__grid-{{ ai_gen_id }}">
+    <div class="ai-promo-card-{{ ai_gen_id }} ai-promo-card--hero-{{ ai_gen_id }}">
+      {% if block.settings.hero_bg_image %}
+        <img
+          src="{{ block.settings.hero_bg_image | image_url: width: 2000 }}"
+          alt="{{ block.settings.hero_bg_image.alt | escape }}"
+          class="ai-promo-card__bg-{{ ai_gen_id }}"
+          loading="lazy"
+          width="{{ block.settings.hero_bg_image.width }}"
+          height="{{ block.settings.hero_bg_image.height }}"
+        >
+      {% else %}
+        <div class="ai-promo-card__placeholder-{{ ai_gen_id }}"></div>
+        <div class="ai-promo-card__empty-state-{{ ai_gen_id }}">
+          Add hero background image
+        </div>
+      {% endif %}
+
+      <div class="ai-promo-card__content-{{ ai_gen_id }}">
+        {% if block.settings.hero_headline != blank %}
+          <h2 class="ai-promo-card__headline-{{ ai_gen_id }}">
+            {{ block.settings.hero_headline }}
+          </h2>
+        {% endif %}
+
+        {% if block.settings.hero_button_text != blank %}
+          <a
+            href="{{ block.settings.hero_button_link }}"
+            class="ai-promo-card__button-{{ ai_gen_id }}"
+          >
+            {{ block.settings.hero_button_text }}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="ai-promo-cards__bottom-row-{{ ai_gen_id }}">
+      <div class="ai-promo-card-{{ ai_gen_id }} ai-promo-card--small-{{ ai_gen_id }} ai-promo-card--left-{{ ai_gen_id }}">
+        {% if block.settings.left_bg_image %}
+          <img
+            src="{{ block.settings.left_bg_image | image_url: width: 1200 }}"
+            alt="{{ block.settings.left_bg_image.alt | escape }}"
+            class="ai-promo-card__bg-{{ ai_gen_id }}"
+            loading="lazy"
+            width="{{ block.settings.left_bg_image.width }}"
+            height="{{ block.settings.left_bg_image.height }}"
+          >
+        {% else %}
+          <div class="ai-promo-card__placeholder-{{ ai_gen_id }}"></div>
+          <div class="ai-promo-card__empty-state-{{ ai_gen_id }}">
+            Add left card background
+          </div>
+        {% endif %}
+
+        <div class="ai-promo-card__content-{{ ai_gen_id }}">
+          {% if block.settings.left_headline != blank %}
+            <h3 class="ai-promo-card__headline--small-{{ ai_gen_id }}">
+              {{ block.settings.left_headline }}
+            </h3>
+          {% endif %}
+
+          {% if block.settings.left_button_text != blank %}
+            <a
+              href="{{ block.settings.left_button_link }}"
+              class="ai-promo-card__button-{{ ai_gen_id }}"
+            >
+              {{ block.settings.left_button_text }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="ai-promo-card-{{ ai_gen_id }} ai-promo-card--small-{{ ai_gen_id }} ai-promo-card--right-{{ ai_gen_id }}">
+        {% if block.settings.right_bg_image %}
+          <img
+            src="{{ block.settings.right_bg_image | image_url: width: 1200 }}"
+            alt="{{ block.settings.right_bg_image.alt | escape }}"
+            class="ai-promo-card__bg-{{ ai_gen_id }}"
+            loading="lazy"
+            width="{{ block.settings.right_bg_image.width }}"
+            height="{{ block.settings.right_bg_image.height }}"
+          >
+        {% else %}
+          <div class="ai-promo-card__placeholder-{{ ai_gen_id }}"></div>
+          <div class="ai-promo-card__empty-state-{{ ai_gen_id }}">
+            Add right card background
+          </div>
+        {% endif %}
+
+        <div class="ai-promo-card__content-{{ ai_gen_id }}">
+          {% if block.settings.right_headline != blank %}
+            <h3 class="ai-promo-card__headline--small-{{ ai_gen_id }}">
+              {{ block.settings.right_headline }}
+            </h3>
+          {% endif %}
+
+          {% if block.settings.right_subline != blank %}
+            <p class="ai-promo-card__subline-{{ ai_gen_id }}">
+              {{ block.settings.right_subline }}
+            </p>
+          {% endif %}
+
+          {% if block.settings.right_button_text != blank %}
+            <a
+              href="{{ block.settings.right_button_link }}"
+              class="ai-promo-card__button-{{ ai_gen_id }}"
+            >
+              {{ block.settings.right_button_text }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Promotional cards",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Section padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card corner radius",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "label": "Image overlay opacity",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Hero card"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_bg_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "hero_height",
+      "min": 300,
+      "max": 700,
+      "step": 50,
+      "unit": "px",
+      "label": "Minimum height",
+      "default": 500
+    },
+    {
+      "type": "text",
+      "id": "hero_headline",
+      "label": "Headline",
+      "default": "Your Royal Upgrade Awaits."
+    },
+    {
+      "type": "range",
+      "id": "hero_headline_size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "hero_text_max_width",
+      "min": 300,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Headline max width",
+      "default": 600
+    },
+    {
+      "type": "text",
+      "id": "hero_button_text",
+      "label": "Button text",
+      "default": "GET THE ROYAL BIN™ TODAY"
+    },
+    {
+      "type": "url",
+      "id": "hero_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Left bottom card"
+    },
+    {
+      "type": "image_picker",
+      "id": "left_bg_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "left_headline",
+      "label": "Headline",
+      "default": "Fast, Free Shipping On All Orders."
+    },
+    {
+      "type": "text",
+      "id": "left_button_text",
+      "label": "Button text",
+      "default": "SHIPS IN 1 DAY"
+    },
+    {
+      "type": "url",
+      "id": "left_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Right bottom card"
+    },
+    {
+      "type": "image_picker",
+      "id": "right_bg_image",
+      "label": "Background image"
+    },
+    {
+      "type": "text",
+      "id": "right_headline",
+      "label": "Headline",
+      "default": "COMES WITH 1 MONTH SUPPLY"
+    },
+    {
+      "type": "text",
+      "id": "right_subline",
+      "label": "Subline"
+    },
+    {
+      "type": "text",
+      "id": "right_button_text",
+      "label": "Button text",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "right_button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Small cards style"
+    },
+    {
+      "type": "range",
+      "id": "small_card_height",
+      "min": 200,
+      "max": 500,
+      "step": 25,
+      "unit": "px",
+      "label": "Minimum height",
+      "default": 350
+    },
+    {
+      "type": "range",
+      "id": "small_headline_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "subline_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subline size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "small_card_text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "headline_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Space below headlines",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Hover background color",
+      "default": "#f0f0f0"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Promotional cards"
+    }
+  ]
+}
+{% endschema %}

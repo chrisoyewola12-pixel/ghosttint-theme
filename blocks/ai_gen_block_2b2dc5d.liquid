@@ -1,0 +1,374 @@
+{% doc %}
+  @prompt
+    Create a clean problem-story grid section on a pure white background (#FFFFFF). At the top center add a bold navy (#002B5B) headline reading “From Frustration to Function”. Below add small body text in dark gray (#444444): “Our founders were deep-cleaning their apartment (you know, the kind of Sunday reset where you light a candle and romanticize your life)…” then a second line “… then hit the trash can problem.” Below this create a 2x2 grid of four equal rounded cards. Each card must allow a merchant-uploaded image via Shopify file picker filling the top portion of the card (no product images inserted by the theme itself—only upload placeholders). Below each image add a dark navy caption bar (#032B5B) with white (#FFFFFF) bold text as follows: Card 1: “Messy hands from tying bags and touching the can”. Card 2: “That annoying edge that traps gunk.” Card 3: “The ‘oops’ moment when you forgot to reload a new bag”. Card 4: “Overflowing bins and late-night guilt because you didn’t feel like dealing with it”. All cards should have 14–16px corner radius, no shadows or borders, consistent gutters, and equal height alignment. Beneath the grid add centered paragraph text in dark gray (#444444) reading “So we designed something smarter — and surprisingly satisfying.” followed by bold navy line “A touch-free, self-sealing, auto-reloading trash bin that actually upgrades your space.” To the right or centered beneath add a pill CTA button labeled “Meet the Royal Bin™” with navy background (#032B5B), white text (#FFFFFF), and border-radius 9999px. Section must remain minimal, premium, fully responsive, and maintain symmetrical spacing on all screen sizes.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-problem-grid-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    padding: 60px 20px;
+  }
+
+  .ai-problem-grid-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .ai-problem-grid-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .ai-problem-grid-headline-{{ ai_gen_id }} {
+    color: #002B5B;
+    font-size: 42px;
+    font-weight: 700;
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+  }
+
+  .ai-problem-grid-body-{{ ai_gen_id }} {
+    color: #444444;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0 auto;
+    max-width: 700px;
+  }
+
+  .ai-problem-grid-body-{{ ai_gen_id }} p {
+    margin: 0 0 8px 0;
+  }
+
+  .ai-problem-grid-cards-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    margin-bottom: 50px;
+  }
+
+  .ai-problem-grid-card-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ai-problem-grid-card-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: 75%;
+    background-color: #f4f4f4;
+    overflow: hidden;
+  }
+
+  .ai-problem-grid-card-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-problem-grid-card-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-problem-grid-card-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-problem-grid-card-caption-{{ ai_gen_id }} {
+    background-color: #032B5B;
+    color: #FFFFFF;
+    padding: 16px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-problem-grid-footer-{{ ai_gen_id }} {
+    text-align: center;
+  }
+
+  .ai-problem-grid-footer-text-{{ ai_gen_id }} {
+    color: #444444;
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0 auto 12px auto;
+    max-width: 700px;
+  }
+
+  .ai-problem-grid-footer-bold-{{ ai_gen_id }} {
+    color: #002B5B;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.5;
+    margin: 0 auto 30px auto;
+    max-width: 700px;
+  }
+
+  .ai-problem-grid-cta-{{ ai_gen_id }} {
+    display: inline-block;
+    background-color: #032B5B;
+    color: #FFFFFF;
+    padding: 14px 32px;
+    border-radius: 9999px;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  .ai-problem-grid-cta-{{ ai_gen_id }}:hover {
+    background-color: #002B5B;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(3, 43, 91, 0.3);
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-problem-grid-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+
+    .ai-problem-grid-headline-{{ ai_gen_id }} {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .ai-problem-grid-body-{{ ai_gen_id }} {
+      font-size: 15px;
+    }
+
+    .ai-problem-grid-cards-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .ai-problem-grid-card-caption-{{ ai_gen_id }} {
+      font-size: 14px;
+      padding: 14px 16px;
+      min-height: 70px;
+    }
+
+    .ai-problem-grid-footer-text-{{ ai_gen_id }},
+    .ai-problem-grid-footer-bold-{{ ai_gen_id }} {
+      font-size: 15px;
+    }
+
+    .ai-problem-grid-footer-bold-{{ ai_gen_id }} {
+      margin-bottom: 24px;
+    }
+
+    .ai-problem-grid-cta-{{ ai_gen_id }} {
+      padding: 12px 28px;
+      font-size: 15px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-problem-grid-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-problem-grid-container-{{ ai_gen_id }}">
+    <div class="ai-problem-grid-header-{{ ai_gen_id }}">
+      <h2 class="ai-problem-grid-headline-{{ ai_gen_id }}">{{ block.settings.headline }}</h2>
+      <div class="ai-problem-grid-body-{{ ai_gen_id }}">
+        <p>{{ block.settings.body_line_1 }}</p>
+        <p>{{ block.settings.body_line_2 }}</p>
+      </div>
+    </div>
+
+    <div class="ai-problem-grid-cards-{{ ai_gen_id }}">
+      {% for i in (1..4) %}
+        {% liquid
+          assign image_key = 'card_' | append: i | append: '_image'
+          assign caption_key = 'card_' | append: i | append: '_caption'
+          assign card_image = block.settings[image_key]
+          assign card_caption = block.settings[caption_key]
+        %}
+        
+        <div class="ai-problem-grid-card-{{ ai_gen_id }}">
+          <div class="ai-problem-grid-card-image-wrapper-{{ ai_gen_id }}">
+            {% if card_image %}
+              <img
+                src="{{ card_image | image_url: width: 800 }}"
+                alt="{{ card_caption | escape }}"
+                class="ai-problem-grid-card-image-{{ ai_gen_id }}"
+                loading="lazy"
+                width="800"
+                height="600"
+              >
+            {% else %}
+              <div class="ai-problem-grid-card-placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="ai-problem-grid-card-caption-{{ ai_gen_id }}">
+            {{ card_caption }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="ai-problem-grid-footer-{{ ai_gen_id }}">
+      <p class="ai-problem-grid-footer-text-{{ ai_gen_id }}">{{ block.settings.footer_text }}</p>
+      <p class="ai-problem-grid-footer-bold-{{ ai_gen_id }}">{{ block.settings.footer_bold_text }}</p>
+      <a href="{{ block.settings.cta_link }}" class="ai-problem-grid-cta-{{ ai_gen_id }}">
+        {{ block.settings.cta_label }}
+      </a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Problem story grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Header"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "From Frustration to Function"
+    },
+    {
+      "type": "text",
+      "id": "body_line_1",
+      "label": "Body text line 1",
+      "default": "Our founders were deep-cleaning their apartment (you know, the kind of Sunday reset where you light a candle and romanticize your life)…"
+    },
+    {
+      "type": "text",
+      "id": "body_line_2",
+      "label": "Body text line 2",
+      "default": "… then hit the trash can problem."
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_caption",
+      "label": "Caption",
+      "default": "Messy hands from tying bags and touching the can"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_caption",
+      "label": "Caption",
+      "default": "That annoying edge that traps gunk."
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_3_caption",
+      "label": "Caption",
+      "default": "The 'oops' moment when you forgot to reload a new bag"
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_4_caption",
+      "label": "Caption",
+      "default": "Overflowing bins and late-night guilt because you didn't feel like dealing with it"
+    },
+    {
+      "type": "header",
+      "content": "Footer"
+    },
+    {
+      "type": "text",
+      "id": "footer_text",
+      "label": "Footer text",
+      "default": "So we designed something smarter — and surprisingly satisfying."
+    },
+    {
+      "type": "text",
+      "id": "footer_bold_text",
+      "label": "Footer bold text",
+      "default": "A touch-free, self-sealing, auto-reloading trash bin that actually upgrades your space."
+    },
+    {
+      "type": "text",
+      "id": "cta_label",
+      "label": "Button label",
+      "default": "Meet the Royal Bin™"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Card corner radius",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Problem story grid"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,483 @@
+{% doc %}
+  @prompt
+    Generate a responsive Shopify section titled “TAKE A CLOSER LOOK.”
+    
+    This section will be placed immediately after the existing Product Information section. Do not create a product form, variant selector, price, quantity control, Add to Cart button, Buy It Now button, upsell or free-gift logic.
+    
+    Create two large editable animated-WebP cards:
+    
+    1. Heading: “INSTANT TINT CONTROL”
+       Copy: “Adjust your window from deep privacy to open clarity using the remote.”
+    2. Heading: “GHOST TINTS IN ACTION”
+       Copy: “See the SPD glass change while maintaining a clean, integrated finish.”
+    
+    Each card must support:
+    
+    * Animated WebP image picker
+    * Separate optional mobile image
+    * Heading
+    * Description
+    * Alt text
+    * Image focal point
+    
+    Display the cards side by side on desktop and vertically on mobile. Use an obsidian-black background, warm-white text, thin graphite borders and restrained cyan accents. Do not add play icons, video controls, progress bars or hover overlays. Preserve WebP animation naturally.
+    
+    Add settings for image ratio, card gap, content width, section spacing and background color. Use responsive Shopify image rendering and lazy-load the assets.
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-closer-look-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.section_spacing_top }}px 0 {{ block.settings.section_spacing_bottom }}px;
+  }
+
+  .ai-closer-look-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.content_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-closer-look-heading-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    text-align: center;
+    margin: 0 0 {{ block.settings.heading_spacing }}px;
+    font-size: 32px;
+    letter-spacing: 2px;
+  }
+
+  .ai-closer-look-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ block.settings.card_gap }}px;
+  }
+
+  .ai-closer-look-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .ai-closer-look-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .ai-closer-look-image-wrapper-{{ ai_gen_id }}::before {
+    content: '';
+    display: block;
+    padding-bottom: {{ block.settings.image_ratio }}%;
+  }
+
+  .ai-closer-look-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: {{ block.settings.image_focal_point }};
+  }
+
+  .ai-closer-look-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-closer-look-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-closer-look-content-{{ ai_gen_id }} {
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-closer-look-card-heading-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    margin: 0;
+    font-size: 20px;
+    letter-spacing: 1.5px;
+    line-height: 1.3;
+  }
+
+  .ai-closer-look-card-description-{{ ai_gen_id }} {
+    color: {{ block.settings.description_color }};
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-closer-look-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.card_gap | times: 0.7 }}px;
+    }
+
+    .ai-closer-look-heading-{{ ai_gen_id }} {
+      font-size: 24px;
+      margin-bottom: {{ block.settings.heading_spacing | times: 0.7 }}px;
+    }
+
+    .ai-closer-look-content-{{ ai_gen_id }} {
+      padding: 24px 20px;
+    }
+
+    .ai-closer-look-card-heading-{{ ai_gen_id }} {
+      font-size: 18px;
+    }
+
+    .ai-closer-look-card-description-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-closer-look-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-closer-look-container-{{ ai_gen_id }}">
+    <h2 class="ai-closer-look-heading-{{ ai_gen_id }}">{{ block.settings.section_heading }}</h2>
+    
+    <div class="ai-closer-look-grid-{{ ai_gen_id }}">
+      <div class="ai-closer-look-card-{{ ai_gen_id }}">
+        <div class="ai-closer-look-image-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.card_1_image_mobile and block.settings.card_1_image %}
+            <picture>
+              <source
+                media="(max-width: 749px)"
+                srcset="{{ block.settings.card_1_image_mobile | image_url: width: 800 }}"
+              >
+              <img
+                src="{{ block.settings.card_1_image | image_url: width: 1200 }}"
+                alt="{{ block.settings.card_1_alt_text | escape }}"
+                loading="lazy"
+                width="{{ block.settings.card_1_image.width }}"
+                height="{{ block.settings.card_1_image.height }}"
+                class="ai-closer-look-image-{{ ai_gen_id }}"
+              >
+            </picture>
+          {% elsif block.settings.card_1_image %}
+            <img
+              src="{{ block.settings.card_1_image | image_url: width: 1200 }}"
+              alt="{{ block.settings.card_1_alt_text | escape }}"
+              loading="lazy"
+              width="{{ block.settings.card_1_image.width }}"
+              height="{{ block.settings.card_1_image.height }}"
+              class="ai-closer-look-image-{{ ai_gen_id }}"
+            >
+          {% else %}
+            <div class="ai-closer-look-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+        <div class="ai-closer-look-content-{{ ai_gen_id }}">
+          <h3 class="ai-closer-look-card-heading-{{ ai_gen_id }}">{{ block.settings.card_1_heading }}</h3>
+          <p class="ai-closer-look-card-description-{{ ai_gen_id }}">{{ block.settings.card_1_description }}</p>
+        </div>
+      </div>
+
+      <div class="ai-closer-look-card-{{ ai_gen_id }}">
+        <div class="ai-closer-look-image-wrapper-{{ ai_gen_id }}">
+          {% if block.settings.card_2_image_mobile and block.settings.card_2_image %}
+            <picture>
+              <source
+                media="(max-width: 749px)"
+                srcset="{{ block.settings.card_2_image_mobile | image_url: width: 800 }}"
+              >
+              <img
+                src="{{ block.settings.card_2_image | image_url: width: 1200 }}"
+                alt="{{ block.settings.card_2_alt_text | escape }}"
+                loading="lazy"
+                width="{{ block.settings.card_2_image.width }}"
+                height="{{ block.settings.card_2_image.height }}"
+                class="ai-closer-look-image-{{ ai_gen_id }}"
+              >
+            </picture>
+          {% elsif block.settings.card_2_image %}
+            <img
+              src="{{ block.settings.card_2_image | image_url: width: 1200 }}"
+              alt="{{ block.settings.card_2_alt_text | escape }}"
+              loading="lazy"
+              width="{{ block.settings.card_2_image.width }}"
+              height="{{ block.settings.card_2_image.height }}"
+              class="ai-closer-look-image-{{ ai_gen_id }}"
+            >
+          {% else %}
+            <div class="ai-closer-look-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+            </div>
+          {% endif %}
+        </div>
+        <div class="ai-closer-look-content-{{ ai_gen_id }}">
+          <h3 class="ai-closer-look-card-heading-{{ ai_gen_id }}">{{ block.settings.card_2_heading }}</h3>
+          <p class="ai-closer-look-card-description-{{ ai_gen_id }}">{{ block.settings.card_2_description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Take a closer look",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "text",
+      "id": "section_heading",
+      "label": "Section heading",
+      "default": "TAKE A CLOSER LOOK"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "section_spacing_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_spacing_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "text",
+      "id": "card_1_heading",
+      "label": "Heading",
+      "default": "INSTANT TINT CONTROL"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_description",
+      "label": "Description",
+      "default": "Adjust your window from deep privacy to open clarity using the remote."
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_alt_text",
+      "label": "Alt text",
+      "default": "Instant tint control demonstration"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "text",
+      "id": "card_2_heading",
+      "label": "Heading",
+      "default": "GHOST TINTS IN ACTION"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_description",
+      "label": "Description",
+      "default": "See the SPD glass change while maintaining a clean, integrated finish."
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image_mobile",
+      "label": "Mobile image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_alt_text",
+      "label": "Alt text",
+      "default": "Ghost Tints in action demonstration"
+    },
+    {
+      "type": "header",
+      "content": "Image settings"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        {
+          "value": "56.25",
+          "label": "16:9"
+        },
+        {
+          "value": "66.67",
+          "label": "3:2"
+        },
+        {
+          "value": "75",
+          "label": "4:3"
+        },
+        {
+          "value": "100",
+          "label": "1:1"
+        },
+        {
+          "value": "133.33",
+          "label": "3:4"
+        }
+      ],
+      "default": "75"
+    },
+    {
+      "type": "select",
+      "id": "image_focal_point",
+      "label": "Image focal point",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 16,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Card border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Heading",
+      "default": "#f5f5f0"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description",
+      "default": "#e8e8e3"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#2a2a2a"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Take a closer look"
+    }
+  ]
+}
+{% endschema %}

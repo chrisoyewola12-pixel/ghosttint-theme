@@ -1,0 +1,543 @@
+{% doc %}
+  @prompt
+    Generate a responsive Shopify editorial image-grid section for Ghost Tints using two static WebP images that I will select in the theme editor.
+    
+    Heading: “SEE GHOST TINTS IN ACTION.”
+    
+    Create two editable image-card blocks. Each block must include:
+    
+    * Desktop image
+    * Optional mobile image
+    * Image focal point
+    * Caption
+    * Optional link
+    * Alt text
+    
+    Default captions:
+    
+    1. “Control at Your Fingertips”
+    2. “Privacy, Right When You Want It”
+    
+    Display the cards side by side on desktop and stack them vertically on mobile. Use equal image heights with object-fit cropping, subtle rounded corners, thin graphite borders and a black background. Preserve the authentic documentary appearance of the images.
+    
+    Do not add play icons, progress bars, video controls, hover-play effects or a third card. Make the entire card optionally clickable and use accessible links. Add settings for content width, image ratio, gap and section spacing.
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-editorial-grid-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding-top: {{ block.settings.padding_top }}px;
+    padding-bottom: {{ block.settings.padding_bottom }}px;
+  }
+
+  .ai-editorial-grid__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.content_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-editorial-grid__heading-{{ ai_gen_id }} {
+    color: {{ block.settings.heading_color }};
+    text-align: {{ block.settings.heading_alignment }};
+    margin: 0 0 {{ block.settings.heading_spacing }}px;
+    font-size: 32px;
+    letter-spacing: 0.05em;
+  }
+
+  .ai-editorial-grid__cards-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: {{ block.settings.gap }}px;
+  }
+
+  .ai-editorial-card-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+  }
+
+  .ai-editorial-card__link-{{ ai_gen_id }} {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .ai-editorial-card__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: {{ block.settings.image_ratio }}%;
+    overflow: hidden;
+    background-color: #000000;
+  }
+
+  .ai-editorial-card__image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-editorial-card__caption-{{ ai_gen_id }} {
+    padding: 16px 20px;
+    background-color: {{ block.settings.caption_background }};
+    color: {{ block.settings.caption_color }};
+    font-size: 14px;
+    text-align: {{ block.settings.caption_alignment }};
+    letter-spacing: 0.03em;
+  }
+
+  .ai-editorial-card__placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-editorial-card__placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-editorial-grid__cards-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-editorial-grid__heading-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+  }
+{% endstyle %}
+
+<editorial-grid-{{ ai_gen_id }} class="ai-editorial-grid-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-editorial-grid__container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank %}
+      <h2 class="ai-editorial-grid__heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+    {% endif %}
+
+    <div class="ai-editorial-grid__cards-{{ ai_gen_id }}">
+      {% for i in (1..2) %}
+        {% liquid
+          assign desktop_image_key = 'card_' | append: i | append: '_desktop_image'
+          assign mobile_image_key = 'card_' | append: i | append: '_mobile_image'
+          assign focal_point_key = 'card_' | append: i | append: '_focal_point'
+          assign caption_key = 'card_' | append: i | append: '_caption'
+          assign link_key = 'card_' | append: i | append: '_link'
+          assign alt_text_key = 'card_' | append: i | append: '_alt_text'
+
+          assign desktop_image = block.settings[desktop_image_key]
+          assign mobile_image = block.settings[mobile_image_key]
+          assign focal_point = block.settings[focal_point_key]
+          assign caption = block.settings[caption_key]
+          assign link = block.settings[link_key]
+          assign alt_text = block.settings[alt_text_key]
+
+          if mobile_image == blank
+            assign mobile_image = desktop_image
+          endif
+
+          if alt_text == blank
+            if desktop_image.alt != blank
+              assign alt_text = desktop_image.alt
+            else
+              assign alt_text = caption
+            endif
+          endif
+        %}
+
+        <div class="ai-editorial-card-{{ ai_gen_id }}">
+          {% if link != blank %}
+            <a href="{{ link }}" class="ai-editorial-card__link-{{ ai_gen_id }}" aria-label="{{ caption | escape }}">
+          {% endif %}
+
+          <div class="ai-editorial-card__image-wrapper-{{ ai_gen_id }}">
+            {% if desktop_image != blank %}
+              <picture>
+                {% if mobile_image != blank %}
+                  <source
+                    media="(max-width: 749px)"
+                    srcset="{{ mobile_image | image_url: width: 800 }}"
+                  >
+                {% endif %}
+                <img
+                  src="{{ desktop_image | image_url: width: 1200 }}"
+                  srcset="{{ desktop_image | image_url: width: 600 }} 600w,
+                          {{ desktop_image | image_url: width: 900 }} 900w,
+                          {{ desktop_image | image_url: width: 1200 }} 1200w"
+                  sizes="(min-width: 750px) calc((100vw - {{ block.settings.gap }}px) / 2), 100vw"
+                  alt="{{ alt_text | escape }}"
+                  loading="lazy"
+                  width="{{ desktop_image.width }}"
+                  height="{{ desktop_image.height }}"
+                  class="ai-editorial-card__image-{{ ai_gen_id }}"
+                  style="object-position: {{ focal_point }};"
+                >
+              </picture>
+            {% else %}
+              <div class="ai-editorial-card__placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if caption != blank %}
+            <div class="ai-editorial-card__caption-{{ ai_gen_id }}">
+              {{ caption }}
+            </div>
+          {% endif %}
+
+          {% if link != blank %}
+            </a>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</editorial-grid-{{ ai_gen_id }}>
+
+{% schema %}
+{
+  "name": "Editorial image grid",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Heading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "SEE GHOST TINTS IN ACTION."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading spacing",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_desktop_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_mobile_image",
+      "label": "Mobile image"
+    },
+    {
+      "type": "select",
+      "id": "card_1_focal_point",
+      "label": "Image focal point",
+      "options": [
+        {
+          "value": "center center",
+          "label": "Center"
+        },
+        {
+          "value": "top center",
+          "label": "Top"
+        },
+        {
+          "value": "bottom center",
+          "label": "Bottom"
+        },
+        {
+          "value": "center left",
+          "label": "Left"
+        },
+        {
+          "value": "center right",
+          "label": "Right"
+        },
+        {
+          "value": "top left",
+          "label": "Top left"
+        },
+        {
+          "value": "top right",
+          "label": "Top right"
+        },
+        {
+          "value": "bottom left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom right",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_1_caption",
+      "label": "Caption",
+      "default": "Control at Your Fingertips"
+    },
+    {
+      "type": "url",
+      "id": "card_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "card_1_alt_text",
+      "label": "Alt text"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_desktop_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_mobile_image",
+      "label": "Mobile image"
+    },
+    {
+      "type": "select",
+      "id": "card_2_focal_point",
+      "label": "Image focal point",
+      "options": [
+        {
+          "value": "center center",
+          "label": "Center"
+        },
+        {
+          "value": "top center",
+          "label": "Top"
+        },
+        {
+          "value": "bottom center",
+          "label": "Bottom"
+        },
+        {
+          "value": "center left",
+          "label": "Left"
+        },
+        {
+          "value": "center right",
+          "label": "Right"
+        },
+        {
+          "value": "top left",
+          "label": "Top left"
+        },
+        {
+          "value": "top right",
+          "label": "Top right"
+        },
+        {
+          "value": "bottom left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom right",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_2_caption",
+      "label": "Caption",
+      "default": "Privacy, Right When You Want It"
+    },
+    {
+      "type": "url",
+      "id": "card_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "text",
+      "id": "card_2_alt_text",
+      "label": "Alt text"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 800,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between cards",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "image_ratio",
+      "label": "Image aspect ratio",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "default": 75
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#3a3a3a"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "caption_background",
+      "label": "Caption background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "caption_color",
+      "label": "Caption color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "caption_alignment",
+      "label": "Caption alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "Editorial image grid"
+    }
+  ]
+}
+{% endschema %}

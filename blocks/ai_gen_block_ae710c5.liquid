@@ -1,0 +1,692 @@
+{% doc %}
+  @prompt
+    Generate a premium responsive Shopify installation section for Ghost Tints.
+    
+    Use a black background and a wide editable installation-bay image. Create an editorial split layout with the copy on one side and the image on the other.
+    
+    Default content:
+    Heading: “INSTALLATION CONFIDENCE.”
+    Description: “Professional installation. Vehicle-specific fitment. Guidance every step of the way.”
+    Button: “Explore Installation”
+    
+    Make the heading use a large condensed font with warm-white body text and a cyan button. Add editable controls for desktop and mobile images, focal points, overlay, button destination, text position, alignment, section height and spacing.
+    
+    The image should focus on a professionally installed finished vehicle. Do not display loose wiring, controller boxes, fuse taps, tools or exposed internal components. Do not make guarantees about universal compatibility or installation availability. Stack the layout cleanly on mobile and preserve readable contrast.
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-installation-section-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-installation-container-{{ ai_gen_id }} {
+    display: flex;
+    align-items: stretch;
+    min-height: {{ block.settings.section_height }}px;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .ai-installation-content-{{ ai_gen_id }} {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: {{ block.settings.text_vertical_position }};
+    align-items: {{ block.settings.text_horizontal_alignment }};
+    padding: {{ block.settings.content_padding_desktop }}px;
+    text-align: {{ block.settings.text_alignment }};
+    z-index: 2;
+    position: relative;
+  }
+
+  .ai-installation-image-wrapper-{{ ai_gen_id }} {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-installation-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: {{ block.settings.desktop_image_focal_x }}% {{ block.settings.desktop_image_focal_y }}%;
+    display: block;
+  }
+
+  .ai-installation-image-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.image_overlay_color }};
+    opacity: {{ block.settings.image_overlay_opacity | divided_by: 100.0 }};
+    pointer-events: none;
+  }
+
+  .ai-installation-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size_desktop }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 {{ block.settings.heading_spacing }}px 0;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  .ai-installation-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size_desktop }}px;
+    color: {{ block.settings.description_color }};
+    margin: 0 0 {{ block.settings.description_spacing }}px 0;
+    line-height: 1.6;
+    max-width: 500px;
+  }
+
+  .ai-installation-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 16px 32px;
+    background-color: {{ block.settings.button_background_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_text_size }}px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-installation-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background_color }};
+    color: {{ block.settings.button_hover_text_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-installation-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-installation-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 400px;
+    max-height: 400px;
+    opacity: 0.3;
+  }
+
+  .ai-installation-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #ffffff;
+    font-size: 14px;
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-installation-container-{{ ai_gen_id }} {
+      flex-direction: {{ block.settings.mobile_layout }};
+      min-height: auto;
+    }
+
+    .ai-installation-content-{{ ai_gen_id }} {
+      padding: {{ block.settings.content_padding_mobile }}px;
+      align-items: {{ block.settings.mobile_text_alignment }};
+      text-align: {{ block.settings.mobile_text_align }};
+    }
+
+    .ai-installation-image-wrapper-{{ ai_gen_id }} {
+      min-height: {{ block.settings.mobile_image_height }}px;
+    }
+
+    .ai-installation-image-{{ ai_gen_id }} {
+      object-position: {{ block.settings.mobile_image_focal_x }}% {{ block.settings.mobile_image_focal_y }}%;
+    }
+
+    .ai-installation-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size_mobile }}px;
+    }
+
+    .ai-installation-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_size_mobile }}px;
+      max-width: 100%;
+    }
+
+    .ai-installation-button-{{ ai_gen_id }} {
+      font-size: {{ block.settings.button_text_size_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<installation-section-{{ ai_gen_id }}
+  class="ai-installation-section-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-installation-container-{{ ai_gen_id }}">
+    {% if block.settings.layout_order == 'content_first' %}
+      <div class="ai-installation-content-{{ ai_gen_id }}">
+        {% if block.settings.heading != blank %}
+          <h2 class="ai-installation-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+        {% endif %}
+
+        {% if block.settings.description != blank %}
+          <div class="ai-installation-description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+        {% endif %}
+
+        {% if block.settings.button_text != blank %}
+          <a
+            href="{{ block.settings.button_link }}"
+            class="ai-installation-button-{{ ai_gen_id }}"
+          >
+            {{ block.settings.button_text }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="ai-installation-image-wrapper-{{ ai_gen_id }}">
+      {% if block.settings.desktop_image %}
+        <picture>
+          {% if block.settings.mobile_image %}
+            <source
+              media="(max-width: 989px)"
+              srcset="{{ block.settings.mobile_image | image_url: width: 1000 }}"
+            >
+          {% endif %}
+          <img
+            src="{{ block.settings.desktop_image | image_url: width: 2000 }}"
+            alt="{{ block.settings.desktop_image.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.desktop_image.width }}"
+            height="{{ block.settings.desktop_image.height }}"
+            class="ai-installation-image-{{ ai_gen_id }}"
+          >
+        </picture>
+      {% else %}
+        <div class="ai-installation-placeholder-{{ ai_gen_id }}">
+          {{ 'image' | placeholder_svg_tag }}
+          <div class="ai-installation-empty-state-{{ ai_gen_id }}">
+            Add an installation bay image
+          </div>
+        </div>
+      {% endif %}
+      <div class="ai-installation-image-overlay-{{ ai_gen_id }}"></div>
+    </div>
+
+    {% if block.settings.layout_order == 'image_first' %}
+      <div class="ai-installation-content-{{ ai_gen_id }}">
+        {% if block.settings.heading != blank %}
+          <h2 class="ai-installation-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+        {% endif %}
+
+        {% if block.settings.description != blank %}
+          <div class="ai-installation-description-{{ ai_gen_id }}">{{ block.settings.description }}</div>
+        {% endif %}
+
+        {% if block.settings.button_text != blank %}
+          <a
+            href="{{ block.settings.button_link }}"
+            class="ai-installation-button-{{ ai_gen_id }}"
+          >
+            {{ block.settings.button_text }}
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</installation-section-{{ ai_gen_id }}>
+
+{% schema %}
+{
+  "name": "Installation confidence",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "<p>INSTALLATION CONFIDENCE.</p>"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size (desktop)",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size (mobile)",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "label": "Heading bottom spacing",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Professional installation. Vehicle-specific fitment. Guidance every step of the way.</p>"
+    },
+    {
+      "type": "range",
+      "id": "description_size_desktop",
+      "label": "Description size (desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "description_size_mobile",
+      "label": "Description size (mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "description_spacing",
+      "label": "Description bottom spacing",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "inline_richtext",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Explore Installation"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "label": "Button text size (desktop)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_text_size_mobile",
+      "label": "Button text size (mobile)",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout_order",
+      "label": "Desktop layout",
+      "options": [
+        {
+          "value": "content_first",
+          "label": "Content left, image right"
+        },
+        {
+          "value": "image_first",
+          "label": "Image left, content right"
+        }
+      ],
+      "default": "content_first"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "options": [
+        {
+          "value": "column",
+          "label": "Image on top"
+        },
+        {
+          "value": "column-reverse",
+          "label": "Content on top"
+        }
+      ],
+      "default": "column"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "label": "Section height (desktop)",
+      "min": 400,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_height",
+      "label": "Image height (mobile)",
+      "min": 250,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "header",
+      "content": "Text position"
+    },
+    {
+      "type": "select",
+      "id": "text_vertical_position",
+      "label": "Vertical position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_horizontal_alignment",
+      "label": "Horizontal alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "flex-start"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "mobile_text_alignment",
+      "label": "Mobile horizontal alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "mobile_text_align",
+      "label": "Mobile text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "content_padding_desktop",
+      "label": "Content padding (desktop)",
+      "min": 20,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "content_padding_mobile",
+      "label": "Content padding (mobile)",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "range",
+      "id": "desktop_image_focal_x",
+      "label": "Horizontal focal point",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "desktop_image_focal_y",
+      "label": "Vertical focal point",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Mobile image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image"
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_focal_x",
+      "label": "Horizontal focal point",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_focal_y",
+      "label": "Vertical focal point",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Image overlay"
+    },
+    {
+      "type": "color",
+      "id": "image_overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#f5f5f0"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description",
+      "default": "#f5f5f0"
+    },
+    {
+      "type": "color",
+      "id": "button_background_color",
+      "label": "Button background",
+      "default": "#00d9ff"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background_color",
+      "label": "Button hover background",
+      "default": "#00b8d4"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_text_color",
+      "label": "Button hover text",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    }
+  ],
+  "presets": [
+    {
+      "name": "Installation confidence"
+    }
+  ]
+}
+{% endschema %}

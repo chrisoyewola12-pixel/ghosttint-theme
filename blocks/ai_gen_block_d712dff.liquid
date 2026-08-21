@@ -1,0 +1,599 @@
+{% doc %}
+  @prompt
+    Create a clean two-column feature story section on a pure white background (#FFFFFF). Left column (text): add a bold navy headline (#002B5B) split across two lines reading “Thoughtfully Designed, Inside & Out”. Below add small medium-gray (#555555) body text: “Trash King™ was born from a simple (and slightly obsessive) idea:” then a bold navy emphasis line: “What if your trash can actually made your life easier — and looked good doing it?” Maintain similar spacing to the reference. Right column: create a tall rounded rectangle card container with a light background tone (#EEF4FF) that uses a merchant-uploadable image block (no hardcoded product—must allow uploading through Shopify Files) positioned on the left half of the card. On the right half inside the card add a small uppercase navy headline (#002B5B) reading “WE SPENT MONTHS OBSESSING OVER THE LITTLE THINGS — SO YOU DON’T HAVE TO”. Beneath that add a vertical checklist with subtle navy bullet icons and dark gray (#444444) text reading “Clean white finish”, “Rechargeable battery”, “Hidden tech that seals and reloads bags in seconds”, and “Just pure, touchless magic”. The card must have soft rounded corners (12–16px radius), no shadows or borders, and float cleanly with balanced padding. Entire section must remain minimal, modern, and premium with responsive stacking so the card shifts below the text on mobile.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-feature-story-{{ ai_gen_id }} {
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+  }
+
+  .ai-feature-story-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ block.settings.column_gap }}px;
+    align-items: center;
+  }
+
+  .ai-feature-story-text-column-{{ ai_gen_id }} {
+    padding-right: 20px;
+  }
+
+  .ai-feature-story-headline-{{ ai_gen_id }} {
+    color: {{ block.settings.headline_color }};
+    font-size: {{ block.settings.headline_size }}px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 {{ block.settings.headline_spacing }}px 0;
+  }
+
+  .ai-feature-story-body-{{ ai_gen_id }} {
+    color: {{ block.settings.body_color }};
+    font-size: {{ block.settings.body_size }}px;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .ai-feature-story-body-{{ ai_gen_id }} strong {
+    color: {{ block.settings.emphasis_color }};
+    font-weight: 700;
+  }
+
+  .ai-feature-story-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ block.settings.card_inner_gap }}px;
+    align-items: center;
+    min-height: {{ block.settings.card_min_height }}px;
+  }
+
+  .ai-feature-story-card-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-feature-story-card-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: {{ block.settings.image_radius }}px;
+  }
+
+  .ai-feature-story-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
+    border-radius: {{ block.settings.image_radius }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-feature-story-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    max-height: 200px;
+    opacity: 0.3;
+  }
+
+  .ai-feature-story-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 8px 16px;
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-feature-story-card-content-{{ ai_gen_id }} {
+    padding: 0 10px;
+  }
+
+  .ai-feature-story-card-headline-{{ ai_gen_id }} {
+    color: {{ block.settings.card_headline_color }};
+    font-size: {{ block.settings.card_headline_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    line-height: 1.3;
+    margin: 0 0 {{ block.settings.card_headline_spacing }}px 0;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-feature-story-checklist-{{ ai_gen_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .ai-feature-story-checklist-item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: {{ block.settings.checklist_spacing }}px;
+    color: {{ block.settings.checklist_color }};
+    font-size: {{ block.settings.checklist_size }}px;
+    line-height: 1.5;
+  }
+
+  .ai-feature-story-checklist-item-{{ ai_gen_id }}:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-feature-story-checklist-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: {{ block.settings.bullet_size }}px;
+    height: {{ block.settings.bullet_size }}px;
+    margin-top: 2px;
+  }
+
+  .ai-feature-story-checklist-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    fill: {{ block.settings.bullet_color }};
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-feature-story-container-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.mobile_gap }}px;
+    }
+
+    .ai-feature-story-text-column-{{ ai_gen_id }} {
+      padding-right: 0;
+    }
+
+    .ai-feature-story-headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.headline_size | times: 0.8 }}px;
+    }
+
+    .ai-feature-story-card-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.card_inner_gap | times: 0.8 }}px;
+      padding: {{ block.settings.card_padding | times: 0.8 }}px;
+    }
+
+    .ai-feature-story-card-headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.card_headline_size | times: 0.85 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-feature-story-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_top | times: 0.7 }}px 16px {{ block.settings.section_padding_bottom | times: 0.7 }}px;
+    }
+
+    .ai-feature-story-headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.headline_size | times: 0.7 }}px;
+    }
+
+    .ai-feature-story-body-{{ ai_gen_id }} {
+      font-size: {{ block.settings.body_size | times: 0.9 }}px;
+    }
+
+    .ai-feature-story-card-headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.card_headline_size | times: 0.75 }}px;
+    }
+
+    .ai-feature-story-checklist-item-{{ ai_gen_id }} {
+      font-size: {{ block.settings.checklist_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-feature-story-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-feature-story-container-{{ ai_gen_id }}">
+    <div class="ai-feature-story-text-column-{{ ai_gen_id }}">
+      {% if block.settings.headline != blank %}
+        <h2 class="ai-feature-story-headline-{{ ai_gen_id }}">
+          {{ block.settings.headline }}
+        </h2>
+      {% endif %}
+
+      {% if block.settings.body_text != blank %}
+        <div class="ai-feature-story-body-{{ ai_gen_id }}">
+          {{ block.settings.body_text }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-feature-story-card-{{ ai_gen_id }}">
+      <div class="ai-feature-story-card-image-{{ ai_gen_id }}">
+        {% if block.settings.card_image %}
+          <img
+            src="{{ block.settings.card_image | image_url: width: 800 }}"
+            alt="{{ block.settings.card_image.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.card_image.width }}"
+            height="{{ block.settings.card_image.height }}"
+          >
+        {% else %}
+          <div class="ai-feature-story-image-placeholder-{{ ai_gen_id }}">
+            {{ 'image' | placeholder_svg_tag }}
+            <div class="ai-feature-story-empty-state-{{ ai_gen_id }}">
+              Upload an image
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="ai-feature-story-card-content-{{ ai_gen_id }}">
+        {% if block.settings.card_headline != blank %}
+          <h3 class="ai-feature-story-card-headline-{{ ai_gen_id }}">
+            {{ block.settings.card_headline }}
+          </h3>
+        {% endif %}
+
+        <ul class="ai-feature-story-checklist-{{ ai_gen_id }}">
+          {% if block.settings.checklist_item_1 != blank %}
+            <li class="ai-feature-story-checklist-item-{{ ai_gen_id }}">
+              <span class="ai-feature-story-checklist-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+              </span>
+              <span>{{ block.settings.checklist_item_1 }}</span>
+            </li>
+          {% endif %}
+
+          {% if block.settings.checklist_item_2 != blank %}
+            <li class="ai-feature-story-checklist-item-{{ ai_gen_id }}">
+              <span class="ai-feature-story-checklist-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+              </span>
+              <span>{{ block.settings.checklist_item_2 }}</span>
+            </li>
+          {% endif %}
+
+          {% if block.settings.checklist_item_3 != blank %}
+            <li class="ai-feature-story-checklist-item-{{ ai_gen_id }}">
+              <span class="ai-feature-story-checklist-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+              </span>
+              <span>{{ block.settings.checklist_item_3 }}</span>
+            </li>
+          {% endif %}
+
+          {% if block.settings.checklist_item_4 != blank %}
+            <li class="ai-feature-story-checklist-item-{{ ai_gen_id }}">
+              <span class="ai-feature-story-checklist-icon-{{ ai_gen_id }}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                </svg>
+              </span>
+              <span>{{ block.settings.checklist_item_4 }}</span>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Feature story",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Column gap",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Mobile gap",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Left column text"
+    },
+    {
+      "type": "richtext",
+      "id": "headline",
+      "label": "Headline",
+      "default": "<p>Thoughtfully Designed,<br>Inside & Out</p>"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline color",
+      "default": "#002B5B"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "headline_spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Headline spacing",
+      "default": 25
+    },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "label": "Body text",
+      "default": "<p>Trash King™ was born from a simple (and slightly obsessive) idea: <strong>What if your trash can actually made your life easier — and looked good doing it?</strong></p>"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Body color",
+      "default": "#555555"
+    },
+    {
+      "type": "color",
+      "id": "emphasis_color",
+      "label": "Emphasis color",
+      "default": "#002B5B"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Body size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Right column card"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_image",
+      "label": "Image"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Background",
+      "default": "#EEF4FF"
+    },
+    {
+      "type": "range",
+      "id": "card_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "card_inner_gap",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Inner gap",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "card_min_height",
+      "min": 300,
+      "max": 600,
+      "step": 20,
+      "unit": "px",
+      "label": "Minimum height",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "image_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Image radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Card content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "card_headline",
+      "label": "Headline",
+      "default": "WE SPENT MONTHS OBSESSING OVER THE LITTLE THINGS — SO YOU DON'T HAVE TO"
+    },
+    {
+      "type": "color",
+      "id": "card_headline_color",
+      "label": "Headline color",
+      "default": "#002B5B"
+    },
+    {
+      "type": "range",
+      "id": "card_headline_size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Headline size",
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "card_headline_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline spacing",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Checklist"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "checklist_item_1",
+      "label": "Item 1",
+      "default": "Clean white finish"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "checklist_item_2",
+      "label": "Item 2",
+      "default": "Rechargeable battery"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "checklist_item_3",
+      "label": "Item 3",
+      "default": "Hidden tech that seals and reloads bags in seconds"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "checklist_item_4",
+      "label": "Item 4",
+      "default": "Just pure, touchless magic"
+    },
+    {
+      "type": "color",
+      "id": "checklist_color",
+      "label": "Text color",
+      "default": "#444444"
+    },
+    {
+      "type": "range",
+      "id": "checklist_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "checklist_spacing",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Item spacing",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "bullet_color",
+      "label": "Bullet color",
+      "default": "#002B5B"
+    },
+    {
+      "type": "range",
+      "id": "bullet_size",
+      "min": 12,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Bullet size",
+      "default": 18
+    }
+  ],
+  "presets": [
+    {
+      "name": "Feature story"
+    }
+  ]
+}
+{% endschema %}

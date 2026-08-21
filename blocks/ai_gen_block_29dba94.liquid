@@ -1,0 +1,404 @@
+{% doc %}
+  @prompt
+    Create a full-width hero-style section that uses one uploaded background image stretched across the entire section. On the left side overlay a rounded rectangular text box with a soft blue background (#6EA4FF) and fully rounded corners. Inside the box add a bold white headline: “A Smarter Way to Take Out the Trash”. Below it add small white paragraph text: “Let’s be honest — no one’s ever said, ‘I love taking out the trash.’” then a second line: “But we thought… 🤔” and a third line: “what if you kind of could?” Maintain the exact line breaks. Below the text add a pill-shaped CTA button labeled “See Our Story →” with a navy background (#032B5B), white text (#FFFFFF), and border-radius 9999px. Keep spacing clean and modern, with the text box positioned toward the left-middle of the hero. No borders, no shadows, and the rest of the layout should remain minimal and premium.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-hero-section-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: {{ block.settings.section_height }}px;
+    overflow: hidden;
+  }
+
+  .ai-hero-background-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .ai-hero-background-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .ai-hero-background-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-hero-background-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 800px;
+    max-height: 600px;
+  }
+
+  .ai-hero-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-hero-content-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    min-height: {{ block.settings.section_height }}px;
+    display: flex;
+    align-items: center;
+    padding: 40px 20px;
+  }
+
+  .ai-hero-text-box-{{ ai_gen_id }} {
+    background-color: {{ block.settings.text_box_bg_color }};
+    border-radius: {{ block.settings.text_box_border_radius }}px;
+    padding: {{ block.settings.text_box_padding }}px;
+    max-width: {{ block.settings.text_box_max_width }}px;
+    margin-left: {{ block.settings.text_box_left_offset }}px;
+  }
+
+  .ai-hero-headline-{{ ai_gen_id }} {
+    color: {{ block.settings.headline_color }};
+    font-size: {{ block.settings.headline_size }}px;
+    font-weight: 700;
+    margin: 0 0 {{ block.settings.text_spacing }}px 0;
+    line-height: 1.2;
+  }
+
+  .ai-hero-paragraph-{{ ai_gen_id }} {
+    color: {{ block.settings.paragraph_color }};
+    font-size: {{ block.settings.paragraph_size }}px;
+    margin: 0 0 {{ block.settings.button_spacing }}px 0;
+    line-height: 1.6;
+  }
+
+  .ai-hero-cta-button-{{ ai_gen_id }} {
+    display: inline-block;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    padding: {{ block.settings.button_padding_y }}px {{ block.settings.button_padding_x }}px;
+    border-radius: 9999px;
+    text-decoration: none;
+    font-size: {{ block.settings.button_text_size }}px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+
+  .ai-hero-cta-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    transform: translateY(-2px);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-hero-content-wrapper-{{ ai_gen_id }} {
+      min-height: {{ block.settings.mobile_section_height }}px;
+    }
+
+    .ai-hero-section-{{ ai_gen_id }} {
+      min-height: {{ block.settings.mobile_section_height }}px;
+    }
+
+    .ai-hero-text-box-{{ ai_gen_id }} {
+      margin-left: 0;
+      max-width: 100%;
+    }
+
+    .ai-hero-headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.headline_size | times: 0.7 }}px;
+    }
+
+    .ai-hero-paragraph-{{ ai_gen_id }} {
+      font-size: {{ block.settings.paragraph_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-hero-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-hero-background-{{ ai_gen_id }}">
+    {% if block.settings.background_image %}
+      <img
+        src="{{ block.settings.background_image | image_url: width: 2400 }}"
+        alt="{{ block.settings.background_image.alt | escape }}"
+        loading="lazy"
+        width="{{ block.settings.background_image.width }}"
+        height="{{ block.settings.background_image.height }}"
+      >
+    {% else %}
+      <div class="ai-hero-background-placeholder-{{ ai_gen_id }}">
+        {{ 'hero-apparel-1' | placeholder_svg_tag }}
+        <div class="ai-hero-empty-state-{{ ai_gen_id }}">
+          Add a background image to get started
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="ai-hero-content-wrapper-{{ ai_gen_id }}">
+    <div class="ai-hero-text-box-{{ ai_gen_id }}">
+      <h1 class="ai-hero-headline-{{ ai_gen_id }}">
+        {{ block.settings.headline }}
+      </h1>
+      
+      <div class="ai-hero-paragraph-{{ ai_gen_id }}">
+        {{ block.settings.paragraph }}
+      </div>
+
+      {% if block.settings.button_link != blank %}
+        <a href="{{ block.settings.button_link }}" class="ai-hero-cta-button-{{ ai_gen_id }}">
+          {{ block.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero with text overlay",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "section_height",
+      "min": 300,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "label": "Desktop height",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_height",
+      "min": 300,
+      "max": 700,
+      "step": 50,
+      "unit": "px",
+      "label": "Mobile height",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Text box"
+    },
+    {
+      "type": "color",
+      "id": "text_box_bg_color",
+      "label": "Background color",
+      "default": "#6EA4FF"
+    },
+    {
+      "type": "range",
+      "id": "text_box_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "text_box_padding",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "text_box_max_width",
+      "min": 300,
+      "max": 700,
+      "step": 50,
+      "unit": "px",
+      "label": "Max width",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "text_box_left_offset",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Left offset",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "headline",
+      "label": "Headline text",
+      "default": "A Smarter Way to Take Out the Trash"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline size",
+      "default": 36
+    },
+    {
+      "type": "header",
+      "content": "Paragraph"
+    },
+    {
+      "type": "richtext",
+      "id": "paragraph",
+      "label": "Paragraph text",
+      "default": "<p>Let's be honest — no one's ever said, 'I love taking out the trash.'</p><p>But we thought… 🤔</p><p>what if you kind of could?</p>"
+    },
+    {
+      "type": "color",
+      "id": "paragraph_color",
+      "label": "Paragraph color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "paragraph_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Paragraph size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "See Our Story →"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Background color",
+      "default": "#032B5B"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Hover background color",
+      "default": "#021a36"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Text size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline to paragraph",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "button_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Paragraph to button",
+      "default": 24
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero with text overlay"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,416 @@
+{% doc %}
+  @prompt
+    Create a full-width hero section that uses one uploaded background image only (no generated background colors). On top of the image add an extra-large, all-caps headline in navy #002B5B that spans far wider than the screen so it can scroll: text like “RIGHT BIN FOR EVERY ROOM” repeated as needed. Animate this headline as a slow, continuous horizontal ticker/marquee moving from right to left in an infinite loop. The text should be very large, bold, and partially cropped at the top and bottom just like an oversized graphic element. In the center-bottom area of the hero, overlay a short description in small white or light gray text saying something like “Not sure which size is best? From compact bathrooms to family kitchens, there’s a Royal Bin™ made for you.” Below that description add a pill-shaped CTA button labeled “FIND YOUR FIT” with background #032B5B, white text #FFFFFF, and fully rounded corners (border-radius 9999px). Keep the layout minimal and premium, with the moving headline as the main visual effect over the static background image.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-hero-marquee-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ block.settings.hero_height }}vh;
+    overflow: hidden;
+  }
+
+  .ai-hero-marquee-bg-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-hero-marquee-bg-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-hero-marquee-bg-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 800px;
+    max-height: 600px;
+  }
+
+  .ai-hero-marquee-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .ai-hero-marquee-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity | divided_by: 100.0 }});
+  }
+
+  .ai-hero-marquee-ticker-wrapper-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .ai-hero-marquee-ticker-{{ ai_gen_id }} {
+    display: flex;
+    white-space: nowrap;
+    animation: ai-hero-marquee-scroll-{{ ai_gen_id }} {{ block.settings.animation_speed }}s linear infinite;
+  }
+
+  .ai-hero-marquee-ticker-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.headline_size }}px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: {{ block.settings.headline_color }};
+    letter-spacing: {{ block.settings.letter_spacing }}px;
+    line-height: 0.9;
+    padding: 0 40px;
+    display: inline-block;
+  }
+
+  @keyframes ai-hero-marquee-scroll-{{ ai_gen_id }} {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .ai-hero-marquee-content-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: {{ block.settings.content_bottom_spacing }}px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    max-width: {{ block.settings.content_max_width }}px;
+    width: 90%;
+    z-index: 2;
+  }
+
+  .ai-hero-marquee-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.description_color }};
+    line-height: 1.6;
+    margin-bottom: {{ block.settings.description_spacing }}px;
+  }
+
+  .ai-hero-marquee-cta-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: {{ block.settings.button_padding_y }}px {{ block.settings.button_padding_x }}px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    font-size: {{ block.settings.button_text_size }}px;
+    font-weight: 600;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-hero-marquee-cta-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    transform: translateY(-2px);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-hero-marquee-{{ ai_gen_id }} {
+      height: {{ block.settings.mobile_hero_height }}vh;
+    }
+
+    .ai-hero-marquee-ticker-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.headline_size | times: 0.5 }}px;
+    }
+
+    .ai-hero-marquee-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_size | times: 0.9 }}px;
+    }
+
+    .ai-hero-marquee-cta-{{ ai_gen_id }} {
+      font-size: {{ block.settings.button_text_size | times: 0.9 }}px;
+      padding: {{ block.settings.button_padding_y | times: 0.9 }}px {{ block.settings.button_padding_x | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-hero-marquee-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.background_image %}
+    <img
+      src="{{ block.settings.background_image | image_url: width: 2400 }}"
+      alt="{{ block.settings.background_image.alt | escape }}"
+      loading="eager"
+      width="{{ block.settings.background_image.width }}"
+      height="{{ block.settings.background_image.height }}"
+      class="ai-hero-marquee-bg-{{ ai_gen_id }}"
+    >
+  {% else %}
+    <div class="ai-hero-marquee-bg-placeholder-{{ ai_gen_id }}">
+      {{ 'hero-apparel-1' | placeholder_svg_tag }}
+      <div class="ai-hero-marquee-empty-state-{{ ai_gen_id }}">
+        Next, add a background image
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="ai-hero-marquee-overlay-{{ ai_gen_id }}"></div>
+
+  <div class="ai-hero-marquee-ticker-wrapper-{{ ai_gen_id }}">
+    <div class="ai-hero-marquee-ticker-{{ ai_gen_id }}">
+      {% for i in (1..10) %}
+        <span class="ai-hero-marquee-ticker-text-{{ ai_gen_id }}">{{ block.settings.headline_text }}</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="ai-hero-marquee-content-{{ ai_gen_id }}">
+    {% if block.settings.description_text != blank %}
+      <p class="ai-hero-marquee-description-{{ ai_gen_id }}">{{ block.settings.description_text }}</p>
+    {% endif %}
+
+    {% if block.settings.cta_text != blank %}
+      <a href="{{ block.settings.cta_link }}" class="ai-hero-marquee-cta-{{ ai_gen_id }}">
+        {{ block.settings.cta_text }}
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero marquee",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "hero_height",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Desktop height",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "mobile_hero_height",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Mobile height",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Animated headline"
+    },
+    {
+      "type": "text",
+      "id": "headline_text",
+      "label": "Headline text",
+      "default": "RIGHT BIN FOR EVERY ROOM"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "min": 60,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Headline size",
+      "default": 120
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline color",
+      "default": "#002B5B"
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Letter spacing",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "label": "Animation speed",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "textarea",
+      "id": "description_text",
+      "label": "Description",
+      "default": "Not sure which size is best? From compact bathrooms to family kitchens, there's a Royal Bin™ made for you."
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "range",
+      "id": "description_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Description spacing",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "min": 400,
+      "max": 800,
+      "step": 20,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "content_bottom_spacing",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Content bottom spacing",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "FIND YOUR FIT"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "range",
+      "id": "button_text_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Button text size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y",
+      "min": 10,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Button vertical padding",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Button horizontal padding",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#032B5B"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background",
+      "default": "#002B5B"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero marquee"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

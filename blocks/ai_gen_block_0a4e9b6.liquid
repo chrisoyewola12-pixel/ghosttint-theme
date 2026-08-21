@@ -1,0 +1,797 @@
+{% doc %}
+  @prompt
+    Generate a compact responsive Shopify benefits section for Ghost Tints. Use a near-black background with warm-white text, thin graphite dividers and restrained cyan line icons.
+    
+    Create three editable blocks with an icon, heading and optional short description. Use these defaults:
+    
+    1. “Instant Privacy”
+    2. “SPD Technology”
+    3. “Vehicle Integrated”
+    
+    Display all three blocks in one horizontal row on desktop and stack or horizontally scroll them cleanly on mobile. Keep the section shallow and premium, with generous horizontal spacing but minimal vertical padding.
+    
+    Add theme-editor controls for colors, icons, text, spacing and divider visibility. Do not add unsupported technical claims, animations, reviews or ratings. Make the icons decorative where appropriate and ensure all text meets accessible contrast standards.
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-benefits-section-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.vertical_padding }}px {{ block.settings.horizontal_padding }}px;
+  }
+
+  .ai-benefits-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-benefits-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.item_spacing }}px;
+    align-items: center;
+  }
+
+  .ai-benefit-item-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: {{ block.settings.content_gap }}px;
+    padding: {{ block.settings.item_padding }}px;
+    position: relative;
+  }
+
+  .ai-benefit-item-{{ ai_gen_id }}:not(:last-child)::after {
+    {% if block.settings.show_dividers %}
+      content: '';
+      position: absolute;
+      right: calc(-{{ block.settings.item_spacing }}px / 2);
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: {{ block.settings.divider_height }}%;
+      background-color: {{ block.settings.divider_color }};
+    {% endif %}
+  }
+
+  .ai-benefit-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    flex-shrink: 0;
+    color: {{ block.settings.icon_color }};
+  }
+
+  .ai-benefit-icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: {{ block.settings.icon_stroke_width }};
+  }
+
+  .ai-benefit-heading-{{ ai_gen_id }} {
+    color: {{ block.settings.heading_color }};
+    font-size: {{ block.settings.heading_size }}px;
+    font-weight: {{ block.settings.heading_weight }};
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .ai-benefit-description-{{ ai_gen_id }} {
+    color: {{ block.settings.description_color }};
+    font-size: {{ block.settings.description_size }}px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-benefits-section-{{ ai_gen_id }} {
+      padding: {{ block.settings.mobile_vertical_padding }}px {{ block.settings.mobile_horizontal_padding }}px;
+    }
+
+    .ai-benefits-grid-{{ ai_gen_id }} {
+      {% if block.settings.mobile_layout == 'stack' %}
+        grid-template-columns: 1fr;
+        gap: {{ block.settings.mobile_item_spacing }}px;
+      {% elsif block.settings.mobile_layout == 'scroll' %}
+        grid-template-columns: repeat(3, minmax(250px, 1fr));
+        gap: {{ block.settings.mobile_item_spacing }}px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      {% endif %}
+    }
+
+    .ai-benefits-grid-{{ ai_gen_id }}::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ai-benefit-item-{{ ai_gen_id }} {
+      {% if block.settings.mobile_layout == 'scroll' %}
+        scroll-snap-align: start;
+      {% endif %}
+    }
+
+    .ai-benefit-item-{{ ai_gen_id }}:not(:last-child)::after {
+      {% if block.settings.mobile_layout == 'stack' %}
+        display: none;
+      {% endif %}
+    }
+
+    .ai-benefit-icon-{{ ai_gen_id }} {
+      width: {{ block.settings.mobile_icon_size }}px;
+      height: {{ block.settings.mobile_icon_size }}px;
+    }
+
+    .ai-benefit-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_heading_size }}px;
+    }
+
+    .ai-benefit-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_description_size }}px;
+    }
+  }
+{% endstyle %}
+
+<ghost-tints-benefits-{{ ai_gen_id }} class="ai-benefits-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-benefits-container-{{ ai_gen_id }}">
+    <div class="ai-benefits-grid-{{ ai_gen_id }}">
+      <div class="ai-benefit-item-{{ ai_gen_id }}">
+        <div class="ai-benefit-icon-{{ ai_gen_id }}" {% if block.settings.icon_1_type == 'decorative' %}aria-hidden="true"{% else %}role="img" aria-label="{{ block.settings.heading_1 }}"{% endif %}>
+          {% case block.settings.icon_1 %}
+            {% when 'shield' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            {% when 'lightning' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+              </svg>
+            {% when 'chip' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z" />
+              </svg>
+            {% when 'car' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+              </svg>
+            {% when 'eye' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            {% when 'sun' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+              </svg>
+            {% when 'lock' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+            {% when 'check' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+          {% endcase %}
+        </div>
+        
+        {% if block.settings.heading_1 != blank %}
+          <h3 class="ai-benefit-heading-{{ ai_gen_id }}">{{ block.settings.heading_1 }}</h3>
+        {% endif %}
+        
+        {% if block.settings.description_1 != blank %}
+          <p class="ai-benefit-description-{{ ai_gen_id }}">{{ block.settings.description_1 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="ai-benefit-item-{{ ai_gen_id }}">
+        <div class="ai-benefit-icon-{{ ai_gen_id }}" {% if block.settings.icon_2_type == 'decorative' %}aria-hidden="true"{% else %}role="img" aria-label="{{ block.settings.heading_2 }}"{% endif %}>
+          {% case block.settings.icon_2 %}
+            {% when 'shield' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            {% when 'lightning' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+              </svg>
+            {% when 'chip' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z" />
+              </svg>
+            {% when 'car' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+              </svg>
+            {% when 'eye' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            {% when 'sun' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+              </svg>
+            {% when 'lock' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+            {% when 'check' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+          {% endcase %}
+        </div>
+        
+        {% if block.settings.heading_2 != blank %}
+          <h3 class="ai-benefit-heading-{{ ai_gen_id }}">{{ block.settings.heading_2 }}</h3>
+        {% endif %}
+        
+        {% if block.settings.description_2 != blank %}
+          <p class="ai-benefit-description-{{ ai_gen_id }}">{{ block.settings.description_2 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="ai-benefit-item-{{ ai_gen_id }}">
+        <div class="ai-benefit-icon-{{ ai_gen_id }}" {% if block.settings.icon_3_type == 'decorative' %}aria-hidden="true"{% else %}role="img" aria-label="{{ block.settings.heading_3 }}"{% endif %}>
+          {% case block.settings.icon_3 %}
+            {% when 'shield' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            {% when 'lightning' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+              </svg>
+            {% when 'chip' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z" />
+              </svg>
+            {% when 'car' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+              </svg>
+            {% when 'eye' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            {% when 'sun' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+              </svg>
+            {% when 'lock' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+              </svg>
+            {% when 'check' %}
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+          {% endcase %}
+        </div>
+        
+        {% if block.settings.heading_3 != blank %}
+          <h3 class="ai-benefit-heading-{{ ai_gen_id }}">{{ block.settings.heading_3 }}</h3>
+        {% endif %}
+        
+        {% if block.settings.description_3 != blank %}
+          <p class="ai-benefit-description-{{ ai_gen_id }}">{{ block.settings.description_3 }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</ghost-tints-benefits-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class GhostTintsBenefits{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        const grid = this.querySelector('.ai-benefits-grid-{{ ai_gen_id }}');
+        
+        if (window.innerWidth <= 749 && grid) {
+          grid.addEventListener('touchstart', this.handleTouchStart.bind(this), { passive: true });
+        }
+      }
+
+      handleTouchStart(e) {
+        const grid = e.currentTarget;
+        if (grid.scrollWidth > grid.clientWidth) {
+          grid.style.cursor = 'grab';
+        }
+      }
+    }
+
+    customElements.define('ghost-tints-benefits-{{ ai_gen_id }}', GhostTintsBenefits{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Ghost Tints benefits",
+  "tag": null,
+  "class": "ghost-tints-benefits-block",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Benefit 1"
+    },
+    {
+      "type": "select",
+      "id": "icon_1",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "shield",
+          "label": "Shield"
+        },
+        {
+          "value": "lightning",
+          "label": "Lightning"
+        },
+        {
+          "value": "chip",
+          "label": "Chip"
+        },
+        {
+          "value": "car",
+          "label": "Car"
+        },
+        {
+          "value": "eye",
+          "label": "Eye"
+        },
+        {
+          "value": "sun",
+          "label": "Sun"
+        },
+        {
+          "value": "lock",
+          "label": "Lock"
+        },
+        {
+          "value": "check",
+          "label": "Check"
+        }
+      ],
+      "default": "eye"
+    },
+    {
+      "type": "select",
+      "id": "icon_1_type",
+      "label": "Icon purpose",
+      "options": [
+        {
+          "value": "decorative",
+          "label": "Decorative"
+        },
+        {
+          "value": "informative",
+          "label": "Informative"
+        }
+      ],
+      "default": "decorative",
+      "info": "Decorative icons are hidden from screen readers"
+    },
+    {
+      "type": "text",
+      "id": "heading_1",
+      "label": "Heading",
+      "default": "Instant Privacy"
+    },
+    {
+      "type": "text",
+      "id": "description_1",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Benefit 2"
+    },
+    {
+      "type": "select",
+      "id": "icon_2",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "shield",
+          "label": "Shield"
+        },
+        {
+          "value": "lightning",
+          "label": "Lightning"
+        },
+        {
+          "value": "chip",
+          "label": "Chip"
+        },
+        {
+          "value": "car",
+          "label": "Car"
+        },
+        {
+          "value": "eye",
+          "label": "Eye"
+        },
+        {
+          "value": "sun",
+          "label": "Sun"
+        },
+        {
+          "value": "lock",
+          "label": "Lock"
+        },
+        {
+          "value": "check",
+          "label": "Check"
+        }
+      ],
+      "default": "chip"
+    },
+    {
+      "type": "select",
+      "id": "icon_2_type",
+      "label": "Icon purpose",
+      "options": [
+        {
+          "value": "decorative",
+          "label": "Decorative"
+        },
+        {
+          "value": "informative",
+          "label": "Informative"
+        }
+      ],
+      "default": "decorative"
+    },
+    {
+      "type": "text",
+      "id": "heading_2",
+      "label": "Heading",
+      "default": "SPD Technology"
+    },
+    {
+      "type": "text",
+      "id": "description_2",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Benefit 3"
+    },
+    {
+      "type": "select",
+      "id": "icon_3",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "shield",
+          "label": "Shield"
+        },
+        {
+          "value": "lightning",
+          "label": "Lightning"
+        },
+        {
+          "value": "chip",
+          "label": "Chip"
+        },
+        {
+          "value": "car",
+          "label": "Car"
+        },
+        {
+          "value": "eye",
+          "label": "Eye"
+        },
+        {
+          "value": "sun",
+          "label": "Sun"
+        },
+        {
+          "value": "lock",
+          "label": "Lock"
+        },
+        {
+          "value": "check",
+          "label": "Check"
+        }
+      ],
+      "default": "car"
+    },
+    {
+      "type": "select",
+      "id": "icon_3_type",
+      "label": "Icon purpose",
+      "options": [
+        {
+          "value": "decorative",
+          "label": "Decorative"
+        },
+        {
+          "value": "informative",
+          "label": "Informative"
+        }
+      ],
+      "default": "decorative"
+    },
+    {
+      "type": "text",
+      "id": "heading_3",
+      "label": "Heading",
+      "default": "Vehicle Integrated"
+    },
+    {
+      "type": "text",
+      "id": "description_3",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "vertical_padding",
+      "label": "Vertical padding",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "horizontal_padding",
+      "label": "Horizontal padding",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "label": "Space between items",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "item_padding",
+      "label": "Item padding",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "content_gap",
+      "label": "Gap between icon and text",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#00d4ff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#f5f5f0"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description",
+      "default": "#d4d4d0"
+    },
+    {
+      "type": "header",
+      "content": "Dividers"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dividers",
+      "label": "Show dividers",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#3a3a3a"
+    },
+    {
+      "type": "range",
+      "id": "divider_height",
+      "label": "Divider height",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Icon style"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "icon_stroke_width",
+      "label": "Icon stroke width",
+      "min": 1,
+      "max": 3,
+      "step": 0.5,
+      "default": 1.5
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "label": "Heading size",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_weight",
+      "label": "Heading weight",
+      "min": 400,
+      "max": 700,
+      "step": 100,
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Description size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "options": [
+        {
+          "value": "stack",
+          "label": "Stack vertically"
+        },
+        {
+          "value": "scroll",
+          "label": "Horizontal scroll"
+        }
+      ],
+      "default": "scroll"
+    },
+    {
+      "type": "range",
+      "id": "mobile_vertical_padding",
+      "label": "Mobile vertical padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "mobile_horizontal_padding",
+      "label": "Mobile horizontal padding",
+      "min": 15,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "mobile_item_spacing",
+      "label": "Mobile item spacing",
+      "min": 15,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "mobile_icon_size",
+      "label": "Mobile icon size",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "mobile_heading_size",
+      "label": "Mobile heading size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mobile_description_size",
+      "label": "Mobile description size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ghost Tints benefits"
+    }
+  ]
+}
+{% endschema %}

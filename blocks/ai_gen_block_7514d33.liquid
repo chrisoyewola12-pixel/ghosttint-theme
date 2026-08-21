@@ -1,0 +1,287 @@
+{% doc %}
+  @prompt
+    Create a 4-panel feature section with four equal-width cards displayed in one horizontal row. Each card must use an uploaded image for the top portion, taking up around 75% of the height. Do not generate any background colors for the image area. Beneath each image add a full-width navy bar #032B5B with white text #FFFFFF for the title and description, with the title bold and the description in smaller regular text. All cards must have soft rounded corners and consistent spacing, with the overall section background white (#FFFFFF). Use clean, modern sans-serif typography matching a premium tech product brand.
+    
+    Use this exact text for the four cards:
+    
+    Card 1
+    Title: “Motion Sensor: Wave to Open”
+    Description: “Effortlessly open the Royal Bin™ with just a wave of your hand.”
+    
+    Card 2
+    Title: “Self Sealing Mechanism”
+    Description: “Automatically seal the trash bag inside — locking in odors.”
+    
+    Card 3
+    Title: “Auto Reloads a New Bag”
+    Description: “The Royal Bin™ instantly replaces a fresh bag all in seconds.”
+    
+    Card 4
+    Title: “Overload Packing Feature”
+    Description: “When the bin is full it automatically lifts the lid to seal the bag.”
+    
+    Keep spacing, card proportions, and layout consistent so all four panels visually match.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-feature-section-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    padding: 60px 20px;
+  }
+
+  .ai-feature-container-{{ ai_gen_id }} {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* HORIZONTAL SCROLL ROW */
+  .ai-feature-grid-{{ ai_gen_id }} {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 10px;
+  }
+
+  .ai-feature-grid-{{ ai_gen_id }}::-webkit-scrollbar {
+    display: none;
+  }
+  .ai-feature-grid-{{ ai_gen_id }} {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .ai-feature-card-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 300px; /* card width in the row */
+    scroll-snap-align: start;
+  }
+
+  .ai-feature-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-feature-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-feature-image-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-feature-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-feature-content-{{ ai_gen_id }} {
+    background-color: #787878;
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-feature-title-{{ ai_gen_id }} {
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  .ai-feature-description-{{ ai_gen_id }} {
+    color: #FFFFFF;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-feature-section-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-feature-title-{{ ai_gen_id }} {
+      font-size: 15px;
+    }
+
+    .ai-feature-description-{{ ai_gen_id }} {
+      font-size: 13px;
+    }
+
+    .ai-feature-content-{{ ai_gen_id }} {
+      padding: 16px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-feature-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-feature-container-{{ ai_gen_id }}">
+    <div class="ai-feature-grid-{{ ai_gen_id }}">
+      {% for i in (1..4) %}
+        {% liquid
+          assign image_key = 'card_' | append: i | append: '_image'
+          assign title_key = 'card_' | append: i | append: '_title'
+          assign description_key = 'card_' | append: i | append: '_description'
+          
+          assign card_image = block.settings[image_key]
+          assign card_title = block.settings[title_key]
+          assign card_description = block.settings[description_key]
+        %}
+        
+        <div class="ai-feature-card-{{ ai_gen_id }}">
+          <div class="ai-feature-image-wrapper-{{ ai_gen_id }}">
+            {% if card_image %}
+              <img
+                src="{{ card_image | image_url: width: 600 }}"
+                alt="{{ card_title | escape }}"
+                loading="lazy"
+                width="600"
+                height="600"
+                class="ai-feature-image-{{ ai_gen_id }}"
+              >
+            {% else %}
+              <div class="ai-feature-image-placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+          
+          <div class="ai-feature-content-{{ ai_gen_id }}">
+            <h3 class="ai-feature-title-{{ ai_gen_id }}">{{ card_title }}</h3>
+            <p class="ai-feature-description-{{ ai_gen_id }}">{{ card_description }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Feature cards",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Motion Sensor: Wave to Open"
+    },
+    {
+      "type": "textarea",
+      "id": "card_1_description",
+      "label": "Description",
+      "default": "Effortlessly open the Royal Bin™ with just a wave of your hand."
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Self Sealing Mechanism"
+    },
+    {
+      "type": "textarea",
+      "id": "card_2_description",
+      "label": "Description",
+      "default": "Automatically seal the trash bag inside — locking in odors."
+    },
+    {
+      "type": "header",
+      "content": "Card 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_3_title",
+      "label": "Title",
+      "default": "Auto Reloads a New Bag"
+    },
+    {
+      "type": "textarea",
+      "id": "card_3_description",
+      "label": "Description",
+      "default": "The Royal Bin™ instantly replaces a fresh bag all in seconds."
+    },
+    {
+      "type": "header",
+      "content": "Card 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_4_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_4_title",
+      "label": "Title",
+      "default": "Overload Packing Feature"
+    },
+    {
+      "type": "textarea",
+      "id": "card_4_description",
+      "label": "Description",
+      "default": "When the bin is full it automatically lifts the lid to seal the bag."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Feature cards"
+    }
+  ]
+}
+{% endschema %}

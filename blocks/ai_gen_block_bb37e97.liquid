@@ -1,0 +1,599 @@
+{% doc %}
+  @prompt
+    Create a full-width hero section that uses a merchant-uploaded background image only (no generated or solid background colors). The section must include image fitting controls for mobile responsiveness: allow a separate mobile image upload field OR a focal-point selector so the merchant can choose the crop focus for desktop and mobile independently; background behavior must support cover scaling with adjustable background-position (Desktop + Mobile position controls: center, top, bottom, left, right) to ensure the product remains visible across screen sizes. On the left side add a rating row: “4.9” in #DDDDDD, followed by 5 star icons in #0066FF, then the text “10,000+ Homes Upgraded.” in #DDDDDD. Below the rating row add a bold two-line headline: line 1 “Never Tie a” and line 2 “Trash Bag Again.” both in #FFFFFF. Beneath add a short paragraph in #E6E6E6 describing the product. Below the paragraph add a wide pill CTA button labeled “Get Your Royal Bin™” with background #4A8DFF, white text #FFFFFF, and fully rounded corners (border-radius 9999px). Under the button place small trust text reading “Free Shipping | 30-Day Money Back Guarantee” in #CCCCCC. Keep all hero text left-aligned with generous spacing. The right side of the hero must remain visually empty to showcase the product area of the background image. Ensure safe padding and max text width so content never overlaps critical parts of the image on tablet or mobile views.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-hero-section-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    overflow: hidden;
+  }
+
+  .ai-hero-section-{{ ai_gen_id }}::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-hero-section-{{ ai_gen_id }}::before {
+      {% if block.settings.background_image %}
+        background-image: url('{{ block.settings.background_image | image_url: width: 2400 }}');
+        background-position: {{ block.settings.desktop_bg_position }};
+      {% endif %}
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-hero-section-{{ ai_gen_id }}::before {
+      {% if block.settings.mobile_background_image %}
+        background-image: url('{{ block.settings.mobile_background_image | image_url: width: 1200 }}');
+        background-position: {{ block.settings.mobile_bg_position }};
+      {% elsif block.settings.background_image %}
+        background-image: url('{{ block.settings.background_image | image_url: width: 1200 }}');
+        background-position: {{ block.settings.mobile_bg_position }};
+      {% endif %}
+    }
+  }
+
+  .ai-hero-container-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  .ai-hero-content-{{ ai_gen_id }} {
+    max-width: {{ block.settings.content_max_width }}px;
+    width: 100%;
+  }
+
+  .ai-hero-rating-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: {{ block.settings.rating_spacing }}px;
+    flex-wrap: wrap;
+  }
+
+  .ai-hero-rating-number-{{ ai_gen_id }} {
+    font-size: {{ block.settings.rating_font_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.rating_color }};
+    line-height: 1;
+  }
+
+  .ai-hero-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 4px;
+  }
+
+  .ai-hero-star-{{ ai_gen_id }} {
+    width: {{ block.settings.star_size }}px;
+    height: {{ block.settings.star_size }}px;
+    fill: {{ block.settings.star_color }};
+  }
+
+  .ai-hero-rating-text-{{ ai_gen_id }} {
+    font-size: {{ block.settings.rating_text_size }}px;
+    color: {{ block.settings.rating_color }};
+    line-height: 1;
+  }
+
+  .ai-hero-headline-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.headline_spacing }}px;
+  }
+
+  .ai-hero-headline-line-{{ ai_gen_id }} {
+    font-size: {{ block.settings.headline_font_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.headline_color }};
+    line-height: 1.1;
+    margin: 0;
+    display: block;
+  }
+
+  .ai-hero-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_font_size }}px;
+    color: {{ block.settings.description_color }};
+    line-height: 1.6;
+    margin-bottom: {{ block.settings.description_spacing }}px;
+    max-width: {{ block.settings.description_max_width }}px;
+  }
+
+  .ai-hero-cta-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: {{ block.settings.button_padding_y }}px {{ block.settings.button_padding_x }}px;
+    background-color: {{ block.settings.button_bg_color }};
+    color: {{ block.settings.button_text_color }};
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    margin-bottom: {{ block.settings.button_spacing }}px;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-hero-cta-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_bg_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-hero-trust-{{ ai_gen_id }} {
+    font-size: {{ block.settings.trust_font_size }}px;
+    color: {{ block.settings.trust_color }};
+    line-height: 1.4;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-hero-section-{{ ai_gen_id }} {
+      min-height: 500px;
+    }
+
+    .ai-hero-container-{{ ai_gen_id }} {
+      padding: 40px 30px;
+    }
+
+    .ai-hero-headline-line-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.headline_font_size }}px * 0.8);
+    }
+
+    .ai-hero-description-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.description_font_size }}px * 0.9);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-hero-section-{{ ai_gen_id }} {
+      min-height: 450px;
+    }
+
+    .ai-hero-container-{{ ai_gen_id }} {
+      padding: 30px 20px;
+    }
+
+    .ai-hero-content-{{ ai_gen_id }} {
+      max-width: 100%;
+    }
+
+    .ai-hero-headline-line-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.headline_font_size }}px * 0.65);
+    }
+
+    .ai-hero-description-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.description_font_size }}px * 0.85);
+    }
+
+    .ai-hero-rating-number-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.rating_font_size }}px * 0.9);
+    }
+
+    .ai-hero-rating-text-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.rating_text_size }}px * 0.9);
+    }
+
+    .ai-hero-star-{{ ai_gen_id }} {
+      width: calc({{ block.settings.star_size }}px * 0.85);
+      height: calc({{ block.settings.star_size }}px * 0.85);
+    }
+
+    .ai-hero-cta-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.button_font_size }}px * 0.9);
+      padding: calc({{ block.settings.button_padding_y }}px * 0.9) calc({{ block.settings.button_padding_x }}px * 0.9);
+    }
+
+    .ai-hero-trust-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.trust_font_size }}px * 0.85);
+    }
+  }
+
+  .ai-hero-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    text-align: center;
+    z-index: 2;
+  }
+{% endstyle %}
+
+<div class="ai-hero-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% unless block.settings.background_image %}
+    <div class="ai-hero-empty-state-{{ ai_gen_id }}">
+      Add a background image to get started
+    </div>
+  {% endunless %}
+
+  <div class="ai-hero-container-{{ ai_gen_id }}">
+    <div class="ai-hero-content-{{ ai_gen_id }}">
+      <div class="ai-hero-rating-{{ ai_gen_id }}">
+        <span class="ai-hero-rating-number-{{ ai_gen_id }}">{{ block.settings.rating_number }}</span>
+        <div class="ai-hero-stars-{{ ai_gen_id }}">
+          {% for i in (1..5) %}
+            <svg class="ai-hero-star-{{ ai_gen_id }}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          {% endfor %}
+        </div>
+        <span class="ai-hero-rating-text-{{ ai_gen_id }}">{{ block.settings.rating_text }}</span>
+      </div>
+
+      <div class="ai-hero-headline-{{ ai_gen_id }}">
+        <span class="ai-hero-headline-line-{{ ai_gen_id }}">{{ block.settings.headline_line_1 }}</span>
+        <span class="ai-hero-headline-line-{{ ai_gen_id }}">{{ block.settings.headline_line_2 }}</span>
+      </div>
+
+      <div class="ai-hero-description-{{ ai_gen_id }}">
+        {{ block.settings.description }}
+      </div>
+
+      {% if block.settings.button_link != blank %}
+        <a href="{{ block.settings.button_link }}" class="ai-hero-cta-{{ ai_gen_id }}">
+          {{ block.settings.button_text }}
+        </a>
+      {% else %}
+        <button class="ai-hero-cta-{{ ai_gen_id }}" disabled>
+          {{ block.settings.button_text }}
+        </button>
+      {% endif %}
+
+      <div class="ai-hero-trust-{{ ai_gen_id }}">
+        {{ block.settings.trust_text }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Desktop background image"
+    },
+    {
+      "type": "select",
+      "id": "desktop_bg_position",
+      "label": "Desktop background position",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" },
+        { "value": "top left", "label": "Top left" },
+        { "value": "top right", "label": "Top right" },
+        { "value": "bottom left", "label": "Bottom left" },
+        { "value": "bottom right", "label": "Bottom right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_background_image",
+      "label": "Mobile background image"
+    },
+    {
+      "type": "select",
+      "id": "mobile_bg_position",
+      "label": "Mobile background position",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "top", "label": "Top" },
+        { "value": "bottom", "label": "Bottom" },
+        { "value": "left", "label": "Left" },
+        { "value": "right", "label": "Right" },
+        { "value": "top left", "label": "Top left" },
+        { "value": "top right", "label": "Top right" },
+        { "value": "bottom left", "label": "Bottom left" },
+        { "value": "bottom right", "label": "Bottom right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Content layout"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "min": 300,
+      "max": 800,
+      "step": 10,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 550
+    },
+    {
+      "type": "header",
+      "content": "Rating"
+    },
+    {
+      "type": "text",
+      "id": "rating_number",
+      "label": "Rating number",
+      "default": "4.9"
+    },
+    {
+      "type": "range",
+      "id": "rating_font_size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Rating number size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "star_size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Star size",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#0066FF"
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Rating text",
+      "default": "10,000+ Homes Upgraded."
+    },
+    {
+      "type": "range",
+      "id": "rating_text_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Rating text size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "rating_color",
+      "label": "Rating color",
+      "default": "#DDDDDD"
+    },
+    {
+      "type": "range",
+      "id": "rating_spacing",
+      "min": 10,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Spacing below rating",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "text",
+      "id": "headline_line_1",
+      "label": "Headline line 1",
+      "default": "Never Tie a"
+    },
+    {
+      "type": "text",
+      "id": "headline_line_2",
+      "label": "Headline line 2",
+      "default": "Trash Bag Again."
+    },
+    {
+      "type": "range",
+      "id": "headline_font_size",
+      "min": 24,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline size",
+      "default": 56
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Headline color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "headline_spacing",
+      "min": 10,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Spacing below headline",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Description"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Experience the revolutionary hands-free trash bag system that makes taking out the trash effortless. No more messy ties or struggling with bags."
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "Description color",
+      "default": "#E6E6E6"
+    },
+    {
+      "type": "range",
+      "id": "description_max_width",
+      "min": 300,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "label": "Description max width",
+      "default": 500
+    },
+    {
+      "type": "range",
+      "id": "description_spacing",
+      "min": 10,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Spacing below description",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Get Your Royal Bin™"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Button text size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "button_padding_y",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Button vertical padding",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "button_padding_x",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Button horizontal padding",
+      "default": 48
+    },
+    {
+      "type": "color",
+      "id": "button_bg_color",
+      "label": "Button background",
+      "default": "#4A8DFF"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg_color",
+      "label": "Button hover background",
+      "default": "#3A7DE8"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "button_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Spacing below button",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Trust text"
+    },
+    {
+      "type": "text",
+      "id": "trust_text",
+      "label": "Trust text",
+      "default": "Free Shipping | 30-Day Money Back Guarantee"
+    },
+    {
+      "type": "range",
+      "id": "trust_font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Trust text size",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "trust_color",
+      "label": "Trust text color",
+      "default": "#CCCCCC"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero section"
+    }
+  ]
+}
+{% endschema %}

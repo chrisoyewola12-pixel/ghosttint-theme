@@ -1,0 +1,233 @@
+{% doc %}
+  @prompt
+    i want to have a section where i can add an image
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-image-block-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: 100%;
+    display: block;
+  }
+
+  .ai-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-image-wrapper-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: {{ block.settings.image_fit }};
+    {% if block.settings.image_fit == 'cover' %}
+      aspect-ratio: {{ block.settings.aspect_ratio }};
+    {% endif %}
+  }
+
+  .ai-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: {{ block.settings.aspect_ratio }};
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 400px;
+    max-height: 400px;
+  }
+
+  .ai-image-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  {% if block.settings.enable_shadow %}
+    .ai-image-wrapper-{{ ai_gen_id }} {
+      box-shadow: 0 {{ block.settings.shadow_vertical }}px {{ block.settings.shadow_blur }}px rgba(0, 0, 0, {{ block.settings.shadow_opacity | divided_by: 100.0 }});
+    }
+  {% endif %}
+
+  {% if block.settings.enable_border %}
+    .ai-image-wrapper-{{ ai_gen_id }} {
+      border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    }
+  {% endif %}
+{% endstyle %}
+
+<div class="ai-image-block-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-image-wrapper-{{ ai_gen_id }}">
+    {% if block.settings.image %}
+      <img
+        src="{{ block.settings.image | image_url: width: 2000 }}"
+        alt="{{ block.settings.image.alt | escape }}"
+        loading="lazy"
+        width="{{ block.settings.image.width }}"
+        height="{{ block.settings.image.height }}"
+      >
+    {% else %}
+      <div class="ai-image-placeholder-{{ ai_gen_id }}">
+        {{ 'image' | placeholder_svg_tag }}
+        <div class="ai-image-empty-state-{{ ai_gen_id }}">
+          Add an image to get started
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Image block",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Image fit",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        }
+      ],
+      "default": "cover",
+      "info": "Cover will crop the image to fill the space. Contain will show the full image."
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Aspect ratio",
+      "options": [
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4/3",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "16/9",
+          "label": "Widescreen (16:9)"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "21/9",
+          "label": "Ultrawide (21:9)"
+        }
+      ],
+      "default": "16/9",
+      "info": "Only applies when Image fit is set to Cover"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Corner radius",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_border",
+      "label": "Enable border",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#002f6c"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_shadow",
+      "label": "Enable shadow",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "shadow_vertical",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Shadow vertical offset",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "id": "shadow_blur",
+      "min": 0,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Shadow blur",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "shadow_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Shadow opacity",
+      "default": 10
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image block"
+    }
+  ]
+}
+{% endschema %}

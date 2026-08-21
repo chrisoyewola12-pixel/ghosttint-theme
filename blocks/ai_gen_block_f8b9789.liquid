@@ -1,0 +1,683 @@
+{% doc %}
+  @prompt
+    Create a multi-row product grid displaying several product cards in equal-width columns. Each product card must use an uploaded product image at the top with clean white background (#FFFFFF) and soft rounded corners. Above the product title include an optional pill-shaped badge with a light blue background #E3F2FD and blue text #0066FF (e.g., “New”, “Best Seller”, “30% OFF”). Below the image add a product title in bold navy #002B5B, and beneath the title add a short description in medium gray #555555. Under that display the price row with the current price in bold navy #002B5B and the old price crossed out in gray #777777. At the bottom of each card add a wide pill-shaped CTA button reading “Add to Cart” with a dark navy background #032B5B, white text (#FFFFFF), fully rounded (border-radius 9999px). Cards should be evenly spaced, aligned in a grid layout, and maintain a clean, minimal, premium presentation with consistent typography and spacing. Do not generate any background colors outside the cards; leave the section background white.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-grid-{{ ai_gen_id }} {
+    padding: {{ block.settings.section_padding_top }}px 0 {{ block.settings.section_padding_bottom }}px;
+    background-color: #FFFFFF;
+  }
+
+  .ai-product-grid-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-product-grid-wrapper-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+  }
+
+  .ai-product-card-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .ai-product-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-4px);
+  }
+
+  .ai-product-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-top: 100%;
+    overflow: hidden;
+    border-radius: {{ block.settings.card_border_radius }}px;
+  }
+
+  .ai-product-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-product-badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: #E3F2FD;
+    color: #0066FF;
+    padding: 6px 16px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-product-info-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_padding }}px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-grow: 1;
+  }
+
+  .ai-product-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    font-weight: 700;
+    color: #002B5B;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .ai-product-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_font_size }}px;
+    color: #555555;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .ai-product-price-row-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 8px;
+  }
+
+  .ai-product-price-current-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_font_size }}px;
+    font-weight: 700;
+    color: #002B5B;
+  }
+
+  .ai-product-price-old-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_font_size | minus: 2 }}px;
+    color: #777777;
+    text-decoration: line-through;
+  }
+
+  .ai-product-cta-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 14px 24px;
+    background-color: #032B5B;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 9999px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 12px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+  }
+
+  .ai-product-cta-{{ ai_gen_id }}:hover {
+    background-color: #001F42;
+    transform: scale(1.02);
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-product-grid-wrapper-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_tablet }}, 1fr);
+      gap: {{ block.settings.grid_gap | times: 0.75 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-grid-wrapper-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_mobile }}, 1fr);
+      gap: {{ block.settings.grid_gap | times: 0.5 }}px;
+    }
+
+    .ai-product-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_font_size | times: 0.9 }}px;
+    }
+
+    .ai-product-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_font_size | times: 0.9 }}px;
+    }
+
+    .ai-product-price-current-{{ ai_gen_id }} {
+      font-size: {{ block.settings.price_font_size | times: 0.9 }}px;
+    }
+
+    .ai-product-cta-{{ ai_gen_id }} {
+      font-size: {{ block.settings.button_font_size | times: 0.9 }}px;
+      padding: 12px 20px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-product-grid-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-product-grid-container-{{ ai_gen_id }}">
+    <div class="ai-product-grid-wrapper-{{ ai_gen_id }}">
+      {% for i in (1..12) %}
+        {% liquid
+          assign product_key = 'product_' | append: i
+          assign badge_key = 'badge_' | append: i
+          assign description_key = 'description_' | append: i
+          assign old_price_key = 'old_price_' | append: i
+          
+          assign product = block.settings[product_key]
+          assign badge_text = block.settings[badge_key]
+          assign description = block.settings[description_key]
+          assign old_price = block.settings[old_price_key]
+        %}
+
+        {% if product != blank %}
+          <div class="ai-product-card-{{ ai_gen_id }}">
+            <div class="ai-product-image-wrapper-{{ ai_gen_id }}">
+              {% if product.featured_image %}
+                <img
+                  src="{{ product.featured_image | image_url: width: 800 }}"
+                  alt="{{ product.featured_image.alt | escape }}"
+                  class="ai-product-image-{{ ai_gen_id }}"
+                  loading="lazy"
+                  width="800"
+                  height="800"
+                >
+              {% else %}
+                <div class="ai-product-image-{{ ai_gen_id }}" style="background-color: #f4f4f4;"></div>
+              {% endif %}
+
+              {% if badge_text != blank %}
+                <div class="ai-product-badge-{{ ai_gen_id }}">{{ badge_text }}</div>
+              {% endif %}
+            </div>
+
+            <div class="ai-product-info-{{ ai_gen_id }}">
+              <h3 class="ai-product-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+
+              {% if description != blank %}
+                <p class="ai-product-description-{{ ai_gen_id }}">{{ description }}</p>
+              {% endif %}
+
+              <div class="ai-product-price-row-{{ ai_gen_id }}">
+                <span class="ai-product-price-current-{{ ai_gen_id }}">{{ product.price | money }}</span>
+                {% if old_price != blank %}
+                  <span class="ai-product-price-old-{{ ai_gen_id }}">{{ old_price }}</span>
+                {% endif %}
+              </div>
+
+              <a href="{{ product.url }}" class="ai-product-cta-{{ ai_gen_id }}">
+                {{ block.settings.cta_text }}
+              </a>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on tablet",
+      "default": 3
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "label": "Columns on mobile",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 10,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Title size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "price_font_size",
+      "min": 12,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Price size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Button text size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "Add to Cart"
+    },
+    {
+      "type": "header",
+      "content": "Product 1"
+    },
+    {
+      "type": "product",
+      "id": "product_1",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_1",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_1",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_1",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 2"
+    },
+    {
+      "type": "product",
+      "id": "product_2",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_2",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_2",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_2",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 3"
+    },
+    {
+      "type": "product",
+      "id": "product_3",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_3",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_3",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_3",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 4"
+    },
+    {
+      "type": "product",
+      "id": "product_4",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_4",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_4",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_4",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 5"
+    },
+    {
+      "type": "product",
+      "id": "product_5",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_5",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_5",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_5",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 6"
+    },
+    {
+      "type": "product",
+      "id": "product_6",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_6",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_6",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_6",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 7"
+    },
+    {
+      "type": "product",
+      "id": "product_7",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_7",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_7",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_7",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 8"
+    },
+    {
+      "type": "product",
+      "id": "product_8",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_8",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_8",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_8",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 9"
+    },
+    {
+      "type": "product",
+      "id": "product_9",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_9",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_9",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_9",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 10"
+    },
+    {
+      "type": "product",
+      "id": "product_10",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_10",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_10",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_10",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 11"
+    },
+    {
+      "type": "product",
+      "id": "product_11",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_11",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_11",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_11",
+      "label": "Old price"
+    },
+    {
+      "type": "header",
+      "content": "Product 12"
+    },
+    {
+      "type": "product",
+      "id": "product_12",
+      "label": "Product"
+    },
+    {
+      "type": "text",
+      "id": "badge_12",
+      "label": "Badge text"
+    },
+    {
+      "type": "textarea",
+      "id": "description_12",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "old_price_12",
+      "label": "Old price"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product grid"
+    }
+  ]
+}
+{% endschema %}

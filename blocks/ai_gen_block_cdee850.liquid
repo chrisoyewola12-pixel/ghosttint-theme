@@ -1,0 +1,493 @@
+{% doc %}
+  @prompt
+    Create a responsive alternating feature showcase section with pure white background. Build 4 feature blocks, each with a blue-sky product image/video card (rounded corners) paired with a navy headline and paragraph text. Desktop layout alternates left/right (image left → text right, then text left → image right). Mobile layout stacks vertically in order: headline → text → media, full width cards with no cropping.
+    
+    Blocks:
+    
+    SWAPS OUT IN SECONDS
+    Text:
+    “Just lift out the empty ring and drop in a new one — that’s it. No tools, no mess, no fuss.
+    Done in under 10 seconds, and you’re back to living your best (trash-free) life.”
+    Media: short demo video of ring removal + insert.
+    
+    BAGS THAT LOAD THEMSELVES
+    Text:
+    “Once a bag is sealed, the next one drops into place automatically — no touching, no replacing, no ‘ugh, I forgot the bag again’ moments.
+    Smart Refill Rings keep your bin ready, so you’re always one step ahead.”
+    Media: short video showing bag auto-reload inside clear bin.
+    
+    SAVE TIME & MONEY
+    Text:
+    “One refill ring gives you 25 self-sealing bags — less than 60¢ per use with no mess, no tying, and no store trips.
+    Just load one ring and let it auto-seal, drop, and reload. Refill delivery keeps you from ever running out.”
+    Media: product image of stacked refill rings.
+    
+    SLEEK, MODERN DESIGN
+    Text:
+    “The Smart Refill Ring fits seamlessly inside the Royal Bin — no clutter, no extra parts, no visible mess.
+    Bags stay hidden and your space stays fresh.”
+    Media: product image of bin with refill ring loaded.
+    
+    Styling:
+    
+    Headlines: bold navy #002B5B, all caps, tight tracking.
+    
+    Body text: modern sans-serif, medium gray #444, comfortable line spacing (not tight).
+    
+    Media cards: light blue background, rounded only, no borders or shadows.
+    
+    Desktop: two-column alternating layout with generous white space.
+    
+    Mobile: single-column vertical stack with large media cards and natural spacing between text blocks.
+    
+    No section borders, frames, or CSS shadows.
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-feature-showcase-{{ ai_gen_id }} {
+    background-color: #ffffff;
+    padding: 80px 20px;
+  }
+
+  .ai-feature-showcase-container-{{ ai_gen_id }} {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .ai-feature-block-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    margin-bottom: 100px;
+  }
+
+  .ai-feature-block-{{ ai_gen_id }}:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-feature-block-{{ ai_gen_id }}.ai-reverse-{{ ai_gen_id }} {
+    direction: rtl;
+  }
+
+  .ai-feature-block-{{ ai_gen_id }}.ai-reverse-{{ ai_gen_id }} > * {
+    direction: ltr;
+  }
+
+  .ai-feature-content-{{ ai_gen_id }} {
+    padding: 0 20px;
+  }
+
+  .ai-feature-headline-{{ ai_gen_id }} {
+    font-size: 32px;
+    font-weight: 700;
+    color: #002B5B;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 20px 0;
+    line-height: 1.2;
+  }
+
+  .ai-feature-text-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: #444444;
+    line-height: 1.8;
+    margin: 0;
+  }
+
+  .ai-feature-media-card-{{ ai_gen_id }} {
+    background-color: #E3F2FD;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+  }
+
+  .ai-feature-media-card-{{ ai_gen_id }} img,
+  .ai-feature-media-card-{{ ai_gen_id }} video {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-feature-media-placeholder-{{ ai_gen_id }} {
+    background-color: #E3F2FD;
+    border-radius: 16px;
+    aspect-ratio: 16 / 9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-feature-media-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 400px;
+    max-height: 400px;
+    opacity: 0.3;
+  }
+
+  .ai-feature-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-feature-showcase-{{ ai_gen_id }} {
+      padding: 60px 20px;
+    }
+
+    .ai-feature-block-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 30px;
+      margin-bottom: 80px;
+    }
+
+    .ai-feature-block-{{ ai_gen_id }}.ai-reverse-{{ ai_gen_id }} {
+      direction: ltr;
+    }
+
+    .ai-feature-content-{{ ai_gen_id }} {
+      padding: 0;
+      order: 1;
+    }
+
+    .ai-feature-media-card-{{ ai_gen_id }},
+    .ai-feature-media-placeholder-{{ ai_gen_id }} {
+      order: 2;
+    }
+
+    .ai-feature-headline-{{ ai_gen_id }} {
+      font-size: 26px;
+      margin-bottom: 16px;
+    }
+
+    .ai-feature-text-{{ ai_gen_id }} {
+      font-size: 15px;
+      line-height: 1.7;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-feature-showcase-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+
+    .ai-feature-block-{{ ai_gen_id }} {
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+
+    .ai-feature-headline-{{ ai_gen_id }} {
+      font-size: 22px;
+    }
+
+    .ai-feature-text-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-feature-showcase-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-feature-showcase-container-{{ ai_gen_id }}">
+    {% if block.settings.feature_1_enabled %}
+      <div class="ai-feature-block-{{ ai_gen_id }}">
+        <div class="ai-feature-content-{{ ai_gen_id }}">
+          {% if block.settings.feature_1_headline != blank %}
+            <h2 class="ai-feature-headline-{{ ai_gen_id }}">{{ block.settings.feature_1_headline }}</h2>
+          {% endif %}
+          {% if block.settings.feature_1_text != blank %}
+            <div class="ai-feature-text-{{ ai_gen_id }}">{{ block.settings.feature_1_text }}</div>
+          {% endif %}
+        </div>
+        <div>
+          {% if block.settings.feature_1_video != blank %}
+            <div class="ai-feature-media-card-{{ ai_gen_id }}">
+              {{ block.settings.feature_1_video | video_tag: autoplay: true, loop: true, muted: true, controls: false }}
+            </div>
+          {% elsif block.settings.feature_1_image != blank %}
+            <div class="ai-feature-media-card-{{ ai_gen_id }}">
+              <img
+                src="{{ block.settings.feature_1_image | image_url: width: 1200 }}"
+                alt="{{ block.settings.feature_1_image.alt | escape }}"
+                loading="lazy"
+                width="{{ block.settings.feature_1_image.width }}"
+                height="{{ block.settings.feature_1_image.height }}"
+              >
+            </div>
+          {% else %}
+            <div class="ai-feature-media-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+              <div class="ai-feature-empty-state-{{ ai_gen_id }}">
+                Add an image or video
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.feature_2_enabled %}
+      <div class="ai-feature-block-{{ ai_gen_id }} ai-reverse-{{ ai_gen_id }}">
+        <div class="ai-feature-content-{{ ai_gen_id }}">
+          {% if block.settings.feature_2_headline != blank %}
+            <h2 class="ai-feature-headline-{{ ai_gen_id }}">{{ block.settings.feature_2_headline }}</h2>
+          {% endif %}
+          {% if block.settings.feature_2_text != blank %}
+            <div class="ai-feature-text-{{ ai_gen_id }}">{{ block.settings.feature_2_text }}</div>
+          {% endif %}
+        </div>
+        <div>
+          {% if block.settings.feature_2_video != blank %}
+            <div class="ai-feature-media-card-{{ ai_gen_id }}">
+              {{ block.settings.feature_2_video | video_tag: autoplay: true, loop: true, muted: true, controls: false }}
+            </div>
+          {% elsif block.settings.feature_2_image != blank %}
+            <div class="ai-feature-media-card-{{ ai_gen_id }}">
+              <img
+                src="{{ block.settings.feature_2_image | image_url: width: 1200 }}"
+                alt="{{ block.settings.feature_2_image.alt | escape }}"
+                loading="lazy"
+                width="{{ block.settings.feature_2_image.width }}"
+                height="{{ block.settings.feature_2_image.height }}"
+              >
+            </div>
+          {% else %}
+            <div class="ai-feature-media-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+              <div class="ai-feature-empty-state-{{ ai_gen_id }}">
+                Add an image or video
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.feature_3_enabled %}
+      <div class="ai-feature-block-{{ ai_gen_id }}">
+        <div class="ai-feature-content-{{ ai_gen_id }}">
+          {% if block.settings.feature_3_headline != blank %}
+            <h2 class="ai-feature-headline-{{ ai_gen_id }}">{{ block.settings.feature_3_headline }}</h2>
+          {% endif %}
+          {% if block.settings.feature_3_text != blank %}
+            <div class="ai-feature-text-{{ ai_gen_id }}">{{ block.settings.feature_3_text }}</div>
+          {% endif %}
+        </div>
+        <div>
+          {% if block.settings.feature_3_video != blank %}
+            <div class="ai-feature-media-card-{{ ai_gen_id }}">
+              {{ block.settings.feature_3_video | video_tag: autoplay: true, loop: true, muted: true, controls: false }}
+            </div>
+          {% elsif block.settings.feature_3_image != blank %}
+            <div class="ai-feature-media-card-{{ ai_gen_id }}">
+              <img
+                src="{{ block.settings.feature_3_image | image_url: width: 1200 }}"
+                alt="{{ block.settings.feature_3_image.alt | escape }}"
+                loading="lazy"
+                width="{{ block.settings.feature_3_image.width }}"
+                height="{{ block.settings.feature_3_image.height }}"
+              >
+            </div>
+          {% else %}
+            <div class="ai-feature-media-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+              <div class="ai-feature-empty-state-{{ ai_gen_id }}">
+                Add an image or video
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+    {% if block.settings.feature_4_enabled %}
+      <div class="ai-feature-block-{{ ai_gen_id }} ai-reverse-{{ ai_gen_id }}">
+        <div class="ai-feature-content-{{ ai_gen_id }}">
+          {% if block.settings.feature_4_headline != blank %}
+            <h2 class="ai-feature-headline-{{ ai_gen_id }}">{{ block.settings.feature_4_headline }}</h2>
+          {% endif %}
+          {% if block.settings.feature_4_text != blank %}
+            <div class="ai-feature-text-{{ ai_gen_id }}">{{ block.settings.feature_4_text }}</div>
+          {% endif %}
+        </div>
+        <div>
+          {% if block.settings.feature_4_video != blank %}
+            <div class="ai-feature-media-card-{{ ai_gen_id }}">
+              {{ block.settings.feature_4_video | video_tag: autoplay: true, loop: true, muted: true, controls: false }}
+            </div>
+          {% elsif block.settings.feature_4_image != blank %}
+            <div class="ai-feature-media-card-{{ ai_gen_id }}">
+              <img
+                src="{{ block.settings.feature_4_image | image_url: width: 1200 }}"
+                alt="{{ block.settings.feature_4_image.alt | escape }}"
+                loading="lazy"
+                width="{{ block.settings.feature_4_image.width }}"
+                height="{{ block.settings.feature_4_image.height }}"
+              >
+            </div>
+          {% else %}
+            <div class="ai-feature-media-placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+              <div class="ai-feature-empty-state-{{ ai_gen_id }}">
+                Add an image or video
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Feature showcase",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Feature 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_1_enabled",
+      "label": "Enable feature 1",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_1_headline",
+      "label": "Headline",
+      "default": "SWAPS OUT IN SECONDS"
+    },
+    {
+      "type": "textarea",
+      "id": "feature_1_text",
+      "label": "Text",
+      "default": "Just lift out the empty ring and drop in a new one — that's it. No tools, no mess, no fuss. Done in under 10 seconds, and you're back to living your best (trash-free) life."
+    },
+    {
+      "type": "video",
+      "id": "feature_1_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "feature_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Feature 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_2_enabled",
+      "label": "Enable feature 2",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_2_headline",
+      "label": "Headline",
+      "default": "BAGS THAT LOAD THEMSELVES"
+    },
+    {
+      "type": "textarea",
+      "id": "feature_2_text",
+      "label": "Text",
+      "default": "Once a bag is sealed, the next one drops into place automatically — no touching, no replacing, no 'ugh, I forgot the bag again' moments. Smart Refill Rings keep your bin ready, so you're always one step ahead."
+    },
+    {
+      "type": "video",
+      "id": "feature_2_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "feature_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Feature 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_3_enabled",
+      "label": "Enable feature 3",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_3_headline",
+      "label": "Headline",
+      "default": "SAVE TIME & MONEY"
+    },
+    {
+      "type": "textarea",
+      "id": "feature_3_text",
+      "label": "Text",
+      "default": "One refill ring gives you 25 self-sealing bags — less than 60¢ per use with no mess, no tying, and no store trips. Just load one ring and let it auto-seal, drop, and reload. Refill delivery keeps you from ever running out."
+    },
+    {
+      "type": "video",
+      "id": "feature_3_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "feature_3_image",
+      "label": "Image"
+    },
+    {
+      "type": "header",
+      "content": "Feature 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "feature_4_enabled",
+      "label": "Enable feature 4",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "feature_4_headline",
+      "label": "Headline",
+      "default": "SLEEK, MODERN DESIGN"
+    },
+    {
+      "type": "textarea",
+      "id": "feature_4_text",
+      "label": "Text",
+      "default": "The Smart Refill Ring fits seamlessly inside the Royal Bin — no clutter, no extra parts, no visible mess. Bags stay hidden and your space stays fresh."
+    },
+    {
+      "type": "video",
+      "id": "feature_4_video",
+      "label": "Video"
+    },
+    {
+      "type": "image_picker",
+      "id": "feature_4_image",
+      "label": "Image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Feature showcase"
+    }
+  ]
+}
+{% endschema %}

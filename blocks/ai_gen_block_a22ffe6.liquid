@@ -1,0 +1,691 @@
+{% doc %}
+  @prompt
+    Create a responsive FAQ accordion section titled “Still Have Questions?”
+    Center the headline in large bold navy text (#002B5B) with generous top and bottom spacing on both desktop and mobile.
+    
+    Below the headline add a stacked accordion with rounded pill-style headers (border-radius ~24px), solid navy background (#032B5B), white text, and left-aligned line icons for each category plus a right-aligned + / – toggle icon. Headers should be tall and padded for easy tapping on mobile.
+    
+    Accordion sections:
+    
+    Refill Ring Features
+    Q: How many bags are in one refill ring?
+    A: About 25 self-sealing bags per ring — up to 1 month depending on use.
+    Q: Are the bags scented or unscented?
+    A: Unscented by default — odor is sealed inside.
+    Q: Will this fit both Trash King bins?
+    A: Yes — choose your size: Signature 17L or Lite 13L.
+    Q: Can I use my own trash bags?
+    A: You can, but you’ll lose the auto-seal + auto-reload features.
+    
+    Materials & Care
+    Q: Are refill rings recyclable?
+    A: Yes — both the ring and bag film are made from recyclable materials.
+    Q: How do I know when to replace the ring?
+    A: A red tab appears when the ring is nearly empty.
+    Q: Do I need to clean anything between swaps?
+    A: No — bags seal and drop away cleanly with zero mess.
+    
+    Shipping
+    Q: Do I get refills automatically?
+    A: Yes — subscriptions auto-ship your next refill so you never run out.
+    Q: Can I cancel or skip?
+    A: Anytime — skip, pause, or cancel in one tap.
+    Q: How fast is shipping?
+    A: Ships in 1–2 business days; delivery in 3–6 days (US).
+    Q: Do you offer free shipping?
+    A: Yes — subscriptions ship free, and one-time orders ship free over $150+.
+    
+    Layout rules
+    
+    Desktop
+    
+    FAQ container centered with max width ~900–1000px.
+    
+    Accordions stacked vertically with generous vertical spacing.
+    
+    Rounded navy headers remain pill-shaped.
+    
+    Expanded content shown in clean white panels below headers with comfortable paragraph spacing (not cramped).
+    
+    Mobile
+    
+    Headline remains centered and visible first.
+    
+    Accordion headers expand to full widt
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-faq-section-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-faq-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-faq-headline-{{ ai_gen_id }} {
+    text-align: center;
+    font-size: {{ block.settings.headline_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.headline_color }};
+    margin: 0 0 {{ block.settings.headline_bottom_spacing }}px;
+    line-height: 1.2;
+  }
+
+  .ai-faq-accordions-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: {{ block.settings.accordion_spacing }}px;
+  }
+
+  .ai-faq-category-{{ ai_gen_id }} {
+    width: 100%;
+  }
+
+  .ai-faq-category-header-{{ ai_gen_id }} {
+    width: 100%;
+    background-color: {{ block.settings.header_bg_color }};
+    color: {{ block.settings.header_text_color }};
+    border: none;
+    border-radius: {{ block.settings.header_border_radius }}px;
+    padding: {{ block.settings.header_padding_vertical }}px {{ block.settings.header_padding_horizontal }}px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: left;
+    font-size: {{ block.settings.header_font_size }}px;
+    font-weight: 600;
+  }
+
+  .ai-faq-category-header-{{ ai_gen_id }}:hover {
+    opacity: 0.9;
+  }
+
+  .ai-faq-header-left-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .ai-faq-category-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.category_icon_size }}px;
+    height: {{ block.settings.category_icon_size }}px;
+    flex-shrink: 0;
+  }
+
+  .ai-faq-category-title-{{ ai_gen_id }} {
+    font-size: inherit;
+    font-weight: inherit;
+    margin: 0;
+  }
+
+  .ai-faq-toggle-icon-{{ ai_gen_id }} {
+    width: {{ block.settings.toggle_icon_size }}px;
+    height: {{ block.settings.toggle_icon_size }}px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-faq-category-{{ ai_gen_id }}.active .ai-faq-toggle-icon-{{ ai_gen_id }} {
+    transform: rotate(45deg);
+  }
+
+  .ai-faq-category-content-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .ai-faq-category-{{ ai_gen_id }}.active .ai-faq-category-content-{{ ai_gen_id }} {
+    max-height: 2000px;
+  }
+
+  .ai-faq-questions-{{ ai_gen_id }} {
+    background-color: {{ block.settings.content_bg_color }};
+    border-radius: 0 0 {{ block.settings.header_border_radius }}px {{ block.settings.header_border_radius }}px;
+    padding: {{ block.settings.content_padding }}px;
+  }
+
+  .ai-faq-question-{{ ai_gen_id }} {
+    margin-bottom: {{ block.settings.question_spacing }}px;
+  }
+
+  .ai-faq-question-{{ ai_gen_id }}:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-faq-q-{{ ai_gen_id }} {
+    font-weight: 600;
+    color: {{ block.settings.question_color }};
+    margin: 0 0 8px;
+    font-size: {{ block.settings.question_font_size }}px;
+  }
+
+  .ai-faq-a-{{ ai_gen_id }} {
+    color: {{ block.settings.answer_color }};
+    margin: 0;
+    line-height: 1.6;
+    font-size: {{ block.settings.answer_font_size }}px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-faq-section-{{ ai_gen_id }} {
+      padding: {{ block.settings.mobile_section_padding_top }}px 16px {{ block.settings.mobile_section_padding_bottom }}px;
+    }
+
+    .ai-faq-headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_headline_size }}px;
+      margin-bottom: {{ block.settings.mobile_headline_bottom_spacing }}px;
+    }
+
+    .ai-faq-category-header-{{ ai_gen_id }} {
+      padding: {{ block.settings.mobile_header_padding_vertical }}px {{ block.settings.mobile_header_padding_horizontal }}px;
+      font-size: {{ block.settings.mobile_header_font_size }}px;
+    }
+
+    .ai-faq-questions-{{ ai_gen_id }} {
+      padding: {{ block.settings.mobile_content_padding }}px;
+    }
+
+    .ai-faq-q-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_question_font_size }}px;
+    }
+
+    .ai-faq-a-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_answer_font_size }}px;
+    }
+  }
+{% endstyle %}
+
+<faq-accordion-{{ ai_gen_id }} class="ai-faq-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-faq-container-{{ ai_gen_id }}">
+    <h2 class="ai-faq-headline-{{ ai_gen_id }}">{{ block.settings.headline }}</h2>
+
+    <div class="ai-faq-accordions-{{ ai_gen_id }}">
+      <div class="ai-faq-category-{{ ai_gen_id }}" data-category="refill">
+        <button class="ai-faq-category-header-{{ ai_gen_id }}" aria-expanded="false">
+          <div class="ai-faq-header-left-{{ ai_gen_id }}">
+            <svg class="ai-faq-category-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M12 6v6l4 2"></path>
+            </svg>
+            <h3 class="ai-faq-category-title-{{ ai_gen_id }}">Refill Ring Features</h3>
+          </div>
+          <svg class="ai-faq-toggle-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <div class="ai-faq-category-content-{{ ai_gen_id }}">
+          <div class="ai-faq-questions-{{ ai_gen_id }}">
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: How many bags are in one refill ring?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">About 25 self-sealing bags per ring — up to 1 month depending on use.</p>
+            </div>
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: Are the bags scented or unscented?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">Unscented by default — odor is sealed inside.</p>
+            </div>
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: Will this fit both Trash King bins?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">Yes — choose your size: Signature 17L or Lite 13L.</p>
+            </div>
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: Can I use my own trash bags?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">You can, but you'll lose the auto-seal + auto-reload features.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-faq-category-{{ ai_gen_id }}" data-category="materials">
+        <button class="ai-faq-category-header-{{ ai_gen_id }}" aria-expanded="false">
+          <div class="ai-faq-header-left-{{ ai_gen_id }}">
+            <svg class="ai-faq-category-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+            <h3 class="ai-faq-category-title-{{ ai_gen_id }}">Materials & Care</h3>
+          </div>
+          <svg class="ai-faq-toggle-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <div class="ai-faq-category-content-{{ ai_gen_id }}">
+          <div class="ai-faq-questions-{{ ai_gen_id }}">
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: Are refill rings recyclable?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">Yes — both the ring and bag film are made from recyclable materials.</p>
+            </div>
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: How do I know when to replace the ring?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">A red tab appears when the ring is nearly empty.</p>
+            </div>
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: Do I need to clean anything between swaps?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">No — bags seal and drop away cleanly with zero mess.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-faq-category-{{ ai_gen_id }}" data-category="shipping">
+        <button class="ai-faq-category-header-{{ ai_gen_id }}" aria-expanded="false">
+          <div class="ai-faq-header-left-{{ ai_gen_id }}">
+            <svg class="ai-faq-category-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="3" width="15" height="13"></rect>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+            <h3 class="ai-faq-category-title-{{ ai_gen_id }}">Shipping</h3>
+          </div>
+          <svg class="ai-faq-toggle-icon-{{ ai_gen_id }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+        <div class="ai-faq-category-content-{{ ai_gen_id }}">
+          <div class="ai-faq-questions-{{ ai_gen_id }}">
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: Do I get refills automatically?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">Yes — subscriptions auto-ship your next refill so you never run out.</p>
+            </div>
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: Can I cancel or skip?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">Anytime — skip, pause, or cancel in one tap.</p>
+            </div>
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: How fast is shipping?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">Ships in 1–2 business days; delivery in 3–6 days (US).</p>
+            </div>
+            <div class="ai-faq-question-{{ ai_gen_id }}">
+              <p class="ai-faq-q-{{ ai_gen_id }}">Q: Do you offer free shipping?</p>
+              <p class="ai-faq-a-{{ ai_gen_id }}">Yes — subscriptions ship free, and one-time orders ship free over $150+.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</faq-accordion-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class FaqAccordion{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.categories = this.querySelectorAll('.ai-faq-category-{{ ai_gen_id }}');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.categories.forEach((category) => {
+          const header = category.querySelector('.ai-faq-category-header-{{ ai_gen_id }}');
+          
+          header.addEventListener('click', () => {
+            const isActive = category.classList.contains('active');
+            
+            if (isActive) {
+              category.classList.remove('active');
+              header.setAttribute('aria-expanded', 'false');
+            } else {
+              category.classList.add('active');
+              header.setAttribute('aria-expanded', 'true');
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('faq-accordion-{{ ai_gen_id }}', FaqAccordion{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ accordion",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Still Have Questions?"
+    },
+    {
+      "type": "color",
+      "id": "headline_color",
+      "label": "Color",
+      "default": "#002B5B"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "min": 24,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "label": "Desktop size",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "mobile_headline_size",
+      "min": 20,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile size",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "headline_bottom_spacing",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Desktop bottom spacing",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "mobile_headline_bottom_spacing",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile bottom spacing",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "container_max_width",
+      "min": 600,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Container max width",
+      "default": 950
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Desktop top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Desktop bottom padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_padding_top",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile top padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "mobile_section_padding_bottom",
+      "min": 16,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Mobile bottom padding",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "accordion_spacing",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Space between accordions",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Accordion headers"
+    },
+    {
+      "type": "color",
+      "id": "header_bg_color",
+      "label": "Background",
+      "default": "#002B5B"
+    },
+    {
+      "type": "color",
+      "id": "header_text_color",
+      "label": "Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "header_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "header_font_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Desktop font size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "mobile_header_font_size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "header_padding_vertical",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Desktop vertical padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "header_padding_horizontal",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Desktop horizontal padding",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "mobile_header_padding_vertical",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile vertical padding",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "mobile_header_padding_horizontal",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "category_icon_size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Category icon size",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "toggle_icon_size",
+      "min": 16,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Toggle icon size",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Accordion content"
+    },
+    {
+      "type": "color",
+      "id": "content_bg_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Question text",
+      "default": "#002B5B"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Answer text",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Desktop padding",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "mobile_content_padding",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "question_font_size",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Desktop question size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_question_font_size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile question size",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "answer_font_size",
+      "min": 13,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Desktop answer size",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mobile_answer_font_size",
+      "min": 13,
+      "max": 17,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile answer size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "question_spacing",
+      "min": 12,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Space between questions",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ accordion"
+    }
+  ]
+}
+{% endschema %}

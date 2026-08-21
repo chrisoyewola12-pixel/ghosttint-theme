@@ -1,0 +1,323 @@
+{% doc %}
+  @prompt
+    Create a centered FAQ accordion section on a pure white background (#FFFFFF). At top center add a bold navy headline (#002B5B) reading “Got questions? We’ve got answers.” with a smaller gray (#555555) subheading directly underneath reading “Here’s everything you need to know before you upgrade to the Clenova™ lifestyle.” Below this display a vertical stack of expandable accordion dropdown cards with rounded corners (12–14px), thin light-gray (#E5E7EB) borders, white fills, subtle spacing between items, no shadows. Each row should show the question text in medium-weight navy (#002B5B) on the left with a small chevron icon on the right that rotates on open. Expanded answers appear below in smaller medium-gray body text (#555555). Use these exact Q&A pairs in order: Q1 “How does the Clenova™ auto-seal the trash bag?” A “Our SmartRing™ system automatically seals the bag with heat technology—no tying, no leaks, no mess.” Q2 “How long does the battery last after a full charge?” A “Up to 50+ days with a single USB-C charge.” Q3 “What’s the difference between the Signature and Lite models?” A “Signature 17L – Bigger capacity for kitchens and families. Lite 13L – Compact size for bathrooms, apartments, and offices.” Q4 “Do I need special refill bags?” A “Technically yes. But don’t worry—we already include them. Clenova™ uses SmartRing™ refills that auto-seal and reload your trash bags. It’s how the magic happens. And to make your life easier, we include a 1-month supply right in the box.” Q5 “How easy is it to install new refill rings?” A “Super easy—lift the lid, pop in the SmartRing™, and you’re ready. Takes less than 10 seconds.” Q6 “What if I run out of refill rings?” A “Short answer—you won’t be left hanging. We include a 1-month refill supply with every bin, but if you ever run out, our support team is ready and our refills ship fast in 2–5 business days. Prefer a hands-off experience? Subscribe and save 20%—so you’re always stocked and always saving.” Q7 “What i
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-faq-section-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    padding: 60px 20px;
+    width: 100%;
+  }
+
+  .ai-faq-container-{{ ai_gen_id }} {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .ai-faq-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-faq-headline-{{ ai_gen_id }} {
+    font-size: 32px;
+    font-weight: 700;
+    color: #002B5B;
+    margin: 0 0 12px 0;
+    line-height: 1.3;
+  }
+
+  .ai-faq-subheading-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: #555555;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .ai-faq-list-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .ai-faq-question-{{ ai_gen_id }} {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    gap: 16px;
+  }
+
+  .ai-faq-question-text-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 500;
+    color: #002B5B;
+    margin: 0;
+    flex: 1;
+    line-height: 1.5;
+  }
+
+  .ai-faq-chevron-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-faq-chevron-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    stroke: #002B5B;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-chevron-{{ ai_gen_id }} {
+    transform: rotate(180deg);
+  }
+
+  .ai-faq-answer-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+
+  .ai-faq-answer-content-{{ ai_gen_id }} {
+    padding: 0 24px 20px 24px;
+    font-size: 15px;
+    color: #555555;
+    line-height: 1.7;
+  }
+
+  .ai-faq-item-{{ ai_gen_id }}.active .ai-faq-answer-{{ ai_gen_id }} {
+    max-height: 500px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-faq-section-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+
+    .ai-faq-headline-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-faq-subheading-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+
+    .ai-faq-question-{{ ai_gen_id }} {
+      padding: 16px 20px;
+    }
+
+    .ai-faq-question-text-{{ ai_gen_id }} {
+      font-size: 15px;
+    }
+
+    .ai-faq-answer-content-{{ ai_gen_id }} {
+      padding: 0 20px 16px 20px;
+      font-size: 14px;
+    }
+  }
+{% endstyle %}
+
+<faq-accordion-{{ ai_gen_id }} class="ai-faq-section-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-faq-container-{{ ai_gen_id }}">
+    <div class="ai-faq-header-{{ ai_gen_id }}">
+      <h2 class="ai-faq-headline-{{ ai_gen_id }}">Got questions? We've got answers.</h2>
+      <p class="ai-faq-subheading-{{ ai_gen_id }}">Here's everything you need to know before you upgrade to the Clenova™ lifestyle.</p>
+    </div>
+
+    <div class="ai-faq-list-{{ ai_gen_id }}">
+      <div class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
+        <button class="ai-faq-question-{{ ai_gen_id }}" aria-expanded="false">
+          <span class="ai-faq-question-text-{{ ai_gen_id }}">How does the Clenova™ auto-seal the trash bag?</span>
+          <span class="ai-faq-chevron-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </button>
+        <div class="ai-faq-answer-{{ ai_gen_id }}">
+          <div class="ai-faq-answer-content-{{ ai_gen_id }}">
+            Our SmartRing™ system automatically seals the bag with heat technology—no tying, no leaks, no mess.
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
+        <button class="ai-faq-question-{{ ai_gen_id }}" aria-expanded="false">
+          <span class="ai-faq-question-text-{{ ai_gen_id }}">How long does the battery last after a full charge?</span>
+          <span class="ai-faq-chevron-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </button>
+        <div class="ai-faq-answer-{{ ai_gen_id }}">
+          <div class="ai-faq-answer-content-{{ ai_gen_id }}">
+            Up to 50+ days with a single USB-C charge.
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
+        <button class="ai-faq-question-{{ ai_gen_id }}" aria-expanded="false">
+          <span class="ai-faq-question-text-{{ ai_gen_id }}">What's the difference between the Signature and Lite models?</span>
+          <span class="ai-faq-chevron-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </button>
+        <div class="ai-faq-answer-{{ ai_gen_id }}">
+          <div class="ai-faq-answer-content-{{ ai_gen_id }}">
+            Signature 17L – Bigger capacity for kitchens and families. Lite 13L – Compact size for bathrooms, apartments, and offices.
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
+        <button class="ai-faq-question-{{ ai_gen_id }}" aria-expanded="false">
+          <span class="ai-faq-question-text-{{ ai_gen_id }}">Do I need special refill bags?</span>
+          <span class="ai-faq-chevron-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </button>
+        <div class="ai-faq-answer-{{ ai_gen_id }}">
+          <div class="ai-faq-answer-content-{{ ai_gen_id }}">
+            Technically yes. But don't worry—we already include them. Clenova™ uses SmartRing™ refills that auto-seal and reload your trash bags. It's how the magic happens. And to make your life easier, we include a 1-month supply right in the box.
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
+        <button class="ai-faq-question-{{ ai_gen_id }}" aria-expanded="false">
+          <span class="ai-faq-question-text-{{ ai_gen_id }}">How easy is it to install new refill rings?</span>
+          <span class="ai-faq-chevron-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </button>
+        <div class="ai-faq-answer-{{ ai_gen_id }}">
+          <div class="ai-faq-answer-content-{{ ai_gen_id }}">
+            Super easy—lift the lid, pop in the SmartRing™, and you're ready. Takes less than 10 seconds.
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-faq-item-{{ ai_gen_id }}" data-faq-item>
+        <button class="ai-faq-question-{{ ai_gen_id }}" aria-expanded="false">
+          <span class="ai-faq-question-text-{{ ai_gen_id }}">What if I run out of refill rings?</span>
+          <span class="ai-faq-chevron-{{ ai_gen_id }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </button>
+        <div class="ai-faq-answer-{{ ai_gen_id }}">
+          <div class="ai-faq-answer-content-{{ ai_gen_id }}">
+            Short answer—you won't be left hanging. We include a 1-month refill supply with every bin, but if you ever run out, our support team is ready and our refills ship fast in 2–5 business days. Prefer a hands-off experience? Subscribe and save 20%—so you're always stocked and always saving.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</faq-accordion-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class FaqAccordion{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.items = this.querySelectorAll('[data-faq-item]');
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.items.forEach((item) => {
+          const button = item.querySelector('.ai-faq-question-{{ ai_gen_id }}');
+          const answer = item.querySelector('.ai-faq-answer-{{ ai_gen_id }}');
+
+          button.addEventListener('click', () => {
+            const isActive = item.classList.contains('active');
+
+            this.items.forEach((otherItem) => {
+              if (otherItem !== item) {
+                otherItem.classList.remove('active');
+                const otherButton = otherItem.querySelector('.ai-faq-question-{{ ai_gen_id }}');
+                otherButton.setAttribute('aria-expanded', 'false');
+              }
+            });
+
+            if (isActive) {
+              item.classList.remove('active');
+              button.setAttribute('aria-expanded', 'false');
+            } else {
+              item.classList.add('active');
+              button.setAttribute('aria-expanded', 'true');
+            }
+          });
+        });
+      }
+    }
+
+    customElements.define('faq-accordion-{{ ai_gen_id }}', FaqAccordion{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ accordion",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Section spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ accordion"
+    }
+  ]
+}
+{% endschema %}

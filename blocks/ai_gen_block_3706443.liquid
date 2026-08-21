@@ -1,0 +1,418 @@
+{% doc %}
+  @prompt
+    Create a full-width hero section for a smart car product website.
+    
+    The section should use a background video instead of an image. The video should autoplay, loop continuously, be muted by default, and play inline on mobile. It should fill the entire hero area (cover style) without distortion and have a subtle dark overlay for text readability.
+    
+    The video content should show a close-up cinematic shot of a hand holding a small remote control aimed at a modern black car, suggesting instant window tint adjustment. The motion should be minimal and smooth to avoid distraction (e.g., slight hand movement or ambient garage lighting).
+    
+    On the left side, overlay the following content:
+    
+    A small trust line at the top: “4.9 ★★★★★ | 10,000+ Vehicles Upgraded”
+    
+    A large bold headline split across multiple lines:
+    “Your Tint. Your Privacy. One Click.”
+    
+    A short supporting paragraph explaining smart PDLC window tint that adjusts from clear to dark in seconds using a remote.
+    
+    A primary rounded CTA button labeled “Upgrade My Car”
+    
+    A small reassurance line below the button: “Free Shipping | 30-Day Money Back Guarantee”
+    
+    Typography should be modern, bold, and high-contrast (white text).
+    Buttons should be soft-rounded, premium, and clearly clickable.
+    
+    Ensure the section is:
+    
+    Fully responsive
+    
+    Optimized for performance (lazy-load video, fallback image option)
+    
+    Accessible (contrast, readable text, keyboard focus on CTA)
+    
+    Include settings in the section schema for:
+    
+    Uploading/replacing the background video
+    
+    Uploading a fallback background image
+    
+    Editing headline, subtext, CTA text, and CTA link
+    
+    Adjusting overlay darkness, Refine the existing hero so the text styling, spacing, alignment, and hierarchy match the reference hero exactly, without changing the autoplay looping background video. The overall feel must be premium, minimal, and Apple-style. Keep all content left-aligned, vertically centered, and slightly inset from the left edge with generous padding. Place a small, subtle rating row above the headline reading “4.9 ★★★★★ | 10,000+ Vehicles Upgraded” in #FFFFFF at ~80–85% opacity with small stars and tight spacing. The headline must read exactly “Your Tint. Your Privacy. One Click.”, split naturally across multiple lines, extra-bold, large display size, tight line height, and pure #FFFFFF at full opacity with no effects. Below it, add the description text “Smart PDLC window film that lets you adjust your car’s tint in real time using a remote — from clear to dark in seconds.” in smaller size, comfortable line spacing, constrained width, and #FFFFFF at ~85–90% opacity. Place a primary CTA button directly beneath the description with clear spacing, labeled “Upgrade My Car”, background #0B0B0B, text #FFFFFF, no gradients, soft rounded corners, medium-large size, and a very subtle lighter hover state. Below the button, add understated trust text reading “Free Shipping | 30-Day Money Back Guarantee” in #4B5563. Maintain clean vertical rhythm between all elements so nothing feels crowded, enforce the color palette strictly (#FFFFFF, #0B0B0B, #4B5563 only), and ensure the same hierarchy and readability carry through on mobile, resulting in a hero that is visually indistinguishable from the reference in text style, balance, and polish.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-video-hero-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background-color: #000000;
+  }
+
+  .ai-video-hero__video-wrapper-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .ai-video-hero__video-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-video-hero__fallback-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-video-hero__overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, {{ block.settings.overlay_opacity | divided_by: 100.0 }});
+    z-index: 2;
+  }
+
+  .ai-video-hero__content-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    max-width: {{ block.settings.page_width }}px;
+    margin: 0 auto;
+    padding: 100px 60px;
+  }
+
+  .ai-video-hero__content-{{ ai_gen_id }} {
+    max-width: 580px;
+  }
+
+  .ai-video-hero__trust-line-{{ ai_gen_id }} {
+    color: #FFFFFF;
+    opacity: 0.82;
+    font-size: 13px;
+    margin-bottom: 20px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+  }
+
+  .ai-video-hero__trust-line-{{ ai_gen_id }} p {
+    margin: 0;
+  }
+
+  .ai-video-hero__headline-{{ ai_gen_id }} {
+    color: #FFFFFF;
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1.05;
+    margin: 0 0 28px 0;
+    letter-spacing: -0.03em;
+  }
+
+  .ai-video-hero__headline-{{ ai_gen_id }} p {
+    margin: 0;
+  }
+
+  .ai-video-hero__subtext-{{ ai_gen_id }} {
+    color: #FFFFFF;
+    opacity: 0.88;
+    font-size: 17px;
+    line-height: 1.65;
+    margin-bottom: 36px;
+    max-width: 520px;
+    font-weight: 400;
+  }
+
+  .ai-video-hero__subtext-{{ ai_gen_id }} p {
+    margin: 0;
+  }
+
+  .ai-video-hero__cta-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 17px 44px;
+    background-color: #787878;
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: background-color 0.25s ease;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.2px;
+  }
+
+  .ai-video-hero__cta-{{ ai_gen_id }}:hover {
+    background-color: #0B0B0B;
+  }
+
+  .ai-video-hero__reassurance-{{ ai_gen_id }} {
+    color: #FFFFFF;
+    font-size: 13px;
+    margin-top: 24px;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+  }
+
+  .ai-video-hero__reassurance-{{ ai_gen_id }} p {
+    margin: 0;
+  }
+
+  .ai-video-hero__placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+  }
+
+  .ai-video-hero__placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.3;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-video-hero-{{ ai_gen_id }} {
+      min-height: 90vh;
+    }
+
+    .ai-video-hero__content-wrapper-{{ ai_gen_id }} {
+      padding: 80px 40px;
+    }
+
+    .ai-video-hero__headline-{{ ai_gen_id }} {
+      font-size: 48px;
+      margin-bottom: 24px;
+    }
+
+    .ai-video-hero__subtext-{{ ai_gen_id }} {
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+
+    .ai-video-hero__cta-{{ ai_gen_id }} {
+      padding: 16px 40px;
+      font-size: 15px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-video-hero-{{ ai_gen_id }} {
+      min-height: 85vh;
+    }
+
+    .ai-video-hero__content-wrapper-{{ ai_gen_id }} {
+      padding: 60px 24px;
+    }
+
+    .ai-video-hero__headline-{{ ai_gen_id }} {
+      font-size: 40px;
+      margin-bottom: 20px;
+      line-height: 1.08;
+    }
+
+    .ai-video-hero__subtext-{{ ai_gen_id }} {
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .ai-video-hero__cta-{{ ai_gen_id }} {
+      padding: 15px 36px;
+      font-size: 15px;
+    }
+
+    .ai-video-hero__trust-line-{{ ai_gen_id }} {
+      font-size: 12px;
+      margin-bottom: 18px;
+    }
+
+    .ai-video-hero__reassurance-{{ ai_gen_id }} {
+      font-size: 12px;
+      margin-top: 20px;
+    }
+  }
+{% endstyle %}
+
+<ai-video-hero-{{ ai_gen_id }} class="ai-video-hero-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-video-hero__video-wrapper-{{ ai_gen_id }}">
+    {% if block.settings.background_video %}
+      <video
+        class="ai-video-hero__video-{{ ai_gen_id }}"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        aria-label="Background video showing smart car tint control"
+      >
+        <source src="{{ block.settings.background_video }}" type="video/mp4">
+        {% if block.settings.fallback_image %}
+          <img
+            src="{{ block.settings.fallback_image | image_url: width: 2000 }}"
+            alt="{{ block.settings.fallback_image.alt | escape }}"
+            class="ai-video-hero__fallback-image-{{ ai_gen_id }}"
+            loading="eager"
+          >
+        {% endif %}
+      </video>
+    {% elsif block.settings.fallback_image %}
+      <img
+        src="{{ block.settings.fallback_image | image_url: width: 2000 }}"
+        alt="{{ block.settings.fallback_image.alt | escape }}"
+        class="ai-video-hero__fallback-image-{{ ai_gen_id }}"
+        loading="eager"
+        width="{{ block.settings.fallback_image.width }}"
+        height="{{ block.settings.fallback_image.height }}"
+      >
+    {% else %}
+      <div class="ai-video-hero__placeholder-{{ ai_gen_id }}">
+        {{ 'hero-apparel-1' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="ai-video-hero__overlay-{{ ai_gen_id }}"></div>
+
+  <div class="ai-video-hero__content-wrapper-{{ ai_gen_id }}">
+    <div class="ai-video-hero__content-{{ ai_gen_id }}">
+      <div class="ai-video-hero__trust-line-{{ ai_gen_id }}">
+        4.9 ★★★★★ | 10,000+ Vehicles Upgraded
+      </div>
+
+      <h1 class="ai-video-hero__headline-{{ ai_gen_id }}">
+        Your Tint. Your Privacy. One Click.
+      </h1>
+
+      <div class="ai-video-hero__subtext-{{ ai_gen_id }}">
+        Smart PDLC window film that lets you adjust your car's tint in real time using a remote — from clear to dark in seconds.
+      </div>
+
+      <a
+        href="{{ block.settings.cta_link }}"
+        class="ai-video-hero__cta-{{ ai_gen_id }}"
+      >
+        Upgrade My Car
+      </a>
+
+      <div class="ai-video-hero__reassurance-{{ ai_gen_id }}">
+        Free Shipping | 30-Day Money Back Guarantee
+      </div>
+    </div>
+  </div>
+</ai-video-hero-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AIVideoHero{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.video = this.querySelector('.ai-video-hero__video-{{ ai_gen_id }}');
+      }
+
+      connectedCallback() {
+        if (this.video) {
+          this.ensureVideoPlays();
+          this.handleVisibilityChange();
+        }
+      }
+
+      ensureVideoPlays() {
+        const playPromise = this.video.play();
+        
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            this.video.muted = true;
+            this.video.play();
+          });
+        }
+      }
+
+      handleVisibilityChange() {
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            this.video.pause();
+          } else {
+            this.video.play();
+          }
+        });
+      }
+    }
+
+    customElements.define('ai-video-hero-{{ ai_gen_id }}', AIVideoHero{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Video hero",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Video"
+    },
+    {
+      "type": "url",
+      "id": "background_video",
+      "label": "Background video URL"
+    },
+    {
+      "type": "image_picker",
+      "id": "fallback_image",
+      "label": "Fallback image"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay darkness",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "url",
+      "id": "cta_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "page_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 1400
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video hero"
+    }
+  ]
+}
+{% endschema %}

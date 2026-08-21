@@ -1,0 +1,195 @@
+<section class="merged-video-hero">
+  <!-- Background videos -->
+  <div class="merged-video-bg">
+    {% if section.settings.video_desktop != blank %}
+      <video
+        class="merged-video merged-video-desktop"
+        autoplay
+        loop
+        muted
+        playsinline
+        preload="none"
+        poster="{{ section.settings.fallback_desktop | image_url: width: 2000 }}"
+      >
+        <source src="{{ section.settings.video_desktop }}" type="video/mp4">
+      </video>
+    {% endif %}
+
+    {% if section.settings.video_mobile != blank %}
+      <video
+        class="merged-video merged-video-mobile"
+        autoplay
+        loop
+        muted
+        playsinline
+        preload="none"
+        poster="{{ section.settings.fallback_mobile | image_url: width: 1000 }}"
+      >
+        <source src="{{ section.settings.video_mobile }}" type="video/mp4">
+      </video>
+    {% endif %}
+
+    <div class="merged-video-overlay"
+         style="background: rgba(0,0,0,{{ section.settings.overlay_opacity | divided_by: 100.0 }});">
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="merged-video-container">
+    <div class="merged-video-content">
+
+      <div class="merged-rating">
+        <span class="rating-number">4.9</span>
+        <span class="rating-stars">★★★★★</span>
+        <span class="rating-text">10,000+ Homes Upgraded</span>
+      </div>
+
+      <h1 class="merged-headline">
+        Never Tie a<br>Trash Bag Again
+      </h1>
+
+      <p class="merged-subtext">
+        Experience the revolutionary Clenova™ system that makes trash disposal effortless.
+      </p>
+
+      <a href="{{ section.settings.cta_link }}" class="merged-cta">
+        {{ section.settings.cta_text }}
+      </a>
+
+      <div class="merged-reassurance">
+        Free Shipping | 30-Day Money Back Guarantee
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<style>
+.merged-video-hero {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.merged-video-bg,
+.merged-video {
+  position: absolute;
+  inset: 0;
+}
+
+.merged-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.merged-video-mobile { display: none; }
+
+.merged-video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.merged-video-container {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1400px;
+  padding: 100px 60px;
+  margin: 0 auto;
+}
+
+.merged-video-content {
+  max-width: 580px;
+}
+
+.merged-rating {
+  display: flex;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.rating-number { color: #fff; font-weight: 600; }
+.rating-stars { color: #0066FF; letter-spacing: 2px; }
+.rating-text { color: #fff; opacity: .85; }
+
+.merged-headline {
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin-bottom: 28px;
+}
+
+.merged-subtext {
+  font-size: 17px;
+  line-height: 1.65;
+  color: #fff;
+  opacity: .88;
+  margin-bottom: 36px;
+}
+
+.merged-cta {
+  display: inline-flex;
+  padding: 17px 44px;
+  background: #0B0B0B;
+  color: #fff;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.merged-reassurance {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #4B5563;
+}
+
+/* Mobile */
+@media (max-width: 749px) {
+  .merged-video-hero { min-height: 90vh; }
+  .merged-video-desktop { display: none; }
+  .merged-video-mobile { display: block; }
+
+  .merged-video-container {
+    padding: 60px 24px;
+  }
+
+  .merged-headline { font-size: 40px; }
+  .merged-subtext { font-size: 15px; }
+}
+</style>
+
+{% schema %}
+{
+  "name": "Video Hero (Autoplay)",
+  "settings": [
+    { "type": "text", "id": "video_desktop", "label": "Desktop video URL" },
+    { "type": "text", "id": "video_mobile", "label": "Mobile video URL" },
+    { "type": "image_picker", "id": "fallback_desktop", "label": "Desktop fallback image" },
+    { "type": "image_picker", "id": "fallback_mobile", "label": "Mobile fallback image" },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "label": "Overlay opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 40
+    },
+    { "type": "text", "id": "cta_text", "label": "CTA text", "default": "Get Your Clenova™" },
+    { "type": "url", "id": "cta_link", "label": "CTA link" }
+  ],
+  "presets": [
+    { "name": "Video Hero (Autoplay + Clean Layout)" }
+  ]
+}
+{% endschema %}

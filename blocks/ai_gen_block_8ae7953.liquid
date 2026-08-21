@@ -1,0 +1,606 @@
+{% doc %}
+  @prompt
+    Create a full-width hero section that uses one uploaded background image covering the entire section (no solid background colors). Add settings for desktop and mobile min-height sliders (e.g., desktop 600–900px, mobile 500–800px), plus controls for desktop and mobile vertical alignment of the text block (top/center/bottom) and desktop and mobile background position (top/center/bottom/left/right) so the merchant can freely adjust how much of the product is visible on smaller screens. On all breakpoints, the text sits in a content box that never overlaps the bottom of the product when padding is adjusted. In the text area, add a rating row: “4.9” in gray #DDDDDD, followed by 5 blue stars in #0066FF, then “10,000+ Homes Upgraded.” in gray #DDDDDD. Below that add a bold two-line headline, line 1 “Never Tie a” and line 2 “Trash Bag Again.” both in white #FFFFFF. Under the headline add a short paragraph in light gray #E6E6E6 describing the product. Below the paragraph add a wide pill-shaped CTA button labeled “Get Your Royal Bin™” with background #4A8DFF, white text #FFFFFF, and fully rounded corners (border-radius 9999px). Under the button add small trust text “Free Shipping | 30-Day Money Back Guarantee” in light gray #CCCCCC. Keep fonts modern and clean, all text left-aligned on desktop but option to center-align on mobile, and ensure the hero’s right side on desktop remains visually open to showcase the background image while mobile uses the height and alignment controls to mimic a tall, centered hero like the Trash King mobile example.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-hero-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: {{ block.settings.desktop_min_height }}px;
+    background-image: {% if block.settings.background_image %}
+      url('{{ block.settings.background_image | image_url: width: block.settings.desktop_image_width }}')
+    {% elsif block.settings.background_image_mobile %}
+      url('{{ block.settings.background_image_mobile | image_url: width: block.settings.desktop_image_width }}')
+    {% else %}
+      none
+    {% endif %};
+    background-size: cover;
+    background-position: {{ block.settings.desktop_bg_position }};
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: {{ block.settings.desktop_vertical_align }};
+    overflow: hidden;
+  }
+
+  .ai-hero-container-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: {{ settings.page_width }}px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    display: flex;
+    align-items: {{ block.settings.desktop_vertical_align }};
+  }
+
+  .ai-hero-content-{{ ai_gen_id }} {
+    max-width: 600px;
+    text-align: {{ block.settings.desktop_text_align }};
+  }
+
+  .ai-hero-rating-row-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    {% if block.settings.desktop_text_align == 'center' %}
+      justify-content: center;
+    {% elsif block.settings.desktop_text_align == 'right' %}
+      justify-content: flex-end;
+    {% else %}
+      justify-content: flex-start;
+    {% endif %}
+  }
+
+  .ai-hero-rating-number-{{ ai_gen_id }} {
+    font-size: 16px;
+    font-weight: 600;
+    color: #DDDDDD;
+    line-height: 1;
+  }
+
+  .ai-hero-stars-{{ ai_gen_id }} {
+    display: flex;
+    gap: 2px;
+  }
+
+  .ai-hero-star-{{ ai_gen_id }} {
+    width: 18px;
+    height: 18px;
+    fill: #555555;
+  }
+
+  .ai-hero-rating-text-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #DDDDDD;
+    line-height: 1;
+  }
+
+  .ai-hero-headline-{{ ai_gen_id }} {
+    margin: 0 0 20px;
+    line-height: 1.1;
+  }
+
+  .ai-hero-headline-line-{{ ai_gen_id }} {
+    display: block;
+    font-size: {{ block.settings.headline_size }}px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0;
+  }
+
+  .ai-hero-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    line-height: 1.6;
+    color: #E6E6E6;
+    margin: 0 0 24px;
+  }
+
+  .ai-hero-cta-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 16px 40px;
+    background-color: #555555;
+    color: #FFFFFF;
+    font-size: {{ block.settings.button_size }}px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 9999px;
+    transition: all 0.3s ease;
+    margin-bottom: 16px;
+  }
+
+  .ai-hero-cta-{{ ai_gen_id }}:hover {
+    background-color: #555555;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(74, 141, 255, 0.3);
+  }
+
+  .ai-hero-trust-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: #CCCCCC;
+    margin: 0;
+  }
+
+  .ai-hero-placeholder-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: {{ block.settings.desktop_min_height }}px;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-hero-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 800px;
+    max-height: 600px;
+    opacity: 0.3;
+  }
+
+  .ai-hero-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 24px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    font-size: 14px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-hero-{{ ai_gen_id }} {
+      min-height: {{ block.settings.mobile_min_height }}px;
+      background-position: {{ block.settings.mobile_bg_position }};
+      align-items: {{ block.settings.mobile_vertical_align }};
+      {% if block.settings.background_image_mobile %}
+        background-image: url('{{ block.settings.background_image_mobile | image_url: width: block.settings.mobile_image_width }}');
+      {% endif %}
+    }
+
+    .ai-hero-container-{{ ai_gen_id }} {
+      padding: 40px 24px;
+      align-items: {{ block.settings.mobile_vertical_align }};
+    }
+
+    .ai-hero-content-{{ ai_gen_id }} {
+      max-width: 100%;
+      text-align: {{ block.settings.mobile_text_align }};
+    }
+
+    .ai-hero-rating-row-{{ ai_gen_id }} {
+      {% if block.settings.mobile_text_align == 'center' %}
+        justify-content: center;
+      {% elsif block.settings.mobile_text_align == 'right' %}
+        justify-content: flex-end;
+      {% else %}
+        justify-content: flex-start;
+      {% endif %}
+    }
+
+    .ai-hero-headline-line-{{ ai_gen_id }} {
+      font-size: {{ block.settings.headline_size | times: 0.7 }}px;
+    }
+
+    .ai-hero-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_size | times: 0.9 }}px;
+    }
+
+    .ai-hero-cta-{{ ai_gen_id }} {
+      font-size: {{ block.settings.button_size | times: 0.9 }}px;
+      padding: 14px 32px;
+    }
+
+    .ai-hero-placeholder-{{ ai_gen_id }} {
+      min-height: {{ block.settings.mobile_min_height }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-hero-rating-number-{{ ai_gen_id }} {
+      font-size: 14px;
+    }
+
+    .ai-hero-star-{{ ai_gen_id }} {
+      width: 16px;
+      height: 16px;
+    }
+
+    .ai-hero-rating-text-{{ ai_gen_id }} {
+      font-size: 12px;
+    }
+
+    .ai-hero-trust-{{ ai_gen_id }} {
+      font-size: 11px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-hero-wrapper-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.background_image or block.settings.background_image_mobile %}
+    <div class="ai-hero-{{ ai_gen_id }}">
+      <div class="ai-hero-container-{{ ai_gen_id }}">
+        <div class="ai-hero-content-{{ ai_gen_id }}">
+          <div class="ai-hero-rating-row-{{ ai_gen_id }}">
+            <span class="ai-hero-rating-number-{{ ai_gen_id }}">{{ block.settings.rating_number }}</span>
+            <div class="ai-hero-stars-{{ ai_gen_id }}">
+              {% for i in (1..5) %}
+                <svg class="ai-hero-star-{{ ai_gen_id }}" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              {% endfor %}
+            </div>
+            <span class="ai-hero-rating-text-{{ ai_gen_id }}">{{ block.settings.rating_text }}</span>
+          </div>
+
+          <h1 class="ai-hero-headline-{{ ai_gen_id }}">
+            <span class="ai-hero-headline-line-{{ ai_gen_id }}">{{ block.settings.headline_line_1 }}</span>
+            <span class="ai-hero-headline-line-{{ ai_gen_id }}">{{ block.settings.headline_line_2 }}</span>
+          </h1>
+
+          <p class="ai-hero-description-{{ ai_gen_id }}">
+            {{ block.settings.description }}
+          </p>
+
+          {% if block.settings.cta_url != blank %}
+            <a href="{{ block.settings.cta_url }}" class="ai-hero-cta-{{ ai_gen_id }}">
+              {{ block.settings.cta_text }}
+            </a>
+          {% else %}
+            <span class="ai-hero-cta-{{ ai_gen_id }}" style="cursor: default;">
+              {{ block.settings.cta_text }}
+            </span>
+          {% endif %}
+
+          <p class="ai-hero-trust-{{ ai_gen_id }}">
+            {{ block.settings.trust_text }}
+          </p>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <div class="ai-hero-placeholder-{{ ai_gen_id }}">
+      {{ 'hero-apparel-1' | placeholder_svg_tag }}
+      <div class="ai-hero-empty-state-{{ ai_gen_id }}">
+        Add a background image to get started
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Hero section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Desktop background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_mobile",
+      "label": "Mobile background image (optional)"
+    },
+    {
+      "type": "number",
+      "id": "desktop_image_width",
+      "label": "Desktop image width (px)",
+      "default": 2400
+    },
+    {
+      "type": "number",
+      "id": "mobile_image_width",
+      "label": "Mobile image width (px)",
+      "default": 1200
+    },
+    {
+      "type": "header",
+      "content": "Desktop layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_min_height",
+      "min": 600,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "label": "Minimum height",
+      "default": 750
+    },
+    {
+      "type": "select",
+      "id": "desktop_vertical_align",
+      "label": "Vertical alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "desktop_bg_position",
+      "label": "Background position",
+      "options": [
+        {
+          "value": "top left",
+          "label": "Top left"
+        },
+        {
+          "value": "top center",
+          "label": "Top center"
+        },
+        {
+          "value": "top right",
+          "label": "Top right"
+        },
+        {
+          "value": "center left",
+          "label": "Center left"
+        },
+        {
+          "value": "center center",
+          "label": "Center center"
+        },
+        {
+          "value": "center right",
+          "label": "Center right"
+        },
+        {
+          "value": "bottom left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom center",
+          "label": "Bottom center"
+        },
+        {
+          "value": "bottom right",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "select",
+      "id": "desktop_text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Mobile layout"
+    },
+    {
+      "type": "range",
+      "id": "mobile_min_height",
+      "min": 500,
+      "max": 800,
+      "step": 50,
+      "unit": "px",
+      "label": "Minimum height",
+      "default": 650
+    },
+    {
+      "type": "select",
+      "id": "mobile_vertical_align",
+      "label": "Vertical alignment",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "flex-end",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "mobile_bg_position",
+      "label": "Background position",
+      "options": [
+        {
+          "value": "top left",
+          "label": "Top left"
+        },
+        {
+          "value": "top center",
+          "label": "Top center"
+        },
+        {
+          "value": "top right",
+          "label": "Top right"
+        },
+        {
+          "value": "center left",
+          "label": "Center left"
+        },
+        {
+          "value": "center center",
+          "label": "Center center"
+        },
+        {
+          "value": "center right",
+          "label": "Center right"
+        },
+        {
+          "value": "bottom left",
+          "label": "Bottom left"
+        },
+        {
+          "value": "bottom center",
+          "label": "Bottom center"
+        },
+        {
+          "value": "bottom right",
+          "label": "Bottom right"
+        }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "select",
+      "id": "mobile_text_align",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Rating row"
+    },
+    {
+      "type": "text",
+      "id": "rating_number",
+      "label": "Rating number",
+      "default": "4.9"
+    },
+    {
+      "type": "text",
+      "id": "rating_text",
+      "label": "Rating text",
+      "default": "10,000+ Homes Upgraded"
+    },
+    {
+      "type": "header",
+      "content": "Headline"
+    },
+    {
+      "type": "text",
+      "id": "headline_line_1",
+      "label": "Headline line 1",
+      "default": "Never Tie a"
+    },
+    {
+      "type": "text",
+      "id": "headline_line_2",
+      "label": "Headline line 2",
+      "default": "Trash Bag Again"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "min": 32,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Headline size",
+      "default": 56
+    },
+    {
+      "type": "header",
+      "content": "Description"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "The revolutionary trash can that automatically seals and changes bags for you. Say goodbye to messy bag changes forever."
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Description size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Call to action"
+    },
+    {
+      "type": "text",
+      "id": "cta_text",
+      "label": "Button text",
+      "default": "Get Your Royal Bin™"
+    },
+    {
+      "type": "url",
+      "id": "cta_url",
+      "label": "Button link"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "min": 14,
+      "max": 22,
+      "step": 1,
+      "unit": "px",
+      "label": "Button text size",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Trust badges"
+    },
+    {
+      "type": "text",
+      "id": "trust_text",
+      "label": "Trust text",
+      "default": "Free Shipping | 30-Day Money Back Guarantee"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero section"
+    }
+  ]
+}
+{% endschema %}

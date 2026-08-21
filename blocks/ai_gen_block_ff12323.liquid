@@ -1,0 +1,362 @@
+{% doc %}
+  @prompt
+    Create a compact Ghost Tints benefits section that displays all three benefits (Instant Privacy, SPF Protection, and Heat Rejection) in a single row on mobile without scrolling. The section must have a solid black (#000000) background, small icons above each benefit title, white text, minimal padding and spacing, and fit entirely within a mobile screen viewport. The design should match a sleek, dark automotive tint brand aesthetic.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-benefits-compact-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.section_padding }}px {{ block.settings.horizontal_padding }}px;
+  }
+
+  .ai-benefits-compact__container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: {{ block.settings.gap_between_items }}px;
+    max-width: 100%;
+  }
+
+  .ai-benefits-compact__item-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: {{ block.settings.icon_text_gap }}px;
+  }
+
+  .ai-benefits-compact__icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    flex-shrink: 0;
+  }
+
+  .ai-benefits-compact__icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    fill: none;
+    stroke: {{ block.settings.icon_color }};
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ai-benefits-compact__title-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: {{ block.settings.title_weight }};
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .ai-benefits-compact__description-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.description_size }}px;
+    margin: 0;
+    line-height: 1.3;
+    opacity: {{ block.settings.description_opacity | divided_by: 100.0 }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-benefits-compact__container-{{ ai_gen_id }} {
+      gap: {{ block.settings.mobile_gap }}px;
+    }
+
+    .ai-benefits-compact__icon-{{ ai_gen_id }} {
+      width: {{ block.settings.mobile_icon_size }}px;
+      height: {{ block.settings.mobile_icon_size }}px;
+    }
+
+    .ai-benefits-compact__title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_title_size }}px;
+    }
+
+    .ai-benefits-compact__description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.mobile_description_size }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-benefits-compact-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-benefits-compact__container-{{ ai_gen_id }}">
+    <div class="ai-benefits-compact__item-{{ ai_gen_id }}">
+      <div class="ai-benefits-compact__icon-{{ ai_gen_id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+      </div>
+      <h3 class="ai-benefits-compact__title-{{ ai_gen_id }}">{{ block.settings.benefit_1_title }}</h3>
+      {% if block.settings.show_descriptions %}
+        <p class="ai-benefits-compact__description-{{ ai_gen_id }}">{{ block.settings.benefit_1_description }}</p>
+      {% endif %}
+    </div>
+
+    <div class="ai-benefits-compact__item-{{ ai_gen_id }}">
+      <div class="ai-benefits-compact__icon-{{ ai_gen_id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+      </div>
+      <h3 class="ai-benefits-compact__title-{{ ai_gen_id }}">{{ block.settings.benefit_2_title }}</h3>
+      {% if block.settings.show_descriptions %}
+        <p class="ai-benefits-compact__description-{{ ai_gen_id }}">{{ block.settings.benefit_2_description }}</p>
+      {% endif %}
+    </div>
+
+    <div class="ai-benefits-compact__item-{{ ai_gen_id }}">
+      <div class="ai-benefits-compact__icon-{{ ai_gen_id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="12" y1="18" x2="12" y2="12"></line>
+          <line x1="9" y1="15" x2="15" y2="15"></line>
+        </svg>
+      </div>
+      <h3 class="ai-benefits-compact__title-{{ ai_gen_id }}">{{ block.settings.benefit_3_title }}</h3>
+      {% if block.settings.show_descriptions %}
+        <p class="ai-benefits-compact__description-{{ ai_gen_id }}">{{ block.settings.benefit_3_description }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Ghost Tints benefits",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Top and bottom padding",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "horizontal_padding",
+      "label": "Left and right padding",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "gap_between_items",
+      "label": "Gap between items",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "mobile_gap",
+      "label": "Mobile gap between items",
+      "min": 2,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "icon_text_gap",
+      "label": "Gap between icon and text",
+      "min": 2,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Icon style"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 15,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "range",
+      "id": "mobile_icon_size",
+      "label": "Mobile icon size",
+      "min": 10,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Text style"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 10,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "mobile_title_size",
+      "label": "Mobile title size",
+      "min": 8,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "title_weight",
+      "label": "Title weight",
+      "min": 400,
+      "max": 900,
+      "step": 100,
+      "default": 700
+    },
+    {
+      "type": "checkbox",
+      "id": "show_descriptions",
+      "label": "Show descriptions",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "label": "Description size",
+      "min": 8,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "mobile_description_size",
+      "label": "Mobile description size",
+      "min": 6,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "description_opacity",
+      "label": "Description opacity",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Benefit 1"
+    },
+    {
+      "type": "text",
+      "id": "benefit_1_title",
+      "label": "Title",
+      "default": "Instant Privacy"
+    },
+    {
+      "type": "text",
+      "id": "benefit_1_description",
+      "label": "Description",
+      "default": "Block unwanted views"
+    },
+    {
+      "type": "header",
+      "content": "Benefit 2"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2_title",
+      "label": "Title",
+      "default": "SPF Protection"
+    },
+    {
+      "type": "text",
+      "id": "benefit_2_description",
+      "label": "Description",
+      "default": "99% UV ray blocking"
+    },
+    {
+      "type": "header",
+      "content": "Benefit 3"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3_title",
+      "label": "Title",
+      "default": "Heat Rejection"
+    },
+    {
+      "type": "text",
+      "id": "benefit_3_description",
+      "label": "Description",
+      "default": "Keep your car cool"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ghost Tints benefits"
+    }
+  ]
+}
+{% endschema %}

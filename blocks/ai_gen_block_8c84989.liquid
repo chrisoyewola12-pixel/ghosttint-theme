@@ -1,0 +1,273 @@
+{% doc %}
+  @prompt
+    Create a minimalist product lineup section with a pure white background (#FFFFFF). At the top center add a small heading in medium gray (#555555) reading “Modern Design”. Below it place a larger bold headline in navy (#002B5B) reading “Cleaner Living”. Add a short supporting paragraph under the headline in medium gray (#555555) with comfortable line-height (1.6–1.8) explaining the lifestyle benefit.
+    
+    Below the text, add a wide centered image upload block where the merchant uploads one single image showing all three bin sizes together. The image must display fully without cropping and auto-scale responsively to fit width on desktop and mobile while maintaining aspect ratio.
+    
+    Beneath the image, add three small centered labels evenly spaced under the image reading:
+    
+    “Ultra 30L”
+    
+    “Signature 17L”
+    
+    “Lite 13L”
+    
+    Use small navy text (#002B5B) for the labels. No cards, no borders, no shadows, no background colors — only clean spacing and a premium editorial look. Mobile should stack exactly the same layout with slightly reduced margins but the same visual hierarchy.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-lineup-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    padding: 60px 20px;
+    width: 100%;
+  }
+
+  .ai-product-lineup-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ai-product-lineup-text-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-product-lineup-small-heading-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #555555;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+  }
+
+  .ai-product-lineup-headline-{{ ai_gen_id }} {
+    font-size: 42px;
+    color: #002B5B;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+    line-height: 1.2;
+  }
+
+  .ai-product-lineup-description-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: #555555;
+    line-height: 1.7;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .ai-product-lineup-image-wrapper-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 30px;
+  }
+
+  .ai-product-lineup-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-product-lineup-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    position: relative;
+  }
+
+  .ai-product-lineup-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 600px;
+    max-height: 400px;
+    opacity: 0.3;
+  }
+
+  .ai-product-lineup-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px;
+    color: #999999;
+    text-align: center;
+  }
+
+  .ai-product-lineup-labels-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    width: 100%;
+  }
+
+  .ai-product-lineup-label-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #002B5B;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 768px) {
+    .ai-product-lineup-{{ ai_gen_id }} {
+      padding: 40px 16px;
+    }
+
+    .ai-product-lineup-headline-{{ ai_gen_id }} {
+      font-size: 32px;
+    }
+
+    .ai-product-lineup-description-{{ ai_gen_id }} {
+      font-size: 15px;
+    }
+
+    .ai-product-lineup-labels-{{ ai_gen_id }} {
+      gap: 30px;
+    }
+
+    .ai-product-lineup-label-{{ ai_gen_id }} {
+      font-size: 12px;
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .ai-product-lineup-headline-{{ ai_gen_id }} {
+      font-size: 28px;
+    }
+
+    .ai-product-lineup-labels-{{ ai_gen_id }} {
+      gap: 20px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-product-lineup-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-product-lineup-container-{{ ai_gen_id }}">
+    <div class="ai-product-lineup-text-{{ ai_gen_id }}">
+      {% if block.settings.small_heading != blank %}
+        <div class="ai-product-lineup-small-heading-{{ ai_gen_id }}">
+          {{ block.settings.small_heading }}
+        </div>
+      {% endif %}
+
+      {% if block.settings.headline != blank %}
+        <h2 class="ai-product-lineup-headline-{{ ai_gen_id }}">
+          {{ block.settings.headline }}
+        </h2>
+      {% endif %}
+
+      {% if block.settings.description != blank %}
+        <div class="ai-product-lineup-description-{{ ai_gen_id }}">
+          {{ block.settings.description }}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-product-lineup-image-wrapper-{{ ai_gen_id }}">
+      {% if block.settings.lineup_image %}
+        <img
+          src="{{ block.settings.lineup_image | image_url: width: 2000 }}"
+          alt="{{ block.settings.lineup_image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.lineup_image.width }}"
+          height="{{ block.settings.lineup_image.height }}"
+          class="ai-product-lineup-image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-product-lineup-placeholder-{{ ai_gen_id }}">
+          {{ 'product-1' | placeholder_svg_tag }}
+          <div class="ai-product-lineup-empty-state-{{ ai_gen_id }}">
+            Upload an image showing all three bin sizes
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="ai-product-lineup-labels-{{ ai_gen_id }}">
+      <div class="ai-product-lineup-label-{{ ai_gen_id }}">
+        {{ block.settings.label_1 }}
+      </div>
+      <div class="ai-product-lineup-label-{{ ai_gen_id }}">
+        {{ block.settings.label_2 }}
+      </div>
+      <div class="ai-product-lineup-label-{{ ai_gen_id }}">
+        {{ block.settings.label_3 }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product lineup",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Text content"
+    },
+    {
+      "type": "text",
+      "id": "small_heading",
+      "label": "Small heading",
+      "default": "Modern Design"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Cleaner Living"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Experience the perfect blend of style and functionality with our premium collection designed to elevate your everyday living."
+    },
+    {
+      "type": "header",
+      "content": "Product image"
+    },
+    {
+      "type": "image_picker",
+      "id": "lineup_image",
+      "label": "Lineup image"
+    },
+    {
+      "type": "header",
+      "content": "Product labels"
+    },
+    {
+      "type": "text",
+      "id": "label_1",
+      "label": "Label 1",
+      "default": "Ultra 30L"
+    },
+    {
+      "type": "text",
+      "id": "label_2",
+      "label": "Label 2",
+      "default": "Signature 17L"
+    },
+    {
+      "type": "text",
+      "id": "label_3",
+      "label": "Label 3",
+      "default": "Lite 13L"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product lineup"
+    }
+  ]
+}
+{% endschema %}

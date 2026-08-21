@@ -1,0 +1,680 @@
+{% doc %}
+  @prompt
+    Generate a responsive Shopify gallery section titled:
+    “GHOST TINTS IN THE WILD.”
+    Create four editable image blocks. Each block must support:
+    Desktop image
+    Optional mobile image
+    Image focal point
+    Alt text
+    Optional caption
+    Optional link
+    Display four equal cards in one row on large screens, two columns on tablets and either two columns or an accessible horizontal scroll on mobile.
+    Use a black background, subtle graphite borders and premium automotive spacing. Every uploaded vehicle image will feature deep Ghost Tints SPD glass. Preserve the deep blue-black windows, cool navy undertone, low cabin visibility and glossy environmental reflections. Do not apply filters that brighten the windows or make them appear clear.
+    Do not add customer names, reviews, ratings, registration plates or manufacturer logos. Add settings for image ratio, card gap, content width, border radius and section spacing. Use responsive Shopify image rendering and lazy-load the gallery.
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-ghost-tints-gallery-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding-top: {{ block.settings.padding_top }}px;
+    padding-bottom: {{ block.settings.padding_bottom }}px;
+  }
+
+  .ai-ghost-tints-gallery__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.content_width }}px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .ai-ghost-tints-gallery__title-{{ ai_gen_id }} {
+    color: {{ block.settings.title_color }};
+    text-align: {{ block.settings.title_alignment }};
+    margin: 0 0 {{ block.settings.title_spacing }}px;
+    font-size: {{ block.settings.title_size }}px;
+    letter-spacing: 2px;
+    font-weight: 700;
+  }
+
+  .ai-ghost-tints-gallery__grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: {{ block.settings.card_gap }}px;
+  }
+
+  .ai-ghost-tints-gallery__card-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+    border: 1px solid {{ block.settings.border_color }};
+    background-color: {{ block.settings.card_background }};
+  }
+
+  .ai-ghost-tints-gallery__image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: {{ block.settings.image_ratio }}%;
+    overflow: hidden;
+  }
+
+  .ai-ghost-tints-gallery__image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--focal-point, center);
+  }
+
+  .ai-ghost-tints-gallery__placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-ghost-tints-gallery__placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-ghost-tints-gallery__caption-{{ ai_gen_id }} {
+    padding: 16px;
+    color: {{ block.settings.caption_color }};
+    font-size: {{ block.settings.caption_size }}px;
+    text-align: center;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-ghost-tints-gallery__grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ai-ghost-tints-gallery__title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.8);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    {% if block.settings.mobile_layout == 'scroll' %}
+      .ai-ghost-tints-gallery__grid-{{ ai_gen_id }} {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        gap: {{ block.settings.card_gap }}px;
+        padding-bottom: 10px;
+      }
+
+      .ai-ghost-tints-gallery__card-{{ ai_gen_id }} {
+        flex: 0 0 75%;
+        scroll-snap-align: start;
+      }
+
+      .ai-ghost-tints-gallery__grid-{{ ai_gen_id }}::-webkit-scrollbar {
+        height: 6px;
+      }
+
+      .ai-ghost-tints-gallery__grid-{{ ai_gen_id }}::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+
+      .ai-ghost-tints-gallery__grid-{{ ai_gen_id }}::-webkit-scrollbar-thumb {
+        background: {{ block.settings.border_color }};
+        border-radius: 3px;
+      }
+    {% else %}
+      .ai-ghost-tints-gallery__grid-{{ ai_gen_id }} {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    {% endif %}
+
+    .ai-ghost-tints-gallery__title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.7);
+    }
+
+    .ai-ghost-tints-gallery__caption-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.caption_size }}px * 0.9);
+      padding: 12px;
+    }
+  }
+{% endstyle %}
+
+<ghost-tints-gallery-{{ ai_gen_id }}
+  class="ai-ghost-tints-gallery-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-ghost-tints-gallery__container-{{ ai_gen_id }}">
+    {% if block.settings.title != blank %}
+      <h2 class="ai-ghost-tints-gallery__title-{{ ai_gen_id }}">
+        {{ block.settings.title }}
+      </h2>
+    {% endif %}
+
+    <div class="ai-ghost-tints-gallery__grid-{{ ai_gen_id }}">
+      {% for i in (1..4) %}
+        {% liquid
+          assign image_key = 'image_' | append: i
+          assign mobile_image_key = 'mobile_image_' | append: i
+          assign focal_point_key = 'focal_point_' | append: i
+          assign alt_text_key = 'alt_text_' | append: i
+          assign caption_key = 'caption_' | append: i
+          assign link_key = 'link_' | append: i
+
+          assign desktop_image = block.settings[image_key]
+          assign mobile_image = block.settings[mobile_image_key]
+          assign focal_point = block.settings[focal_point_key]
+          assign alt_text = block.settings[alt_text_key]
+          assign caption = block.settings[caption_key]
+          assign link = block.settings[link_key]
+
+          assign display_image = desktop_image
+        %}
+
+        <div class="ai-ghost-tints-gallery__card-{{ ai_gen_id }}">
+          {% if link != blank %}
+            <a href="{{ link }}" aria-label="{{ alt_text | default: 'View image' }}">
+          {% endif %}
+
+          <div class="ai-ghost-tints-gallery__image-wrapper-{{ ai_gen_id }}">
+            {% if desktop_image %}
+              <picture>
+                {% if mobile_image %}
+                  <source
+                    media="(max-width: 749px)"
+                    srcset="{{ mobile_image | image_url: width: 800 }}"
+                  >
+                {% endif %}
+                <img
+                  src="{{ desktop_image | image_url: width: 1000 }}"
+                  srcset="{{ desktop_image | image_url: width: 400 }} 400w,
+                          {{ desktop_image | image_url: width: 600 }} 600w,
+                          {{ desktop_image | image_url: width: 800 }} 800w,
+                          {{ desktop_image | image_url: width: 1000 }} 1000w"
+                  sizes="(max-width: 749px) 75vw, (max-width: 989px) 50vw, 25vw"
+                  alt="{{ alt_text | escape }}"
+                  loading="lazy"
+                  width="{{ desktop_image.width }}"
+                  height="{{ desktop_image.height }}"
+                  class="ai-ghost-tints-gallery__image-{{ ai_gen_id }}"
+                  style="--focal-point: {{ focal_point }};"
+                >
+              </picture>
+            {% else %}
+              <div class="ai-ghost-tints-gallery__placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            {% endif %}
+          </div>
+
+          {% if link != blank %}
+            </a>
+          {% endif %}
+
+          {% if caption != blank %}
+            <div class="ai-ghost-tints-gallery__caption-{{ ai_gen_id }}">
+              {{ caption }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</ghost-tints-gallery-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class GhostTintsGallery{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.setupAccessibility();
+      }
+
+      setupAccessibility() {
+        const scrollContainer = this.querySelector('.ai-ghost-tints-gallery__grid-{{ ai_gen_id }}');
+        
+        if (scrollContainer && window.innerWidth <= 749) {
+          scrollContainer.setAttribute('role', 'region');
+          scrollContainer.setAttribute('aria-label', 'Gallery scroll container');
+          scrollContainer.setAttribute('tabindex', '0');
+        }
+      }
+    }
+
+    customElements.define('ghost-tints-gallery-{{ ai_gen_id }}', GhostTintsGallery{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Ghost Tints gallery",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Title"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "GHOST TINTS IN THE WILD"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "label": "Title spacing",
+      "min": 20,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Image 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_1",
+      "label": "Mobile image"
+    },
+    {
+      "type": "select",
+      "id": "focal_point_1",
+      "label": "Focal point",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "alt_text_1",
+      "label": "Alt text"
+    },
+    {
+      "type": "text",
+      "id": "caption_1",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "link_1",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Image 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_2",
+      "label": "Mobile image"
+    },
+    {
+      "type": "select",
+      "id": "focal_point_2",
+      "label": "Focal point",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "alt_text_2",
+      "label": "Alt text"
+    },
+    {
+      "type": "text",
+      "id": "caption_2",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "link_2",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Image 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_3",
+      "label": "Mobile image"
+    },
+    {
+      "type": "select",
+      "id": "focal_point_3",
+      "label": "Focal point",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "alt_text_3",
+      "label": "Alt text"
+    },
+    {
+      "type": "text",
+      "id": "caption_3",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "link_3",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Image 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Desktop image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image_4",
+      "label": "Mobile image"
+    },
+    {
+      "type": "select",
+      "id": "focal_point_4",
+      "label": "Focal point",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "text",
+      "id": "alt_text_4",
+      "label": "Alt text"
+    },
+    {
+      "type": "text",
+      "id": "caption_4",
+      "label": "Caption"
+    },
+    {
+      "type": "url",
+      "id": "link_4",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Content width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "default": 75
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Card gap",
+      "min": 8,
+      "max": 40,
+      "step": 4,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "options": [
+        {
+          "value": "grid",
+          "label": "Two columns"
+        },
+        {
+          "value": "scroll",
+          "label": "Horizontal scroll"
+        }
+      ],
+      "default": "scroll"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "caption_color",
+      "label": "Caption color",
+      "default": "#b0b0b0"
+    },
+    {
+      "type": "range",
+      "id": "caption_size",
+      "label": "Caption size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 64
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ghost Tints gallery"
+    }
+  ]
+}
+{% endschema %}

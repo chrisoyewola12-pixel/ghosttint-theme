@@ -1,0 +1,457 @@
+{% doc %}
+  @prompt
+    Wide horizontal website banner with a bold, solid red background. Centered white uppercase headline text reads “HOLIDAY SALE NOW LIVE” in a strong sans-serif font, with smaller subtext beneath saying “UP TO 57% OFF + EXCLUSIVE OFFERS.” On the right side, a clean countdown timer displays three white number blocks labeled “HOURS,” “MINUTES,” and “SECONDS,” with large digits above each label. Minimal, high-contrast, modern e-commerce promotional design, flat layout, no gradients or textures, optimized for a sale announcement header.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-holiday-banner-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding_vertical }}px 20px;
+  }
+
+  .ai-holiday-banner-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+  }
+
+  .ai-holiday-banner-content-{{ ai_gen_id }} {
+    flex: 1;
+    text-align: center;
+  }
+
+  .ai-holiday-banner-headline-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.headline_size }}px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 8px 0;
+    line-height: 1.2;
+  }
+
+  .ai-holiday-banner-subtext-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.subtext_size }}px;
+    font-weight: 400;
+    margin: 0;
+    opacity: 0.95;
+  }
+
+  .ai-holiday-banner-timer-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.timer_gap }}px;
+    align-items: center;
+  }
+
+  .ai-holiday-banner-timer-block-{{ ai_gen_id }} {
+    background-color: {{ block.settings.timer_block_bg }};
+    border-radius: {{ block.settings.timer_border_radius }}px;
+    padding: {{ block.settings.timer_padding_vertical }}px {{ block.settings.timer_padding_horizontal }}px;
+    min-width: {{ block.settings.timer_min_width }}px;
+    text-align: center;
+  }
+
+  .ai-holiday-banner-timer-number-{{ ai_gen_id }} {
+    color: {{ block.settings.timer_number_color }};
+    font-size: {{ block.settings.timer_number_size }}px;
+    font-weight: 700;
+    line-height: 1;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .ai-holiday-banner-timer-label-{{ ai_gen_id }} {
+    color: {{ block.settings.timer_label_color }};
+    font-size: {{ block.settings.timer_label_size }}px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1;
+    display: block;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-holiday-banner-container-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .ai-holiday-banner-headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.headline_size | times: 0.8 }}px;
+    }
+
+    .ai-holiday-banner-subtext-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtext_size | times: 0.9 }}px;
+    }
+
+    .ai-holiday-banner-timer-number-{{ ai_gen_id }} {
+      font-size: {{ block.settings.timer_number_size | times: 0.8 }}px;
+    }
+
+    .ai-holiday-banner-timer-label-{{ ai_gen_id }} {
+      font-size: {{ block.settings.timer_label_size | times: 0.9 }}px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-holiday-banner-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_vertical | times: 0.7 }}px 15px;
+    }
+
+    .ai-holiday-banner-headline-{{ ai_gen_id }} {
+      font-size: {{ block.settings.headline_size | times: 0.6 }}px;
+    }
+
+    .ai-holiday-banner-subtext-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtext_size | times: 0.8 }}px;
+    }
+
+    .ai-holiday-banner-timer-{{ ai_gen_id }} {
+      gap: {{ block.settings.timer_gap | times: 0.7 }}px;
+    }
+
+    .ai-holiday-banner-timer-block-{{ ai_gen_id }} {
+      padding: {{ block.settings.timer_padding_vertical | times: 0.7 }}px {{ block.settings.timer_padding_horizontal | times: 0.7 }}px;
+      min-width: {{ block.settings.timer_min_width | times: 0.7 }}px;
+    }
+
+    .ai-holiday-banner-timer-number-{{ ai_gen_id }} {
+      font-size: {{ block.settings.timer_number_size | times: 0.6 }}px;
+    }
+
+    .ai-holiday-banner-timer-label-{{ ai_gen_id }} {
+      font-size: {{ block.settings.timer_label_size | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<holiday-sale-banner-{{ ai_gen_id }}
+  class="ai-holiday-banner-{{ ai_gen_id }}"
+  data-end-date="{{ block.settings.end_date }}"
+  data-end-time="{{ block.settings.end_time }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-holiday-banner-container-{{ ai_gen_id }}">
+    <div class="ai-holiday-banner-content-{{ ai_gen_id }}">
+      {% if block.settings.headline != blank %}
+        <h2 class="ai-holiday-banner-headline-{{ ai_gen_id }}">
+          {{ block.settings.headline }}
+        </h2>
+      {% endif %}
+      {% if block.settings.subtext != blank %}
+        <p class="ai-holiday-banner-subtext-{{ ai_gen_id }}">
+          {{ block.settings.subtext }}
+        </p>
+      {% endif %}
+    </div>
+
+    <div class="ai-holiday-banner-timer-{{ ai_gen_id }}">
+      <div class="ai-holiday-banner-timer-block-{{ ai_gen_id }}">
+        <span class="ai-holiday-banner-timer-number-{{ ai_gen_id }}" data-timer-hours>00</span>
+        <span class="ai-holiday-banner-timer-label-{{ ai_gen_id }}">{{ block.settings.hours_label }}</span>
+      </div>
+      <div class="ai-holiday-banner-timer-block-{{ ai_gen_id }}">
+        <span class="ai-holiday-banner-timer-number-{{ ai_gen_id }}" data-timer-minutes>00</span>
+        <span class="ai-holiday-banner-timer-label-{{ ai_gen_id }}">{{ block.settings.minutes_label }}</span>
+      </div>
+      <div class="ai-holiday-banner-timer-block-{{ ai_gen_id }}">
+        <span class="ai-holiday-banner-timer-number-{{ ai_gen_id }}" data-timer-seconds>00</span>
+        <span class="ai-holiday-banner-timer-label-{{ ai_gen_id }}">{{ block.settings.seconds_label }}</span>
+      </div>
+    </div>
+  </div>
+</holiday-sale-banner-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class HolidaySaleBanner{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.endDate = this.dataset.endDate;
+        this.endTime = this.dataset.endTime;
+        this.hoursElement = this.querySelector('[data-timer-hours]');
+        this.minutesElement = this.querySelector('[data-timer-minutes]');
+        this.secondsElement = this.querySelector('[data-timer-seconds]');
+      }
+
+      connectedCallback() {
+        if (this.endDate && this.endTime) {
+          this.startCountdown();
+        }
+      }
+
+      startCountdown() {
+        const updateTimer = () => {
+          const now = new Date().getTime();
+          const endDateTime = new Date(this.endDate + ' ' + this.endTime).getTime();
+          const distance = endDateTime - now;
+
+          if (distance < 0) {
+            this.hoursElement.textContent = '00';
+            this.minutesElement.textContent = '00';
+            this.secondsElement.textContent = '00';
+            return;
+          }
+
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          this.hoursElement.textContent = String(hours).padStart(2, '0');
+          this.minutesElement.textContent = String(minutes).padStart(2, '0');
+          this.secondsElement.textContent = String(seconds).padStart(2, '0');
+        };
+
+        updateTimer();
+        this.interval = setInterval(updateTimer, 1000);
+      }
+
+      disconnectedCallback() {
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
+      }
+    }
+
+    customElements.define('holiday-sale-banner-{{ ai_gen_id }}', HolidaySaleBanner{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Holiday sale banner",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "HOLIDAY SALE NOW LIVE"
+    },
+    {
+      "type": "text",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "UP TO 57% OFF + EXCLUSIVE OFFERS"
+    },
+    {
+      "type": "header",
+      "content": "Countdown timer"
+    },
+    {
+      "type": "text",
+      "id": "end_date",
+      "label": "End date",
+      "default": "2026-01-31",
+      "info": "Format: YYYY-MM-DD (e.g., 2026-01-31)"
+    },
+    {
+      "type": "text",
+      "id": "end_time",
+      "label": "End time",
+      "default": "23:59:59",
+      "info": "Format: HH:MM:SS (e.g., 23:59:59)"
+    },
+    {
+      "type": "text",
+      "id": "hours_label",
+      "label": "Hours label",
+      "default": "HOURS"
+    },
+    {
+      "type": "text",
+      "id": "minutes_label",
+      "label": "Minutes label",
+      "default": "MINUTES"
+    },
+    {
+      "type": "text",
+      "id": "seconds_label",
+      "label": "Seconds label",
+      "default": "SECONDS"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#dc2626"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "timer_block_bg",
+      "label": "Timer block background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "timer_number_color",
+      "label": "Timer number",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "timer_label_color",
+      "label": "Timer label",
+      "default": "#6b7280"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 800,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "default": 25
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "headline_size",
+      "label": "Headline size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "subtext_size",
+      "label": "Subtext size",
+      "min": 10,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Timer style"
+    },
+    {
+      "type": "range",
+      "id": "timer_gap",
+      "label": "Gap between blocks",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "timer_min_width",
+      "label": "Block minimum width",
+      "min": 50,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "timer_padding_vertical",
+      "label": "Block vertical padding",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "timer_padding_horizontal",
+      "label": "Block horizontal padding",
+      "min": 5,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "timer_border_radius",
+      "label": "Block border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "timer_number_size",
+      "label": "Number size",
+      "min": 20,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "timer_label_size",
+      "label": "Label size",
+      "min": 8,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Holiday sale banner"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,727 @@
+{% doc %}
+  @prompt
+    Generate a cinematic full-width Shopify call-to-action section for Ghost Tints.
+    Use an editable desktop image and separate mobile image showing glossy dark automotive glass. Allow an optional editable image of the real Ghost Tints remote positioned on the right.
+    Default heading:
+    “MAKE PRIVACY PART OF THE DRIVE.”
+    Default button:
+    “Shop Ghost Tints”
+    Use a black image overlay, large condensed warm-white heading and restrained cyan button. Add theme-editor controls for images, focal points, remote position and size, overlay strength, section height, text alignment, button destination and spacing.
+    Ensure the text remains readable and the remote does not cover the heading on smaller screens. Do not add prices, discounts, reviews, ratings, video controls or unsupported claims. Use responsive Shopify images and accessible button markup.
+    
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-ghost-tints-cta-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    height: {{ block.settings.section_height_desktop }}px;
+    overflow: hidden;
+    display: block;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-ghost-tints-cta-{{ ai_gen_id }} {
+      height: {{ block.settings.section_height_mobile }}px;
+    }
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__background-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: {{ block.settings.desktop_image_focal_x }}% {{ block.settings.desktop_image_focal_y }}%;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-ghost-tints-cta-{{ ai_gen_id }}__background-image--desktop {
+      display: none;
+    }
+
+    .ai-ghost-tints-cta-{{ ai_gen_id }}__background-image--mobile {
+      display: block;
+      object-position: {{ block.settings.mobile_image_focal_x }}% {{ block.settings.mobile_image_focal_y }}%;
+    }
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-ghost-tints-cta-{{ ai_gen_id }}__background-image--mobile {
+      display: none;
+    }
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.overlay_color }};
+    opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
+    z-index: 2;
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__content-wrapper {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ block.settings.content_padding_vertical }}px {{ block.settings.content_padding_horizontal }}px;
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__content {
+    max-width: {{ block.settings.content_max_width }}px;
+    width: 100%;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__heading {
+    font-size: {{ block.settings.heading_size_desktop }}px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 {{ block.settings.heading_spacing }}px;
+    text-transform: uppercase;
+    font-stretch: condensed;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-ghost-tints-cta-{{ ai_gen_id }}__heading {
+      font-size: {{ block.settings.heading_size_mobile }}px;
+    }
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: {{ block.settings.button_padding_vertical }}px {{ block.settings.button_padding_horizontal }}px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: {{ block.settings.button_font_size }}px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__button:hover {
+    background-color: {{ block.settings.button_background_hover }};
+    transform: translateY(-2px);
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__remote-wrapper {
+    position: absolute;
+    z-index: 4;
+    {% if block.settings.remote_position == 'top-right' %}
+      top: {{ block.settings.remote_offset_vertical }}px;
+      right: {{ block.settings.remote_offset_horizontal }}px;
+    {% elsif block.settings.remote_position == 'top-left' %}
+      top: {{ block.settings.remote_offset_vertical }}px;
+      left: {{ block.settings.remote_offset_horizontal }}px;
+    {% elsif block.settings.remote_position == 'bottom-right' %}
+      bottom: {{ block.settings.remote_offset_vertical }}px;
+      right: {{ block.settings.remote_offset_horizontal }}px;
+    {% elsif block.settings.remote_position == 'bottom-left' %}
+      bottom: {{ block.settings.remote_offset_vertical }}px;
+      left: {{ block.settings.remote_offset_horizontal }}px;
+    {% elsif block.settings.remote_position == 'center-right' %}
+      top: 50%;
+      right: {{ block.settings.remote_offset_horizontal }}px;
+      transform: translateY(-50%);
+    {% elsif block.settings.remote_position == 'center-left' %}
+      top: 50%;
+      left: {{ block.settings.remote_offset_horizontal }}px;
+      transform: translateY(-50%);
+    {% endif %}
+    width: {{ block.settings.remote_width_desktop }}px;
+    max-width: 90vw;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-ghost-tints-cta-{{ ai_gen_id }}__remote-wrapper {
+      width: {{ block.settings.remote_width_mobile }}px;
+      {% if block.settings.remote_position == 'top-right' %}
+        top: {{ block.settings.remote_offset_vertical_mobile }}px;
+        right: {{ block.settings.remote_offset_horizontal_mobile }}px;
+      {% elsif block.settings.remote_position == 'top-left' %}
+        top: {{ block.settings.remote_offset_vertical_mobile }}px;
+        left: {{ block.settings.remote_offset_horizontal_mobile }}px;
+      {% elsif block.settings.remote_position == 'bottom-right' %}
+        bottom: {{ block.settings.remote_offset_vertical_mobile }}px;
+        right: {{ block.settings.remote_offset_horizontal_mobile }}px;
+      {% elsif block.settings.remote_position == 'bottom-left' %}
+        bottom: {{ block.settings.remote_offset_vertical_mobile }}px;
+        left: {{ block.settings.remote_offset_horizontal_mobile }}px;
+      {% elsif block.settings.remote_position == 'center-right' %}
+        top: 50%;
+        right: {{ block.settings.remote_offset_horizontal_mobile }}px;
+      {% elsif block.settings.remote_position == 'center-left' %}
+        top: 50%;
+        left: {{ block.settings.remote_offset_horizontal_mobile }}px;
+      {% endif %}
+    }
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__remote-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__background-placeholder {
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-ghost-tints-cta-{{ ai_gen_id }}__background-placeholder svg {
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    max-height: 500px;
+    opacity: 0.3;
+  }
+{% endstyle %}
+
+<ghost-tints-cta-{{ ai_gen_id }}
+  class="ai-ghost-tints-cta-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-ghost-tints-cta-{{ ai_gen_id }}__background">
+    {% if block.settings.desktop_image %}
+      <img
+        src="{{ block.settings.desktop_image | image_url: width: 2400 }}"
+        srcset="{{ block.settings.desktop_image | image_url: width: 750 }} 750w,
+                {{ block.settings.desktop_image | image_url: width: 1500 }} 1500w,
+                {{ block.settings.desktop_image | image_url: width: 2400 }} 2400w"
+        sizes="100vw"
+        alt="{{ block.settings.desktop_image.alt | escape }}"
+        loading="lazy"
+        width="{{ block.settings.desktop_image.width }}"
+        height="{{ block.settings.desktop_image.height }}"
+        class="ai-ghost-tints-cta-{{ ai_gen_id }}__background-image ai-ghost-tints-cta-{{ ai_gen_id }}__background-image--desktop"
+      >
+    {% else %}
+      <div class="ai-ghost-tints-cta-{{ ai_gen_id }}__background-placeholder">
+        {{ 'image' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+
+    {% if block.settings.mobile_image %}
+      <img
+        src="{{ block.settings.mobile_image | image_url: width: 750 }}"
+        srcset="{{ block.settings.mobile_image | image_url: width: 375 }} 375w,
+                {{ block.settings.mobile_image | image_url: width: 750 }} 750w"
+        sizes="100vw"
+        alt="{{ block.settings.mobile_image.alt | escape }}"
+        loading="lazy"
+        width="{{ block.settings.mobile_image.width }}"
+        height="{{ block.settings.mobile_image.height }}"
+        class="ai-ghost-tints-cta-{{ ai_gen_id }}__background-image ai-ghost-tints-cta-{{ ai_gen_id }}__background-image--mobile"
+      >
+    {% elsif block.settings.desktop_image %}
+      <img
+        src="{{ block.settings.desktop_image | image_url: width: 750 }}"
+        srcset="{{ block.settings.desktop_image | image_url: width: 375 }} 375w,
+                {{ block.settings.desktop_image | image_url: width: 750 }} 750w"
+        sizes="100vw"
+        alt="{{ block.settings.desktop_image.alt | escape }}"
+        loading="lazy"
+        width="{{ block.settings.desktop_image.width }}"
+        height="{{ block.settings.desktop_image.height }}"
+        class="ai-ghost-tints-cta-{{ ai_gen_id }}__background-image ai-ghost-tints-cta-{{ ai_gen_id }}__background-image--mobile"
+      >
+    {% endif %}
+  </div>
+
+  <div class="ai-ghost-tints-cta-{{ ai_gen_id }}__overlay"></div>
+
+  <div class="ai-ghost-tints-cta-{{ ai_gen_id }}__content-wrapper">
+    <div class="ai-ghost-tints-cta-{{ ai_gen_id }}__content">
+      {% if block.settings.heading != blank %}
+        <h2 class="ai-ghost-tints-cta-{{ ai_gen_id }}__heading">
+          {{ block.settings.heading }}
+        </h2>
+      {% endif %}
+
+      {% if block.settings.button_text != blank %}
+        <a
+          href="{{ block.settings.button_link }}"
+          class="ai-ghost-tints-cta-{{ ai_gen_id }}__button"
+        >
+          {{ block.settings.button_text }}
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if block.settings.enable_remote and block.settings.remote_image %}
+    <div class="ai-ghost-tints-cta-{{ ai_gen_id }}__remote-wrapper">
+      <img
+        src="{{ block.settings.remote_image | image_url: width: 600 }}"
+        srcset="{{ block.settings.remote_image | image_url: width: 300 }} 300w,
+                {{ block.settings.remote_image | image_url: width: 600 }} 600w"
+        sizes="(max-width: 749px) {{ block.settings.remote_width_mobile }}px, {{ block.settings.remote_width_desktop }}px"
+        alt="{{ block.settings.remote_image.alt | escape }}"
+        loading="lazy"
+        width="{{ block.settings.remote_image.width }}"
+        height="{{ block.settings.remote_image.height }}"
+        class="ai-ghost-tints-cta-{{ ai_gen_id }}__remote-image"
+      >
+    </div>
+  {% endif %}
+</ghost-tints-cta-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class GhostTintsCta{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.adjustRemotePosition();
+        window.addEventListener('resize', () => this.adjustRemotePosition());
+      }
+
+      adjustRemotePosition() {
+        const remote = this.querySelector('.ai-ghost-tints-cta-{{ ai_gen_id }}__remote-wrapper');
+        const heading = this.querySelector('.ai-ghost-tints-cta-{{ ai_gen_id }}__heading');
+        
+        if (!remote || !heading) return;
+
+        const headingRect = heading.getBoundingClientRect();
+        const remoteRect = remote.getBoundingClientRect();
+
+        if (this.isOverlapping(headingRect, remoteRect) && window.innerWidth <= 749) {
+          remote.style.opacity = '0.3';
+        } else {
+          remote.style.opacity = '1';
+        }
+      }
+
+      isOverlapping(rect1, rect2) {
+        return !(
+          rect1.right < rect2.left ||
+          rect1.left > rect2.right ||
+          rect1.bottom < rect2.top ||
+          rect1.top > rect2.bottom
+        );
+      }
+    }
+
+    customElements.define('ghost-tints-cta-{{ ai_gen_id }}', GhostTintsCta{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Ghost Tints CTA",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Desktop background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "range",
+      "id": "desktop_image_focal_x",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Horizontal focal point",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "desktop_image_focal_y",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Vertical focal point",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Mobile background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image"
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_focal_x",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Horizontal focal point",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_focal_y",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Vertical focal point",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Overlay"
+    },
+    {
+      "type": "color",
+      "id": "overlay_color",
+      "label": "Overlay color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay opacity",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Section height"
+    },
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "min": 300,
+      "max": 900,
+      "step": 50,
+      "unit": "px",
+      "label": "Desktop height",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "min": 300,
+      "max": 700,
+      "step": 50,
+      "unit": "px",
+      "label": "Mobile height",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "MAKE PRIVACY PART OF THE DRIVE."
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#f5f5f0"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "min": 30,
+      "max": 120,
+      "step": 5,
+      "unit": "px",
+      "label": "Desktop heading size",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Mobile heading size",
+      "default": 35
+    },
+    {
+      "type": "range",
+      "id": "heading_spacing",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Heading bottom spacing",
+      "default": 30
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Content max width",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "content_padding_vertical",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_padding_horizontal",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "Shop Ghost Tints"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background color",
+      "default": "#00bcd4"
+    },
+    {
+      "type": "color",
+      "id": "button_background_hover",
+      "label": "Hover background color",
+      "default": "#00acc1"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "button_padding_vertical",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_padding_horizontal",
+      "min": 20,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 6
+    },
+    {
+      "type": "header",
+      "content": "Remote control image"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_remote",
+      "label": "Enable remote image",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "remote_image",
+      "label": "Remote image"
+    },
+    {
+      "type": "select",
+      "id": "remote_position",
+      "label": "Position",
+      "options": [
+        {
+          "value": "top-right",
+          "label": "Top right"
+        },
+        {
+          "value": "top-left",
+          "label": "Top left"
+        },
+        {
+          "value": "center-right",
+          "label": "Center right"
+        },
+        {
+          "value": "center-left",
+          "label": "Center left"
+        },
+        {
+          "value": "bottom-right",
+          "label": "Bottom right"
+        },
+        {
+          "value": "bottom-left",
+          "label": "Bottom left"
+        }
+      ],
+      "default": "center-right"
+    },
+    {
+      "type": "range",
+      "id": "remote_width_desktop",
+      "min": 100,
+      "max": 500,
+      "step": 20,
+      "unit": "px",
+      "label": "Desktop width",
+      "default": 300
+    },
+    {
+      "type": "range",
+      "id": "remote_width_mobile",
+      "min": 60,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Mobile width",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "remote_offset_horizontal",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop horizontal offset",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "remote_offset_vertical",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Desktop vertical offset",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "remote_offset_horizontal_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Mobile horizontal offset",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "remote_offset_vertical_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Mobile vertical offset",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ghost Tints CTA"
+    }
+  ]
+}
+{% endschema %}
