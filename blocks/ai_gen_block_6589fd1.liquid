@@ -1,0 +1,721 @@
+{% doc %}
+  @prompt
+    Generate a responsive Shopify homepage hero section for Ghost Tints. Use an editable desktop image and separate mobile image. Style it as premium automotive technology with an obsidian-black background, warm-white text and restrained cyan accents.
+
+    Add editable fields for:
+
+    * Eyebrow text
+    * Heading
+    * Description
+    * Desktop and mobile images
+    * Image focal points
+    * Two buttons and destinations
+    * Overlay strength
+    * Section height and spacing
+
+    Default content:
+    Heading: “PRIVACY AT THE PRESS OF A BUTTON.”
+    Description: “SPD electric tint. Adjustable from 5% to 70% VLT.”
+    Primary button: “Shop Ghost Tints”
+    Secondary button: “How It Works”
+
+    Position the content on the left and leave the right side available for the Ghost Tints remote. Add a polished VLT indicator below the buttons labelled “5% VLT” and “70% VLT.” This may be a visual indicator rather than a functional product controller.
+
+    Use a large condensed heading, clean sans-serif body text and subtle cyan details. Make the hero cinematic and spacious. On mobile, stack the content cleanly without covering the car or remote. Do not add video, play icons, prices, reviews, ratings or sale messaging. Use semantic HTML, responsive Shopify images and accessible buttons.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-ghost-hero-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    min-height: {{ block.settings.section_height_desktop }}vh;
+    background-color: {{ block.settings.background_color }};
+    overflow: hidden;
+    display: block;
+  }
+
+  .ai-ghost-hero-image-wrapper-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .ai-ghost-hero-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: {{ block.settings.desktop_image_focal_x }}% {{ block.settings.desktop_image_focal_y }}%;
+  }
+
+  .ai-ghost-hero-image-{{ ai_gen_id }}.mobile {
+    display: none;
+  }
+
+  .ai-ghost-hero-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: {{ block.settings.background_color }};
+    opacity: {{ block.settings.overlay_strength | divided_by: 100.0 }};
+    z-index: 2;
+  }
+
+  .ai-ghost-hero-container-{{ ai_gen_id }} {
+    position: relative;
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+    padding: {{ block.settings.padding_top }}px {{ block.settings.padding_horizontal }}px {{ block.settings.padding_bottom }}px;
+    height: 100%;
+    min-height: {{ block.settings.section_height_desktop }}vh;
+    display: flex;
+    align-items: center;
+    z-index: 3;
+  }
+
+  .ai-ghost-hero-content-{{ ai_gen_id }} {
+    max-width: 600px;
+    width: 100%;
+  }
+
+  .ai-ghost-hero-eyebrow-{{ ai_gen_id }} {
+    font-size: {{ block.settings.eyebrow_size }}px;
+    color: {{ block.settings.accent_color }};
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+
+  .ai-ghost-hero-heading-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.text_color }};
+    line-height: 1;
+    margin: 0 0 24px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+  }
+
+  .ai-ghost-hero-description-{{ ai_gen_id }} {
+    font-size: {{ block.settings.description_size }}px;
+    color: {{ block.settings.text_color }};
+    line-height: 1.6;
+    margin-bottom: 32px;
+    opacity: 0.9;
+  }
+
+  .ai-ghost-hero-buttons-{{ ai_gen_id }} {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+
+  .ai-ghost-hero-button-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .ai-ghost-hero-button-{{ ai_gen_id }}.primary {
+    background-color: {{ block.settings.primary_button_bg }};
+    color: {{ block.settings.primary_button_text_color }};
+    border: 2px solid {{ block.settings.primary_button_bg }};
+  }
+
+  .ai-ghost-hero-button-{{ ai_gen_id }}.primary:hover {
+    background-color: transparent;
+    color: {{ block.settings.primary_button_bg }};
+  }
+
+  .ai-ghost-hero-button-{{ ai_gen_id }}.secondary {
+    background-color: transparent;
+    color: {{ block.settings.secondary_button_text_color }};
+    border: 2px solid {{ block.settings.secondary_button_border }};
+  }
+
+  .ai-ghost-hero-button-{{ ai_gen_id }}.secondary:hover {
+    background-color: {{ block.settings.secondary_button_border }};
+    color: {{ block.settings.background_color }};
+  }
+
+  .ai-ghost-hero-vlt-indicator-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .ai-ghost-hero-vlt-bar-{{ ai_gen_id }} {
+    position: relative;
+    width: 200px;
+    height: 6px;
+    background: linear-gradient(to right,
+      {{ block.settings.vlt_dark_color }} 0%,
+      {{ block.settings.vlt_dark_color }} 7%,
+      {{ block.settings.vlt_light_color }} 93%,
+      {{ block.settings.vlt_light_color }} 100%
+    );
+    border-radius: 3px;
+  }
+
+  .ai-ghost-hero-vlt-labels-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    width: 200px;
+    font-size: 12px;
+    color: {{ block.settings.accent_color }};
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-ghost-hero-{{ ai_gen_id }} {
+      min-height: {{ block.settings.section_height_mobile }}vh;
+    }
+
+    .ai-ghost-hero-container-{{ ai_gen_id }} {
+      min-height: {{ block.settings.section_height_mobile }}vh;
+      padding: {{ block.settings.padding_top_mobile }}px {{ block.settings.padding_horizontal_mobile }}px {{ block.settings.padding_bottom_mobile }}px;
+    }
+
+    .ai-ghost-hero-image-{{ ai_gen_id }}.desktop {
+      display: none;
+    }
+
+    .ai-ghost-hero-image-{{ ai_gen_id }}.mobile {
+      display: block;
+      object-position: {{ block.settings.mobile_image_focal_x }}% {{ block.settings.mobile_image_focal_y }}%;
+    }
+
+    .ai-ghost-hero-content-{{ ai_gen_id }} {
+      max-width: 100%;
+    }
+
+    .ai-ghost-hero-heading-{{ ai_gen_id }} {
+      font-size: {{ block.settings.heading_size_mobile }}px;
+      margin-bottom: 16px;
+    }
+
+    .ai-ghost-hero-description-{{ ai_gen_id }} {
+      font-size: {{ block.settings.description_size_mobile }}px;
+      margin-bottom: 24px;
+    }
+
+    .ai-ghost-hero-buttons-{{ ai_gen_id }} {
+      margin-bottom: 32px;
+    }
+
+    .ai-ghost-hero-button-{{ ai_gen_id }} {
+      padding: 14px 24px;
+      font-size: 13px;
+    }
+
+    .ai-ghost-hero-vlt-bar-{{ ai_gen_id }},
+    .ai-ghost-hero-vlt-labels-{{ ai_gen_id }} {
+      width: 160px;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-ghost-hero-buttons-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .ai-ghost-hero-button-{{ ai_gen_id }} {
+      width: 100%;
+    }
+
+    .ai-ghost-hero-vlt-indicator-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-ghost-hero-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-ghost-hero-image-wrapper-{{ ai_gen_id }}">
+    {% if block.settings.desktop_image %}
+      <img
+        src="{{ block.settings.desktop_image | image_url: width: 2400 }}"
+        srcset="{{ block.settings.desktop_image | image_url: width: 1200 }} 1200w,
+                {{ block.settings.desktop_image | image_url: width: 1600 }} 1600w,
+                {{ block.settings.desktop_image | image_url: width: 2000 }} 2000w,
+                {{ block.settings.desktop_image | image_url: width: 2400 }} 2400w"
+        sizes="100vw"
+        alt="{{ block.settings.desktop_image.alt | escape }}"
+        class="ai-ghost-hero-image-{{ ai_gen_id }} desktop"
+        loading="eager"
+        width="{{ block.settings.desktop_image.width }}"
+        height="{{ block.settings.desktop_image.height }}"
+      >
+    {% else %}
+      <div class="ai-ghost-hero-image-placeholder-{{ ai_gen_id }}">
+        {{ 'hero-apparel-1' | placeholder_svg_tag }}
+      </div>
+    {% endif %}
+
+    {% if block.settings.mobile_image %}
+      <img
+        src="{{ block.settings.mobile_image | image_url: width: 800 }}"
+        srcset="{{ block.settings.mobile_image | image_url: width: 400 }} 400w,
+                {{ block.settings.mobile_image | image_url: width: 600 }} 600w,
+                {{ block.settings.mobile_image | image_url: width: 800 }} 800w"
+        sizes="100vw"
+        alt="{{ block.settings.mobile_image.alt | escape }}"
+        class="ai-ghost-hero-image-{{ ai_gen_id }} mobile"
+        loading="eager"
+        width="{{ block.settings.mobile_image.width }}"
+        height="{{ block.settings.mobile_image.height }}"
+      >
+    {% elsif block.settings.desktop_image %}
+      <img
+        src="{{ block.settings.desktop_image | image_url: width: 800 }}"
+        srcset="{{ block.settings.desktop_image | image_url: width: 400 }} 400w,
+                {{ block.settings.desktop_image | image_url: width: 600 }} 600w,
+                {{ block.settings.desktop_image | image_url: width: 800 }} 800w"
+        sizes="100vw"
+        alt="{{ block.settings.desktop_image.alt | escape }}"
+        class="ai-ghost-hero-image-{{ ai_gen_id }} mobile"
+        loading="eager"
+        width="{{ block.settings.desktop_image.width }}"
+        height="{{ block.settings.desktop_image.height }}"
+      >
+    {% endif %}
+  </div>
+
+  <div class="ai-ghost-hero-overlay-{{ ai_gen_id }}"></div>
+
+  <div class="ai-ghost-hero-container-{{ ai_gen_id }}">
+    <div class="ai-ghost-hero-content-{{ ai_gen_id }}">
+      {% if block.settings.eyebrow_text != blank %}
+        <div class="ai-ghost-hero-eyebrow-{{ ai_gen_id }}">
+          {{ block.settings.eyebrow_text }}
+        </div>
+      {% endif %}
+
+      {% if block.settings.heading != blank %}
+        <h1 class="ai-ghost-hero-heading-{{ ai_gen_id }}">
+          {{ block.settings.heading }}
+        </h1>
+      {% endif %}
+
+      {% if block.settings.description != blank %}
+        <div class="ai-ghost-hero-description-{{ ai_gen_id }}">
+          {{ block.settings.description }}
+        </div>
+      {% endif %}
+
+      <div class="ai-ghost-hero-buttons-{{ ai_gen_id }}">
+        {% if block.settings.primary_btn_text != blank %}
+          <a
+            href="{{ block.settings.primary_btn_link }}"
+            class="ai-ghost-hero-button-{{ ai_gen_id }} primary"
+          >
+            {{ block.settings.primary_btn_text }}
+          </a>
+        {% endif %}
+
+        {% if block.settings.secondary_btn_text != blank %}
+          <a
+            href="{{ block.settings.secondary_btn_link }}"
+            class="ai-ghost-hero-button-{{ ai_gen_id }} secondary"
+          >
+            {{ block.settings.secondary_btn_text }}
+          </a>
+        {% endif %}
+      </div>
+
+      {% if block.settings.show_vlt_indicator %}
+        <div class="ai-ghost-hero-vlt-indicator-{{ ai_gen_id }}">
+          <div class="ai-ghost-hero-vlt-bar-{{ ai_gen_id }}"></div>
+          <div class="ai-ghost-hero-vlt-labels-{{ ai_gen_id }}">
+            <span>{{ block.settings.vlt_min_label }}</span>
+            <span>{{ block.settings.vlt_max_label }}</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Ghost Tints hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "desktop_image",
+      "label": "Desktop image"
+    },
+    {
+      "type": "range",
+      "id": "desktop_image_focal_x",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Desktop focal point X",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "desktop_image_focal_y",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Desktop focal point Y",
+      "default": 50
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image"
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_focal_x",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Mobile focal point X",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "mobile_image_focal_y",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Mobile focal point Y",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "overlay_strength",
+      "min": 0,
+      "max": 90,
+      "step": 5,
+      "unit": "%",
+      "label": "Overlay strength",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow_text",
+      "label": "Eyebrow text",
+      "default": "PREMIUM AUTOMOTIVE TECHNOLOGY"
+    },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading",
+      "default": "PRIVACY AT THE PRESS OF A BUTTON."
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "SPD electric tint. Adjustable from 5% to 70% VLT."
+    },
+    {
+      "type": "header",
+      "content": "Primary button"
+    },
+    {
+      "type": "text",
+      "id": "primary_btn_text",
+      "label": "Text",
+      "default": "Shop Ghost Tints"
+    },
+    {
+      "type": "url",
+      "id": "primary_btn_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Secondary button"
+    },
+    {
+      "type": "text",
+      "id": "secondary_btn_text",
+      "label": "Text",
+      "default": "How It Works"
+    },
+    {
+      "type": "url",
+      "id": "secondary_btn_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "VLT indicator"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vlt_indicator",
+      "label": "Show VLT indicator",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "vlt_min_label",
+      "label": "Minimum label",
+      "default": "5% VLT"
+    },
+    {
+      "type": "text",
+      "id": "vlt_max_label",
+      "label": "Maximum label",
+      "default": "70% VLT"
+    },
+    {
+      "type": "color",
+      "id": "vlt_dark_color",
+      "label": "Dark end color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "vlt_light_color",
+      "label": "Light end color",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Accent",
+      "default": "#00d9ff"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_bg",
+      "label": "Primary button background",
+      "default": "#00d9ff"
+    },
+    {
+      "type": "color",
+      "id": "primary_button_text_color",
+      "label": "Primary button text",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_text_color",
+      "label": "Secondary button text",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "secondary_button_border",
+      "label": "Secondary button border",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 1000,
+      "max": 1600,
+      "step": 100,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "section_height_desktop",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Desktop height",
+      "default": 90
+    },
+    {
+      "type": "range",
+      "id": "section_height_mobile",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Mobile height",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Desktop spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Mobile spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal_mobile",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "eyebrow_size",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Eyebrow size",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Desktop heading size",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "min": 24,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Mobile heading size",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "description_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Desktop description size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "description_size_mobile",
+      "min": 14,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Mobile description size",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Ghost Tints hero"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

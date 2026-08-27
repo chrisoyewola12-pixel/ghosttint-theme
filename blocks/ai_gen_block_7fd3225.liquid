@@ -1,0 +1,490 @@
+{% doc %}
+  @prompt
+    Generate a minimal accessible Shopify FAQ accordion section for Ghost Tints.
+    Create editable FAQ blocks with a question and rich-text answer. Use these default questions:
+    “How does SPD tint work?”
+    “What VLT range can I select?”
+    “How is Ghost Tints controlled?”
+    “Is installation support available?”
+    Use a near-black background, warm-white text, thin graphite borders and restrained cyan focus accents. Display a plus icon when closed and a minus icon when open.
+    Only one answer should optionally remain open at a time, controlled by a theme setting. Use real button elements with aria-expanded and aria-controls. Support keyboard navigation and visible focus states. Keep answers editable and do not invent certifications, legal claims, warranties or performance specifications.
+    Add settings for heading, intro text, maximum width, open-first-item option, colors and section spacing. Use minimal vanilla JavaScript and avoid external accordion libraries.
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-faq-accordion-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+  }
+
+  .ai-faq-accordion-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-faq-accordion-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .ai-faq-accordion-heading-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    margin: 0 0 16px;
+    font-size: 32px;
+  }
+
+  .ai-faq-accordion-intro-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    opacity: 0.85;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  .ai-faq-accordion-list-{{ ai_gen_id }} {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .ai-faq-accordion-item-{{ ai_gen_id }} {
+    border-bottom: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-faq-accordion-item-{{ ai_gen_id }}:first-child {
+    border-top: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-faq-accordion-button-{{ ai_gen_id }} {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    padding: 24px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: {{ block.settings.text_color }};
+    font-size: 18px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+  }
+
+  .ai-faq-accordion-button-{{ ai_gen_id }}:hover {
+    color: {{ block.settings.focus_color }};
+  }
+
+  .ai-faq-accordion-button-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ block.settings.focus_color }};
+    outline-offset: 4px;
+  }
+
+  .ai-faq-accordion-question-{{ ai_gen_id }} {
+    flex: 1;
+  }
+
+  .ai-faq-accordion-icon-{{ ai_gen_id }} {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-faq-accordion-icon-{{ ai_gen_id }}::before,
+  .ai-faq-accordion-icon-{{ ai_gen_id }}::after {
+    content: '';
+    position: absolute;
+    background-color: {{ block.settings.text_color }};
+    transition: background-color 0.2s ease, transform 0.3s ease;
+  }
+
+  .ai-faq-accordion-icon-{{ ai_gen_id }}::before {
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    transform: translateY(-50%);
+  }
+
+  .ai-faq-accordion-icon-{{ ai_gen_id }}::after {
+    top: 0;
+    left: 50%;
+    width: 2px;
+    height: 100%;
+    transform: translateX(-50%);
+  }
+
+  .ai-faq-accordion-button-{{ ai_gen_id }}:hover .ai-faq-accordion-icon-{{ ai_gen_id }}::before,
+  .ai-faq-accordion-button-{{ ai_gen_id }}:hover .ai-faq-accordion-icon-{{ ai_gen_id }}::after {
+    background-color: {{ block.settings.focus_color }};
+  }
+
+  .ai-faq-accordion-button-{{ ai_gen_id }}[aria-expanded="true"] .ai-faq-accordion-icon-{{ ai_gen_id }}::after {
+    transform: translateX(-50%) rotate(90deg);
+    opacity: 0;
+  }
+
+  .ai-faq-accordion-panel-{{ ai_gen_id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .ai-faq-accordion-panel-{{ ai_gen_id }}.active {
+    max-height: 1000px;
+  }
+
+  .ai-faq-accordion-answer-{{ ai_gen_id }} {
+    padding: 0 0 24px;
+    color: {{ block.settings.text_color }};
+    opacity: 0.8;
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .ai-faq-accordion-answer-{{ ai_gen_id }} p {
+    margin: 0 0 12px;
+  }
+
+  .ai-faq-accordion-answer-{{ ai_gen_id }} p:last-child {
+    margin-bottom: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-faq-accordion-heading-{{ ai_gen_id }} {
+      font-size: 24px;
+    }
+
+    .ai-faq-accordion-button-{{ ai_gen_id }} {
+      font-size: 16px;
+      padding: 20px 0;
+    }
+
+    .ai-faq-accordion-answer-{{ ai_gen_id }} {
+      font-size: 14px;
+      padding: 0 0 20px;
+    }
+  }
+{% endstyle %}
+
+<faq-accordion-{{ ai_gen_id }}
+  class="ai-faq-accordion-{{ ai_gen_id }}"
+  data-allow-multiple="{{ block.settings.allow_multiple_open }}"
+  data-open-first="{{ block.settings.open_first_item }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-faq-accordion-container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank or block.settings.intro_text != blank %}
+      <div class="ai-faq-accordion-header-{{ ai_gen_id }}">
+        {% if block.settings.heading != blank %}
+          <h2 class="ai-faq-accordion-heading-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+        {% endif %}
+        {% if block.settings.intro_text != blank %}
+          <div class="ai-faq-accordion-intro-{{ ai_gen_id }}">{{ block.settings.intro_text }}</div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <ul class="ai-faq-accordion-list-{{ ai_gen_id }}">
+      {% for i in (1..4) %}
+        {% assign question_key = 'question_' | append: i %}
+        {% assign answer_key = 'answer_' | append: i %}
+        {% assign question = block.settings[question_key] %}
+        {% assign answer = block.settings[answer_key] %}
+
+        {% if question != blank %}
+          {% assign faq_id = ai_gen_id | append: '-faq-' | append: i %}
+          <li class="ai-faq-accordion-item-{{ ai_gen_id }}">
+            <button
+              class="ai-faq-accordion-button-{{ ai_gen_id }}"
+              aria-expanded="false"
+              aria-controls="{{ faq_id }}"
+              type="button"
+            >
+              <span class="ai-faq-accordion-question-{{ ai_gen_id }}">{{ question }}</span>
+              <span class="ai-faq-accordion-icon-{{ ai_gen_id }}" aria-hidden="true"></span>
+            </button>
+            <div
+              id="{{ faq_id }}"
+              class="ai-faq-accordion-panel-{{ ai_gen_id }}"
+              role="region"
+              aria-labelledby="{{ faq_id }}-button"
+            >
+              {% if answer != blank %}
+                <div class="ai-faq-accordion-answer-{{ ai_gen_id }}">{{ answer }}</div>
+              {% endif %}
+            </div>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</faq-accordion-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class FaqAccordion{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.allowMultiple = this.dataset.allowMultiple === 'true';
+        this.openFirst = this.dataset.openFirst === 'true';
+      }
+
+      connectedCallback() {
+        this.buttons = this.querySelectorAll('.ai-faq-accordion-button-{{ ai_gen_id }}');
+        this.panels = this.querySelectorAll('.ai-faq-accordion-panel-{{ ai_gen_id }}');
+
+        this.setupEventListeners();
+
+        if (this.openFirst && this.buttons.length > 0) {
+          this.openPanel(this.buttons[0], this.panels[0]);
+        }
+      }
+
+      setupEventListeners() {
+        this.buttons.forEach((button, index) => {
+          button.addEventListener('click', () => {
+            this.handleClick(button, this.panels[index]);
+          });
+
+          button.addEventListener('keydown', (e) => {
+            this.handleKeydown(e, index);
+          });
+        });
+      }
+
+      handleClick(button, panel) {
+        const isExpanded = button.getAttribute('aria-expanded') === 'true';
+
+        if (!this.allowMultiple) {
+          this.buttons.forEach((btn, idx) => {
+            if (btn !== button) {
+              this.closePanel(btn, this.panels[idx]);
+            }
+          });
+        }
+
+        if (isExpanded) {
+          this.closePanel(button, panel);
+        } else {
+          this.openPanel(button, panel);
+        }
+      }
+
+      openPanel(button, panel) {
+        button.setAttribute('aria-expanded', 'true');
+        panel.classList.add('active');
+      }
+
+      closePanel(button, panel) {
+        button.setAttribute('aria-expanded', 'false');
+        panel.classList.remove('active');
+      }
+
+      handleKeydown(e, currentIndex) {
+        let targetIndex;
+
+        switch (e.key) {
+          case 'ArrowDown':
+            e.preventDefault();
+            targetIndex = currentIndex === this.buttons.length - 1 ? 0 : currentIndex + 1;
+            this.buttons[targetIndex].focus();
+            break;
+          case 'ArrowUp':
+            e.preventDefault();
+            targetIndex = currentIndex === 0 ? this.buttons.length - 1 : currentIndex - 1;
+            this.buttons[targetIndex].focus();
+            break;
+          case 'Home':
+            e.preventDefault();
+            this.buttons[0].focus();
+            break;
+          case 'End':
+            e.preventDefault();
+            this.buttons[this.buttons.length - 1].focus();
+            break;
+        }
+      }
+    }
+
+    customElements.define('faq-accordion-{{ ai_gen_id }}', FaqAccordion{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "FAQ accordion",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently asked questions"
+    },
+    {
+      "type": "richtext",
+      "id": "intro_text",
+      "label": "Introduction text"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 1"
+    },
+    {
+      "type": "text",
+      "id": "question_1",
+      "label": "Question",
+      "default": "How does SPD tint work?"
+    },
+    {
+      "type": "richtext",
+      "id": "answer_1",
+      "label": "Answer",
+      "default": "<p>SPD (Suspended Particle Device) technology uses microscopic particles suspended in a film. When voltage is applied, these particles align to allow light through, giving you instant control over tint darkness.</p>"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 2"
+    },
+    {
+      "type": "text",
+      "id": "question_2",
+      "label": "Question",
+      "default": "What VLT range can I select?"
+    },
+    {
+      "type": "richtext",
+      "id": "answer_2",
+      "label": "Answer",
+      "default": "<p>Ghost Tints offers customizable Visible Light Transmission (VLT) ranges to suit your preferences and local regulations. Contact us to discuss the available options for your specific needs.</p>"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 3"
+    },
+    {
+      "type": "text",
+      "id": "question_3",
+      "label": "Question",
+      "default": "How is Ghost Tints controlled?"
+    },
+    {
+      "type": "richtext",
+      "id": "answer_3",
+      "label": "Answer",
+      "default": "<p>Our smart tint system can be controlled through multiple methods including wireless remotes, smartphone apps, and integration with your vehicle's existing controls for seamless operation.</p>"
+    },
+    {
+      "type": "header",
+      "content": "FAQ 4"
+    },
+    {
+      "type": "text",
+      "id": "question_4",
+      "label": "Question",
+      "default": "Is installation support available?"
+    },
+    {
+      "type": "richtext",
+      "id": "answer_4",
+      "label": "Answer",
+      "default": "<p>Yes, we provide comprehensive installation support. Our team can guide you through the process or connect you with certified installers in your area to ensure proper setup.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Behavior"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first_item",
+      "label": "Open first item by default",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "allow_multiple_open",
+      "label": "Allow multiple items open",
+      "default": false,
+      "info": "If disabled, opening one item will close others"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Maximum width",
+      "min": 600,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "label": "Top padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "label": "Bottom padding",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 60
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#f5f5f0"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#3a3a3a"
+    },
+    {
+      "type": "color",
+      "id": "focus_color",
+      "label": "Focus accent",
+      "default": "#00bcd4"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ accordion"
+    }
+  ]
+}
+{% endschema %}
