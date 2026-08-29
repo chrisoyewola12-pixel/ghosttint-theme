@@ -1,0 +1,173 @@
+{
+  "_readme": "Manifest of GhostTint's media files as uploaded to Shopify (Settings > Content > Files). This does NOT contain the actual video/image bytes — each entry is a permanent Shopify CDN URL, which stays valid regardless of theme changes. Generated from Shopify's Admin GraphQL `files` query. Only covers the active build (2026-08-18 onward); older files from earlier concept/mockup exploration (Dec 2025 - Jan 2026 ChatGPT-generated images, unrelated screen recordings) were excluded as not relevant to the current site. Re-run the query in this session's history to refresh if new files are uploaded.",
+  "generated_at": "2026-08-29",
+  "shopify_files_admin_url": "https://admin.shopify.com/store/theghosttint/content/files",
+  "product_hero_media": {
+    "_note": "Studio glass photography, one file per VLT (visible light transmission) level, used by the interactive tint/remote demo section (gt-remote).",
+    "vlt_levels": [
+      { "level": "70%", "filename": "gt-level-70.jpg", "gid": "gid://shopify/MediaImage/69412619059581", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-level-70.jpg", "used_in": "gt-remote section, level_1_image" },
+      { "level": "55%", "filename": "gt-level-55.jpg", "gid": "gid://shopify/MediaImage/69412619092349", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-level-55.jpg", "used_in": "gt-remote section, level_2_image" },
+      { "level": "42%", "filename": "gt-level-42.jpg", "gid": "gid://shopify/MediaImage/69412619125117", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-level-42.jpg", "used_in": "gt-remote section, level_3_image" },
+      { "level": "30%", "filename": "gt-level-30.jpg", "gid": "gid://shopify/MediaImage/69412619157885", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-level-30.jpg", "used_in": "gt-remote section, level_4_image" },
+      { "level": "20%", "filename": "gt-level-20.jpg", "gid": "gid://shopify/MediaImage/69412619190653", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-level-20.jpg", "used_in": "gt-remote section, level_5_image" },
+      { "level": "12%", "filename": "gt-level-12.jpg", "gid": "gid://shopify/MediaImage/69412619223421", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-level-12.jpg", "used_in": "gt-remote section, level_6_image" },
+      { "level": "5%", "filename": "gt-level-5.jpg", "gid": "gid://shopify/MediaImage/69412619256189", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-level-5.jpg", "used_in": "gt-remote section, level_7_image" }
+    ],
+    "remote_photos": [
+      { "filename": "ghosttint-remote-transparent-off.png", "gid": "gid://shopify/MediaImage/69420995379581", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-remote-transparent-off.png", "alt": "GhostTint wireless remote, LED off", "used_in": "gt-remote section, remote_image (default state)" },
+      { "filename": "ghosttint-remote-transparent-on.png", "gid": "gid://shopify/MediaImage/69420995412349", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-remote-transparent-on.png", "alt": "GhostTint wireless remote, LED lit", "used_in": "gt-remote section, remote_image_on (transmitting state)" },
+      { "filename": "ghosttint-remote-led-off.jpg", "gid": "gid://shopify/MediaImage/69413990400381", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-remote-led-off.jpg", "alt": "GhostTint wireless remote with power, up and down buttons", "used_in": null, "status": "unused — alternate (non-transparent-bg) remote photo" },
+      { "filename": "ghosttint-remote-led-on.jpg", "gid": "gid://shopify/MediaImage/69413990433149", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-remote-led-on.jpg", "alt": "GhostTint remote transmitting, indicator lit blue", "used_in": null, "status": "unused — alternate (non-transparent-bg) remote photo" },
+      { "filename": "ghost-tints-remote-product.png", "gid": "gid://shopify/MediaImage/69403424555389", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghost-tints-remote-product.png", "alt": "Ghost Tints wireless electronic tint remote on white", "used_in": null, "status": "unused" },
+      { "filename": "ghost-tints-remote-in-use.jpg", "gid": "gid://shopify/MediaImage/69403423801725", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghost-tints-remote-in-use.jpg", "alt": "Ghost Tints remote control held beside an electronically tinted car window", "used_in": null, "status": "unused" }
+    ],
+    "social_proof_avatars": [
+      { "filename": "IMG_4632.jpg", "gid": "gid://shopify/MediaImage/69459232194941", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/IMG_4632.jpg", "used_in": "product-hero section, avatar block \"Elliot\" (verified)" },
+      { "filename": "IMG_4631.jpg", "gid": "gid://shopify/MediaImage/69459232162173", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/IMG_4631.jpg", "used_in": "product-hero section, avatar block \"George\" (verified)" },
+      { "filename": "IMG_4630.jpg", "gid": "gid://shopify/MediaImage/69459231998333", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/IMG_4630.jpg", "used_in": "product-hero section, avatar block (unnamed, unverified)" }
+    ]
+  },
+  "product_component_photos": {
+    "_note": "Not currently used in the live template — available for a future spec-sheet, unboxing, or components section.",
+    "items": [
+      { "filename": "ghost-tints-hengye-power-control.jpg", "gid": "gid://shopify/MediaImage/69403426128253", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghost-tints-hengye-power-control.jpg", "alt": "Ghost Tints HENGYE power and control unit on white" },
+      { "filename": "ghost-tints-connection-cables.jpg", "gid": "gid://shopify/MediaImage/69403425636733", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghost-tints-connection-cables.jpg", "alt": "Ghost Tints connection cable assemblies on white" },
+      { "filename": "ghosttint-logo-black.png", "gid": "gid://shopify/MediaImage/69420864438653", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-logo-black.png", "alt": "Ghost Tints — Drive Smarter (black wordmark logo)" }
+    ]
+  },
+  "videos": {
+    "_note": "Each video's `mp4_hd` is the best-quality direct mp4 URL (usually 1080p); `sources` lists every resolution Shopify generated (SD/HD/HLS .m3u8), in case a lighter-weight version is needed.",
+    "how_it_works_section": [
+      {
+        "role": "step 1 — \"It starts as a film\"",
+        "filename": "ghosttint-turntable-spin.mp4",
+        "gid": "gid://shopify/Video/69421029458301",
+        "duration_ms": 20130,
+        "mp4_hd": "https://cdn.shopify.com/videos/c/vp/36b7198f9bb24627be3f8b3059b9d475/36b7198f9bb24627be3f8b3059b9d475.HD-1080p-2.5Mbps-92457403.mp4",
+        "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-turntable-spin-poster.jpg",
+        "used_in": "gt-how section, step s1"
+      },
+      {
+        "role": "step 2 — \"Wired to the car\"",
+        "filename": "ghosttint-install-wiring.mp4",
+        "gid": "gid://shopify/Video/69416461730173",
+        "duration_ms": 3900,
+        "mp4_hd": "https://cdn.shopify.com/videos/c/vp/d1db113a857142a994e4a09670d63be0/d1db113a857142a994e4a09670d63be0.SD-480p-0.9Mbps-92379918.mp4",
+        "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-poster-install.jpg",
+        "used_in": "gt-how section, step s2",
+        "note": "only an SD source was generated for this one (no separate HD mp4)"
+      },
+      {
+        "role": "step 3 — \"You hold the range\"",
+        "filename": "ghosttint-tint-range-demo.mp4",
+        "gid": "gid://shopify/Video/69411121758589",
+        "duration_ms": 5040,
+        "mp4_hd": "https://cdn.shopify.com/videos/c/vp/b6d86aced2974e78a1af2c999768d69f/b6d86aced2974e78a1af2c999768d69f.HD-1080p-7.2Mbps-92320304.mp4",
+        "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-poster-range.jpg",
+        "used_in": "gt-how section, step s3"
+      }
+    ],
+    "showcase_section": [
+      {
+        "filename": "0828.mp4",
+        "gid": "gid://shopify/Video/69467904573821",
+        "duration_ms": 5020,
+        "mp4_hd": "https://cdn.shopify.com/videos/c/vp/d0dcee7217724fddb0ae1c45a2471d67/d0dcee7217724fddb0ae1c45a2471d67.HD-1080p-3.3Mbps-92878942.mp4",
+        "description": "Clean white-background BMW 3-series studio render, looping windows clear -> full blackout -> clear",
+        "used_in": "gt-showcase section (\"THE WHOLE CAR\" / \"Every window. One system.\")"
+      },
+      {
+        "filename": "gt_whitebg.mp4",
+        "gid": "gid://shopify/Video/69458915885437",
+        "duration_ms": 5040,
+        "mp4_hd": "https://cdn.shopify.com/videos/c/vp/c4194f5144fa459992e3bee726c08bdc/c4194f5144fa459992e3bee726c08bdc.HD-720p-1.6Mbps-92752854.mp4",
+        "used_in": null,
+        "status": "unused — earlier white-bg cut, superseded by 0828.mp4 (uploaded ~1 day later)"
+      }
+    ],
+    "in_action_carousel": [
+      {
+        "filename": "ghosttint-inaction-clip1.mov",
+        "gid": "gid://shopify/Video/69432888426877",
+        "duration_ms": 10030,
+        "mp4_hd": "https://cdn.shopify.com/videos/c/vp/71f7c1e5cfab4b1eaa32da2b05c7c940/71f7c1e5cfab4b1eaa32da2b05c7c940.HD-1080p-7.2Mbps-92576471.mp4",
+        "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-inaction-clip1-poster.jpg",
+        "used_in": "customer-spotlight section (\"Spotted\" / \"In Action\"), post 1"
+      },
+      {
+        "filename": "ghosttint-inaction-clip2.mov",
+        "gid": "gid://shopify/Video/69432888459645",
+        "duration_ms": 13630,
+        "mp4_hd": "https://cdn.shopify.com/videos/c/vp/678f97c6c3f6451091027afcaf6f520b/678f97c6c3f6451091027afcaf6f520b.HD-1080p-7.2Mbps-92576472.mp4",
+        "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-inaction-clip2-poster.jpg",
+        "used_in": "customer-spotlight section, post 2"
+      },
+      {
+        "filename": "ghosttint-inaction-clip3.mov",
+        "gid": "gid://shopify/Video/69432888492413",
+        "duration_ms": 13630,
+        "mp4_hd": "https://cdn.shopify.com/videos/c/vp/0359ae0915534ab7bb3106fd379adc3f/0359ae0915534ab7bb3106fd379adc3f.HD-1080p-7.2Mbps-92576473.mp4",
+        "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-inaction-clip3-poster.jpg",
+        "used_in": "customer-spotlight section, post 3"
+      },
+      {
+        "filename": "ghosttint-inaction-clip-1.mov",
+        "gid": "gid://shopify/Video/69432582930813",
+        "used_in": null,
+        "status": "unused — earlier hyphenated-name duplicate, superseded by ghosttint-inaction-clip1.mov (no hyphen, uploaded ~1hr later, has a matching poster)"
+      },
+      {
+        "filename": "ghosttint-inaction-clip-2.mov",
+        "gid": "gid://shopify/Video/69432582963581",
+        "used_in": null,
+        "status": "unused — superseded, see clip-1 note"
+      },
+      {
+        "filename": "ghosttint-inaction-clip-3.mov",
+        "gid": "gid://shopify/Video/69432582996349",
+        "used_in": null,
+        "status": "unused — superseded, see clip-1 note"
+      }
+    ],
+    "unused_raw_clips": {
+      "_note": "Unedited phone captures, not currently wired into any section. Previously the customer-spotlight carousel used four of these (0826.mov and its 3 siblings) before being swapped for the purpose-made in_action_carousel clips above.",
+      "items": [
+        { "filename": "0826.mov", "gid": "gid://shopify/Video/69457365959037", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/71ec27c7121b48c99049480ca50ff9fe/71ec27c7121b48c99049480ca50ff9fe.HD-1080p-7.2Mbps-92709517.mp4" },
+        { "filename": "0826(1).mov", "gid": "gid://shopify/Video/69457366188413", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/60876e50687646bc9f65c2fa132dfa4a/60876e50687646bc9f65c2fa132dfa4a.HD-1080p-7.2Mbps-92709596.mp4" },
+        { "filename": "0826(2).mov", "gid": "gid://shopify/Video/69457366647165", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/27358ce70db34e5cb54f3cc1b184a2d8/27358ce70db34e5cb54f3cc1b184a2d8.HD-1080p-7.2Mbps-92709660.mp4" },
+        { "filename": "0826(3).mov", "gid": "gid://shopify/Video/69457367466365", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/d625b100049b42969248d905c2181ad7/d625b100049b42969248d905c2181ad7.HD-1080p-7.2Mbps-92709727.mp4" },
+        { "filename": "0825.mov", "gid": "gid://shopify/Video/69456846848381", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/6c8ad31a40df4d9eb96ba0bece4cf5b7/6c8ad31a40df4d9eb96ba0bece4cf5b7.HD-1080p-7.2Mbps-92690982.mp4", "note": "was previously (incorrectly) wired into gt-how step 2 in place of ghosttint-install-wiring.mp4; fixed 2026-08-29" },
+        { "filename": "0824(2)(1).mov", "gid": "gid://shopify/Video/69455105556861", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/edfd88ab40a047b3bb43c9df1a2deabc/edfd88ab40a047b3bb43c9df1a2deabc.HD-1080p-7.2Mbps-92668591.mp4" },
+        { "filename": "0824(2)(2).mov", "gid": "gid://shopify/Video/69456727835005", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/efcef11969d74534a09fecabb4b466eb/efcef11969d74534a09fecabb4b466eb.HD-1080p-7.2Mbps-92688345.mp4" },
+        { "filename": "IMG-4599.MP4", "gid": "gid://shopify/Video/69457369858429", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/b9ad80613ecb40d0a0d0b9379806d820/b9ad80613ecb40d0a0d0b9379806d820.HD-1080p-7.2Mbps-92709967.mp4" },
+        { "filename": "2026-08-24-12:44:13.mp4", "gid": "gid://shopify/Video/69457362780541", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/3ab033cc769947daba0c41f4d5c535d9/3ab033cc769947daba0c41f4d5c535d9.HD-1080p-7.2Mbps-92709089.mp4" },
+        { "filename": "2026-08-27-00:19:52.mp4", "gid": "gid://shopify/Video/69457412358525", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/a2d1b588cf3a407198cbfe78f0933764/a2d1b588cf3a407198cbfe78f0933764.HD-1080p-7.2Mbps-92711451.mp4" },
+        { "filename": "ghosttint-instant-tints-hero.mov", "gid": "gid://shopify/Video/69455177777533", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/cc0741a52dc5421ebe7339e4a2c9a507/cc0741a52dc5421ebe7339e4a2c9a507.HD-1080p-7.2Mbps-92669179.mp4" }
+      ]
+    },
+    "unused_glass_demo_videos": {
+      "_note": "Polished studio glass demo clips (not the whole-car showcase) — candidates for a future close-up detail section.",
+      "items": [
+        { "filename": "ghosttint-glass-cycle.mp4", "gid": "gid://shopify/Video/69412619288957", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/8c3b26a14ef547038e7bdcffc2b955b9/8c3b26a14ef547038e7bdcffc2b955b9.HD-1080p-3.3Mbps-92334920.mp4" },
+        { "filename": "ghosttint-blackout-rotation.mp4", "gid": "gid://shopify/Video/69411121791357", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/21ab4551384f4bb8907c98ffd1e3dcca/21ab4551384f4bb8907c98ffd1e3dcca.HD-1080p-7.2Mbps-92320305.mp4", "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-poster-rotation.jpg" },
+        { "filename": "ghosttint-glass-rotation-transition.mp4", "gid": "gid://shopify/Video/69411121725821", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/0e7906e93ea34d0fa1cbad3684962324/0e7906e93ea34d0fa1cbad3684962324.HD-1080p-7.2Mbps-92320303.mp4" },
+        { "filename": "ghosttint-tint-transition-closeup.mp4", "gid": "gid://shopify/Video/69411121693053", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/8ece608b5904494b9b22110ef772294b/8ece608b5904494b9b22110ef772294b.HD-1080p-7.2Mbps-92320302.mp4" },
+        { "filename": "ghosttint-tint-transition-hero.mp4", "gid": "gid://shopify/Video/69411121660285", "mp4_hd": "https://cdn.shopify.com/videos/c/vp/6e2f24568e7b46079b820f29e955e18d/6e2f24568e7b46079b820f29e955e18d.HD-1080p-7.2Mbps-92320300.mp4" }
+      ],
+      "matching_posters": [
+        { "filename": "gt-poster-rotation.jpg", "gid": "gid://shopify/MediaImage/69416396161405", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-poster-rotation.jpg" },
+        { "filename": "gt-poster-cycle.jpg", "gid": "gid://shopify/MediaImage/69416396128637", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/gt-poster-cycle.jpg" }
+      ]
+    }
+  },
+  "legacy_template_images": {
+    "_note": "Referenced only by templates/product.ghosttint.json — an older, currently-inactive template (the live product uses templates/product.ghosttint-v2.json instead). Kept here for reference in case that template is ever revived.",
+    "items": [
+      { "filename": "ABE99DB7-18B7-4D34-9580-8143A234E44F.png", "gid": "gid://shopify/MediaImage/69379883958653", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ABE99DB7-18B7-4D34-9580-8143A234E44F.png" },
+      { "filename": "8C0A69A2-CA11-46BF-86F4-DFC6B46F04F0.png", "gid": "gid://shopify/MediaImage/69379877339517", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/8C0A69A2-CA11-46BF-86F4-DFC6B46F04F0.png" },
+      { "filename": "89C2E3BE-E10C-49F3-87D8-12A15BBED08C.png", "gid": "gid://shopify/MediaImage/69379691577725", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/89C2E3BE-E10C-49F3-87D8-12A15BBED08C.png" },
+      { "filename": "63A4F981-13BC-40A7-B569-A2F97D531D43.png", "gid": "gid://shopify/MediaImage/69379700883837", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/63A4F981-13BC-40A7-B569-A2F97D531D43.png" },
+      { "filename": "78A21F35-A5E3-4286-A203-EC8A7CF80E7C_71d51a51-3a57-4224-b6d1-afad9dce4bd3.png", "gid": "gid://shopify/MediaImage/69382910214525", "url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/78A21F35-A5E3-4286-A203-EC8A7CF80E7C_71d51a51-3a57-4224-b6d1-afad9dce4bd3.png" }
+    ]
+  }
+}
