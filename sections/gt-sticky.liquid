@@ -10,28 +10,30 @@
 <div class="gt">
   <div class="gt-sticky" data-gt-sticky data-product-url="{{ p.url }}">
     <div class="gt-sticky__in">
-      <div class="gt-sticky__media">
-        {%- if thumb -%}
-          <img
-            class="gt-sticky__img"
-            src="{{ thumb | image_url: width: 96 }}"
-            width="48" height="48"
-            alt="{{ p.title | escape }}"
-            loading="lazy"
-          >
-        {%- else -%}
-          <span class="gt-sticky__img gt-sticky__img--ph" aria-hidden="true">{{ p.title | slice: 0, 1 }}</span>
-        {%- endif -%}
-      </div>
+      <div class="gt-sticky__main">
+        <div class="gt-sticky__media">
+          {%- if thumb -%}
+            <img
+              class="gt-sticky__img"
+              src="{{ thumb | image_url: width: 96 }}"
+              width="48" height="48"
+              alt="{{ p.title | escape }}"
+              loading="lazy"
+            >
+          {%- else -%}
+            <span class="gt-sticky__img gt-sticky__img--ph" aria-hidden="true">{{ p.title | slice: 0, 1 }}</span>
+          {%- endif -%}
+        </div>
 
-      <div class="gt-sticky__txt">
-        <p class="gt-sticky__name">{{ section.settings.label | default: p.title }}</p>
-        {%- if section.settings.show_price -%}
-          <p class="gt-sticky__meta">
-            {{ v.price | money }}
-            {%- if section.settings.show_level %}&nbsp;·&nbsp;<span data-gt-vlt-out>70</span>% VLT{% endif -%}
-          </p>
-        {%- endif -%}
+        <div class="gt-sticky__txt">
+          <p class="gt-sticky__name">{{ section.settings.label | default: p.title }}</p>
+          {%- if section.settings.show_price -%}
+            <p class="gt-sticky__meta">
+              {{ v.price | money }}
+              {%- if section.settings.show_level %}&nbsp;·&nbsp;<span data-gt-vlt-out>70</span>% VLT{% endif -%}
+            </p>
+          {%- endif -%}
+        </div>
       </div>
 
       <button

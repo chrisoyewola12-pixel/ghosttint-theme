@@ -288,12 +288,41 @@
 .gt-faq__a p { margin: 0 0 10px; }
 .gt-faq__a p:last-child { margin: 0; }
 
-/* Sticky add-to-cart — floating glass pill, matches VUSI Studios reference:
-   thumbnail + name (+ optional price) + prominent CTA, appears after the
-   shopper scrolls past the buy box and hides again near the footer.
-   VUSI's version is a DARK glass pill with a LIGHT "Shop Now" button —
-   this was inverted (light pill / dark button) and needed correcting. */
+/* Sticky add-to-cart — floating glass pill.
+   Tokens below were measured (not guessed) from VUSI Studios' live sticky
+   bar at https://vusistudios.com/products/dot — devtools computed styles
+   on its `seed-sticky-product` element, read at 390px and 1440px:
+     surface   background: rgba(98,98,98,.35)   backdrop-filter: blur(19px)
+               border-radius: 100px              box-shadow: none (measured —
+               there is no literal shadow; the "soft shadow" impression in
+               screenshots comes from the blur edge against page content)
+     title     color: #fff   font-weight: 400   font-size: 14px (<750px) / 18px (>=750px)
+     button    background: #f8f8f8   text: #4a4a4a   hover-bg: #e8e8e8
+               border-radius: 100px  padding: 8px 16px (<750px) / 12px 24px (>=750px)
+     avatar    36px (<750px) / 48px (>=750px), circular, rgba(255,255,255,.15) halo
+     layout    7px panel padding, 8px gap between avatar and title
+     position  16px inset from left/right/bottom (floating pill, not edge-to-edge) */
 .gt-sticky {
+  --gt-sticky-bg: rgba(98, 98, 98, .35);
+  --gt-sticky-bg-fallback: rgba(38, 38, 41, .94); /* solid stand-in when backdrop-filter is unsupported */
+  --gt-sticky-blur: 19px;
+  --gt-sticky-radius: 100px;
+  --gt-sticky-shadow: none;
+  --gt-sticky-pad: 7px;
+  --gt-sticky-gap: 8px;
+  --gt-sticky-avatar: 36px;
+  --gt-sticky-avatar-bg: rgba(255, 255, 255, .15);
+  --gt-sticky-title-color: #ffffff;
+  --gt-sticky-title-weight: 400;
+  --gt-sticky-title-size: 14px;
+  --gt-sticky-meta-color: rgba(255, 255, 255, .7);
+  --gt-sticky-btn-bg: #f8f8f8;
+  --gt-sticky-btn-bg-hover: #e8e8e8;
+  --gt-sticky-btn-text: #4a4a4a;
+  --gt-sticky-btn-radius: 100px;
+  --gt-sticky-btn-pad: 8px 16px;
+  --gt-sticky-btn-font: 14px;
+
   position: fixed;
   left: 16px; right: 16px;
   bottom: calc(16px + env(safe-area-inset-bottom, 0px));
@@ -308,37 +337,54 @@
 .gt-sticky__in {
   pointer-events: auto;
   width: 100%; max-width: 480px;
-  display: flex; align-items: center; gap: 12px;
-  padding: 7px 7px 7px 10px;
-  background: rgba(22,22,24,.82);
-  -webkit-backdrop-filter: blur(19px); backdrop-filter: blur(19px);
-  border: 1px solid rgba(255,255,255,.14);
-  border-radius: 100px;
-  box-shadow: 0 12px 30px rgba(0,0,0,.32);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: var(--gt-sticky-pad);
+  background: var(--gt-sticky-bg-fallback);
+  border-radius: var(--gt-sticky-radius);
+  box-shadow: var(--gt-sticky-shadow);
 }
-.gt-sticky__media { flex: none; width: 48px; height: 48px; }
-.gt-sticky__img { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; display: block; background: var(--gt-surface); }
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .gt-sticky__in {
+    background: var(--gt-sticky-bg);
+    -webkit-backdrop-filter: blur(var(--gt-sticky-blur));
+    backdrop-filter: blur(var(--gt-sticky-blur));
+  }
+}
+/* Avatar + title are grouped in their own flex row so the fixed-size avatar
+   (flex: none) and the truncating title (min-width: 0) can never collide —
+   no absolute positioning or manual margins involved at any width. */
+.gt-sticky__main { display: flex; align-items: center; gap: var(--gt-sticky-gap); flex: 1 1 auto; min-width: 0; }
+.gt-sticky__media {
+  flex: none;
+  width: var(--gt-sticky-avatar); height: var(--gt-sticky-avatar);
+  border-radius: 50%;
+  background: var(--gt-sticky-avatar-bg);
+  overflow: hidden;
+}
+.gt-sticky__img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
 .gt-sticky__img--ph {
+  width: 100%; height: 100%;
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; font-weight: 700; color: var(--gt-accent-ink);
   background: var(--gt-accent); text-transform: uppercase;
 }
-.gt-sticky__txt { flex: 1; min-width: 0; }
-.gt-sticky__name { margin: 0; font-size: 15px; font-weight: 650; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.gt-sticky__meta { margin: 1px 0 0; font-size: 12px; color: rgba(255,255,255,.65); font-variant-numeric: tabular-nums; }
+.gt-sticky__txt { flex: 1 1 auto; min-width: 0; }
+.gt-sticky__name { margin: 0; font-size: var(--gt-sticky-title-size); font-weight: var(--gt-sticky-title-weight); color: var(--gt-sticky-title-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gt-sticky__meta { margin: 1px 0 0; font-size: 12px; color: var(--gt-sticky-meta-color); font-variant-numeric: tabular-nums; }
 .gt-sticky__cta {
   flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  height: 44px; padding: 0 22px; border: 0; border-radius: 100px;
-  background: #ffffff; color: #16161a;
-  font: inherit; font-size: 14px; font-weight: 650; letter-spacing: .01em;
+  padding: var(--gt-sticky-btn-pad); border: 0; border-radius: var(--gt-sticky-btn-radius);
+  background: var(--gt-sticky-btn-bg); color: var(--gt-sticky-btn-text);
+  font: inherit; font-size: var(--gt-sticky-btn-font); font-weight: 600; letter-spacing: .01em;
+  line-height: 1.4;
   cursor: pointer; transition: background .16s ease, transform .12s ease;
 }
-.gt-sticky__cta:hover { background: #ececee; }
+.gt-sticky__cta:hover { background: var(--gt-sticky-btn-bg-hover); }
 .gt-sticky__cta:active { transform: translateY(1px); }
 .gt-sticky__cta[disabled] { opacity: .6; cursor: wait; }
 .gt-sticky__spinner {
   width: 14px; height: 14px; border-radius: 50%;
-  border: 2px solid rgba(22,22,24,.25); border-top-color: #16161a;
+  border: 2px solid rgba(74,74,74,.3); border-top-color: var(--gt-sticky-btn-text);
   display: none; animation: gtStickySpin .7s linear infinite;
 }
 .gt-sticky__cta[disabled] .gt-sticky__spinner { display: inline-block; }
@@ -346,14 +392,11 @@
 
 @media (max-width: 559px) {
   .gt-sticky { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
-  .gt-sticky__media { width: 36px; height: 36px; }
-  .gt-sticky__img, .gt-sticky__img--ph { width: 36px; height: 36px; font-size: 14px; }
-  .gt-sticky__name { font-size: 14px; }
-  .gt-sticky__cta { height: 40px; padding: 0 18px; font-size: 13px; }
 }
 
 @media (min-width: 750px) {
   .gt { --gt-pad: 34px; }
+  .gt-sticky { --gt-sticky-avatar: 48px; --gt-sticky-title-size: 18px; --gt-sticky-btn-pad: 12px 24px; }
   .gt-trust { grid-template-columns: repeat(2, 1fr); }
   .gt-steps { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 26px; }
   .gt-reviews { grid-template-columns: repeat(3, 1fr); }
