@@ -288,10 +288,10 @@
 .gt-faq__a p { margin: 0 0 10px; }
 .gt-faq__a p:last-child { margin: 0; }
 
-/* Sticky add-to-cart — floating glass pill.
-   Tokens below were measured (not guessed) from VUSI Studios' live sticky
-   bar at https://vusistudios.com/products/dot — devtools computed styles
-   on its `seed-sticky-product` element, read at 390px and 1440px:
+/* Sticky add-to-cart — floating glass pill with a 4-stage reveal.
+   Steady-state tokens were measured from VUSI Studios' live sticky bar at
+   https://vusistudios.com/products/dot — devtools computed styles on its
+   `seed-sticky-product` element, read at 390px and 1440px:
      surface   background: rgba(98,98,98,.35)   backdrop-filter: blur(19px)
                border-radius: 100px              box-shadow: none (measured —
                there is no literal shadow; the "soft shadow" impression in
@@ -299,9 +299,41 @@
      title     color: #fff   font-weight: 400   font-size: 14px (<750px) / 18px (>=750px)
      button    background: #f8f8f8   text: #4a4a4a   hover-bg: #e8e8e8
                border-radius: 100px  padding: 8px 16px (<750px) / 12px 24px (>=750px)
-     avatar    36px (<750px) / 48px (>=750px), circular, rgba(255,255,255,.15) halo
+     avatar    36px (<750px) / 48px (>=750px), circular, rgba(255,255,255,.15) halo,
+               object-fit: contain (measured — VUSI never crops the product)
      layout    7px panel padding, 8px gap between avatar and title
-     position  16px inset from left/right/bottom (floating pill, not edge-to-edge) */
+     position  16px inset from right/bottom, right-anchored (not centered)
+
+   Reveal animation — also measured, not guessed, from VUSI's own CSS custom
+   properties and transition rules (read straight out of its stylesheet):
+     trigger   scrollY > 1.05 * viewport height (a single formula — VUSI does
+               not use separate mobile/desktop scroll thresholds)
+     base      --ssp-duration: 900ms, split into named sub-durations:
+               pop-time   = duration * 4/9  (400ms)  ease: cubic-bezier(0,0,.2,1)
+               slide-time = duration * 5/9  (500ms)  ease: cubic-bezier(.4,0,.2,1)
+               text-delay = duration * .8   (720ms)
+               word-stagger = duration * .1756 (158ms, per word)
+               cta-time   = duration * .62  (558ms)
+     stage 1   "bubble": the collapsed surface (a circle, --gt-sticky-bubble
+               wide) and the avatar fade/scale in together over pop-time,
+               0 -> 400ms, no delay. Title/button stay invisible.
+     stage 2   "width expand": the surface grows from the bubble circle to
+               the pill's full width/height over slide-time, DELAYED by
+               pop-time (400ms -> 900ms). The avatar simultaneously slides
+               (translate) from an offset equal to the pill's final width
+               minus the bubble size, down to 0 — this is what makes it
+               look like the bubble "expands left" while the avatar glides
+               into its resting spot. Title/button are still invisible.
+     stage 3   "content fade": each word of the title slides up
+               (translateY 100% -> 0) over pop-time, delayed by
+               text-delay + word-index * word-stagger (720ms, 878ms, ...);
+               the button fades/slides in over cta-time delayed by
+               text-delay (720ms -> 1278ms).
+     stage 4   steady state — everything settled; matches the frosted-glass
+               look above.
+   All 4 stages are driven by ONE class toggle (`.is-on`) — the staging
+   comes entirely from transition-delay values baked into the CSS below,
+   not from separate JS timers that could desync. */
 .gt-sticky {
   --gt-sticky-bg: rgba(98, 98, 98, .35);
   --gt-sticky-bg-fallback: rgba(38, 38, 41, .94); /* solid stand-in when backdrop-filter is unsupported */
@@ -311,6 +343,8 @@
   --gt-sticky-pad: 7px;
   --gt-sticky-gap: 8px;
   --gt-sticky-avatar: 36px;
+  --gt-sticky-bubble: 52px;
+  --gt-sticky-travel: 0px; /* set by JS: final pill width minus bubble size */
   --gt-sticky-avatar-bg: rgba(255, 255, 255, .15);
   --gt-sticky-title-color: #ffffff;
   --gt-sticky-title-weight: 400;
@@ -323,35 +357,65 @@
   --gt-sticky-btn-pad: 8px 16px;
   --gt-sticky-btn-font: 14px;
 
+  --gt-sticky-duration: 900ms;
+  --gt-sticky-pop-ease: cubic-bezier(0, 0, .2, 1);
+  --gt-sticky-slide-ease: cubic-bezier(.4, 0, .2, 1);
+  --gt-sticky-pop-time: calc(var(--gt-sticky-duration) * .4444444444);
+  --gt-sticky-slide-time: calc(var(--gt-sticky-duration) * .5555555556);
+  --gt-sticky-text-delay: calc(var(--gt-sticky-duration) * .8);
+  --gt-sticky-word-stagger: calc(var(--gt-sticky-duration) * .1755555556);
+  --gt-sticky-cta-time: calc(var(--gt-sticky-duration) * .62);
+
   position: fixed;
-  left: 16px; right: 16px;
+  right: 16px; left: auto;
   bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  width: min(480px, calc(100% - 32px));
   z-index: 60;
-  display: flex; justify-content: center;
-  pointer-events: none;
-  transform: translateY(140%) scale(.96);
-  opacity: 0;
-  transition: transform .38s cubic-bezier(.16,1,.3,1), opacity .3s ease;
-}
-.gt-sticky.is-on { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
-.gt-sticky__in {
-  pointer-events: auto;
-  width: 100%; max-width: 480px;
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: var(--gt-sticky-pad);
-  background: var(--gt-sticky-bg-fallback);
   border-radius: var(--gt-sticky-radius);
-  box-shadow: var(--gt-sticky-shadow);
+  overflow: clip;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity var(--gt-sticky-duration) var(--gt-sticky-pop-ease), visibility var(--gt-sticky-duration);
+}
+.gt-sticky.is-on { opacity: 1; visibility: visible; pointer-events: auto; box-shadow: var(--gt-sticky-shadow); }
+
+/* Stage 1 + 2: the decorative glass layer starts as a small circle (the
+   "bubble") and grows to fill the pill. Absolutely positioned and anchored
+   top-right so it expands leftward out of the collapsed bubble's position. */
+.gt-sticky__surface {
+  position: absolute; inset: 0 0 auto auto;
+  width: var(--gt-sticky-bubble); height: var(--gt-sticky-bubble);
+  background: var(--gt-sticky-bg-fallback);
+  border-radius: inherit;
+  opacity: 0;
+  pointer-events: none;
 }
 @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-  .gt-sticky__in {
+  .gt-sticky__surface {
     background: var(--gt-sticky-bg);
     -webkit-backdrop-filter: blur(var(--gt-sticky-blur));
     backdrop-filter: blur(var(--gt-sticky-blur));
   }
 }
+.gt-sticky.is-on .gt-sticky__surface {
+  opacity: 1; width: 100%; height: 100%;
+  transition:
+    opacity var(--gt-sticky-pop-time) var(--gt-sticky-pop-ease),
+    width var(--gt-sticky-slide-time) var(--gt-sticky-slide-ease) var(--gt-sticky-pop-time),
+    height var(--gt-sticky-slide-time) var(--gt-sticky-slide-ease) var(--gt-sticky-pop-time);
+}
+
+/* The content panel is laid out at its final size from frame one (it never
+   animates its own box) — only its children individually fade/slide in, so
+   layout math (and the avatar/title collision guard) never changes mid-animation. */
+.gt-sticky__panel {
+  position: relative;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: var(--gt-sticky-pad);
+}
 /* Avatar + title are grouped in their own flex row so the fixed-size avatar
-   (flex: none) and the truncating title (min-width: 0) can never collide —
+   (flex: none) and the wrapping title (min-width: 0) can never collide —
    no absolute positioning or manual margins involved at any width. */
 .gt-sticky__main { display: flex; align-items: center; gap: var(--gt-sticky-gap); flex: 1 1 auto; min-width: 0; }
 .gt-sticky__media {
@@ -360,8 +424,19 @@
   border-radius: 50%;
   background: var(--gt-sticky-avatar-bg);
   overflow: hidden;
+  opacity: 0;
+  scale: .5;
+  translate: var(--gt-sticky-travel, 0px) 0;
 }
-.gt-sticky__img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
+.gt-sticky.is-on .gt-sticky__media {
+  opacity: 1; scale: 1; translate: 0 0;
+  transition:
+    opacity var(--gt-sticky-pop-time) var(--gt-sticky-pop-ease),
+    scale var(--gt-sticky-pop-time) var(--gt-sticky-pop-ease),
+    translate var(--gt-sticky-slide-time) var(--gt-sticky-slide-ease) var(--gt-sticky-pop-time);
+}
+/* object-fit: contain — the whole product must stay visible, never cropped */
+.gt-sticky__img { width: 100%; height: 100%; border-radius: 50%; object-fit: contain; display: block; }
 .gt-sticky__img--ph {
   width: 100%; height: 100%;
   display: flex; align-items: center; justify-content: center;
@@ -369,15 +444,38 @@
   background: var(--gt-accent); text-transform: uppercase;
 }
 .gt-sticky__txt { flex: 1 1 auto; min-width: 0; }
-.gt-sticky__name { margin: 0; font-size: var(--gt-sticky-title-size); font-weight: var(--gt-sticky-title-weight); color: var(--gt-sticky-title-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.gt-sticky__meta { margin: 1px 0 0; font-size: 12px; color: var(--gt-sticky-meta-color); font-variant-numeric: tabular-nums; }
+.gt-sticky__name {
+  margin: 0; font-size: var(--gt-sticky-title-size); font-weight: var(--gt-sticky-title-weight);
+  color: var(--gt-sticky-title-color);
+  display: flex; flex-wrap: wrap; gap: 0 .25em; overflow-wrap: anywhere;
+}
+/* Stage 3: each word slides up on its own delay (text-delay + index * stagger) */
+.gt-sticky__word { display: inline-block; overflow: clip; max-width: 100%; vertical-align: top; }
+.gt-sticky__word-inner { display: inline-block; max-width: 100%; vertical-align: top; translate: 0 100%; }
+.gt-sticky.is-on .gt-sticky__word-inner {
+  translate: 0 0;
+  transition: translate var(--gt-sticky-pop-time) var(--gt-sticky-pop-ease)
+    calc(var(--gt-sticky-text-delay) + var(--gt-word-index, 0) * var(--gt-sticky-word-stagger));
+}
+.gt-sticky__meta { margin: 1px 0 0; font-size: 12px; color: var(--gt-sticky-meta-color); font-variant-numeric: tabular-nums; opacity: 0; }
+.gt-sticky.is-on .gt-sticky__meta { opacity: 1; transition: opacity var(--gt-sticky-pop-time) var(--gt-sticky-pop-ease) var(--gt-sticky-text-delay); }
 .gt-sticky__cta {
   flex: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: var(--gt-sticky-btn-pad); border: 0; border-radius: var(--gt-sticky-btn-radius);
   background: var(--gt-sticky-btn-bg); color: var(--gt-sticky-btn-text);
   font: inherit; font-size: var(--gt-sticky-btn-font); font-weight: 600; letter-spacing: .01em;
   line-height: 1.4;
-  cursor: pointer; transition: background .16s ease, transform .12s ease;
+  cursor: pointer;
+  opacity: 0; translate: 18px 0;
+  transition: background .16s ease;
+}
+/* Stage 3: button fades/slides in on the same delay as the title */
+.gt-sticky.is-on .gt-sticky__cta {
+  opacity: 1; translate: 0 0;
+  transition:
+    opacity var(--gt-sticky-cta-time) var(--gt-sticky-pop-ease) var(--gt-sticky-text-delay),
+    translate var(--gt-sticky-cta-time) var(--gt-sticky-pop-ease) var(--gt-sticky-text-delay),
+    background .16s ease;
 }
 .gt-sticky__cta:hover { background: var(--gt-sticky-btn-bg-hover); }
 .gt-sticky__cta:active { transform: translateY(1px); }
@@ -391,12 +489,12 @@
 @keyframes gtStickySpin { to { transform: rotate(360deg); } }
 
 @media (max-width: 559px) {
-  .gt-sticky { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); }
+  .gt-sticky { right: 12px; bottom: calc(12px + env(safe-area-inset-bottom, 0px)); width: min(480px, calc(100% - 24px)); }
 }
 
 @media (min-width: 750px) {
   .gt { --gt-pad: 34px; }
-  .gt-sticky { --gt-sticky-avatar: 48px; --gt-sticky-title-size: 18px; --gt-sticky-btn-pad: 12px 24px; }
+  .gt-sticky { --gt-sticky-avatar: 48px; --gt-sticky-bubble: 64px; --gt-sticky-title-size: 18px; --gt-sticky-btn-pad: 12px 24px; }
   .gt-trust { grid-template-columns: repeat(2, 1fr); }
   .gt-steps { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 26px; }
   .gt-reviews { grid-template-columns: repeat(3, 1fr); }
@@ -416,5 +514,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .gt *, .gt *::before, .gt *::after { animation: none !important; transition: none !important; }
-  .gt-sticky { transition: none; }
+  /* Reduce the 4-stage reveal to a simple fade: the outer bar still fades in/out
+     (short, linear), but every internal stage (bubble scale, width expand, word
+     stagger, button slide) is pre-settled to its final state so nothing moves. */
+  .gt-sticky { transition: opacity .2s linear !important; }
+  .gt-sticky__surface, .gt-sticky__media, .gt-sticky__word-inner, .gt-sticky__cta, .gt-sticky__meta {
+    transition: none !important;
+    opacity: 1 !important; scale: 1 !important; translate: 0 0 !important;
+  }
+  .gt-sticky__surface { width: 100% !important; height: 100% !important; }
 }

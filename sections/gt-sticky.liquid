@@ -4,15 +4,33 @@
 {%- liquid
   assign p = section.settings.product | default: product
   assign v = p.selected_or_first_available_variant
+
+  # The avatar_image_asset setting overrides the product's own featured
+  # image — useful when that image is a close-up crop unsuitable for a
+  # small circle. It points at a theme asset filename (assets/…), not a
+  # Shopify product image, so this stays scoped to the sticky bar only.
+  assign avatar_asset = section.settings.avatar_image_asset
   assign thumb = p.featured_media.preview_image | default: p.featured_image
+
+  assign title = section.settings.label | default: p.title
+  assign title_words = title | split: ' '
 -%}
 
 <div class="gt">
   <div class="gt-sticky" data-gt-sticky data-product-url="{{ p.url }}">
-    <div class="gt-sticky__in">
+    <div class="gt-sticky__surface"></div>
+    <div class="gt-sticky__panel">
       <div class="gt-sticky__main">
         <div class="gt-sticky__media">
-          {%- if thumb -%}
+          {%- if avatar_asset != blank -%}
+            <img
+              class="gt-sticky__img"
+              src="{{ avatar_asset | asset_url }}"
+              width="48" height="48"
+              alt="{{ p.title | escape }}"
+              loading="lazy"
+            >
+          {%- elsif thumb -%}
             <img
               class="gt-sticky__img"
               src="{{ thumb | image_url: width: 96 }}"
@@ -26,7 +44,11 @@
         </div>
 
         <div class="gt-sticky__txt">
-          <p class="gt-sticky__name">{{ section.settings.label | default: p.title }}</p>
+          <p class="gt-sticky__name">
+            {%- for word in title_words -%}
+              <span class="gt-sticky__word"><span class="gt-sticky__word-inner" style="--gt-word-index: {{ forloop.index0 }}">{{ word }}{% unless forloop.last %}&nbsp;{% endunless %}</span></span>
+            {%- endfor -%}
+          </p>
           {%- if section.settings.show_price -%}
             <p class="gt-sticky__meta">
               {{ v.price | money }}
@@ -65,7 +87,8 @@
     { "type": "text", "id": "label", "label": "Label", "info": "Defaults to the product title." },
     { "type": "text", "id": "cta_label", "label": "Button label", "default": "Shop Now" },
     { "type": "checkbox", "id": "show_price", "label": "Show price", "default": false },
-    { "type": "checkbox", "id": "show_level", "label": "Show selected VLT level", "info": "Only shown when price is shown.", "default": false }
+    { "type": "checkbox", "id": "show_level", "label": "Show selected VLT level", "info": "Only shown when price is shown.", "default": false },
+    { "type": "text", "id": "avatar_image_asset", "label": "Avatar image (theme asset filename)", "info": "Overrides the product's featured image in the circular avatar, e.g. 'gt-sticky-avatar-ghosttint.png'. Use this when the featured image is a close-up crop unsuitable for a small circle — the image should show the whole product on a transparent background." }
   ],
   "presets": [{ "name": "GT · Sticky add to cart" }]
 }

@@ -322,6 +322,11 @@
    * the currently selected variant (read live from the main form) and
    * sends the shopper straight to checkout, falling back to the cart
    * page if the add fails.
+   *
+   * Trigger matches VUSI Studios' own sticky bar (measured, not guessed,
+   * by scrubbing its live scroll position against its data-visible
+   * attribute): scrollY > 1.05 * viewport height, one formula for every
+   * width — no separate mobile/desktop scroll thresholds.
    * ------------------------------------------------------------- */
   function initSticky() {
     var bar = document.querySelector('[data-gt-sticky]');
@@ -337,7 +342,19 @@
     var raf = 0;
 
     function threshold() {
-      return window.matchMedia('(max-width: 749px)').matches ? 600 : 900;
+      return window.innerHeight * 1.05;
+    }
+
+    // The avatar animates in from an offset equal to (final pill width -
+    // bubble size), so it visually glides from the collapsed bubble's
+    // position into its resting spot as the surface widens (stage 2).
+    // Measured live and set as a custom property, not hard-coded, since
+    // the pill's final width is responsive (min(480px, 100% - 32px)).
+    function updateTravel() {
+      var bubble = parseFloat(getComputedStyle(bar).getPropertyValue('--gt-sticky-bubble')) || 0;
+      var pillWidth = bar.getBoundingClientRect().width;
+      var travel = Math.max(0, pillWidth - bubble);
+      bar.style.setProperty('--gt-sticky-travel', travel + 'px');
     }
 
     function apply() {
@@ -346,6 +363,7 @@
 
     function evaluate() {
       raf = 0;
+      updateTravel();
       pastThreshold = window.scrollY > threshold();
       apply();
     }
