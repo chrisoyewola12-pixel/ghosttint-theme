@@ -1,0 +1,70 @@
+{{ 'gt-pdp.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'gt-pdp.js' | asset_url }}" defer></script>
+
+{%- liquid
+  assign p = section.settings.product | default: product
+  assign v = p.selected_or_first_available_variant
+  assign thumb = p.featured_media.preview_image | default: p.featured_image
+-%}
+
+<div class="gt">
+  <div class="gt-sticky" data-gt-sticky data-product-url="{{ p.url }}">
+    <div class="gt-sticky__in">
+      <div class="gt-sticky__media">
+        {%- if thumb -%}
+          <img
+            class="gt-sticky__img"
+            src="{{ thumb | image_url: width: 96 }}"
+            width="48" height="48"
+            alt="{{ p.title | escape }}"
+            loading="lazy"
+          >
+        {%- else -%}
+          <span class="gt-sticky__img gt-sticky__img--ph" aria-hidden="true">{{ p.title | slice: 0, 1 }}</span>
+        {%- endif -%}
+      </div>
+
+      <div class="gt-sticky__txt">
+        <p class="gt-sticky__name">{{ section.settings.label | default: p.title }}</p>
+        {%- if section.settings.show_price -%}
+          <p class="gt-sticky__meta">
+            {{ v.price | money }}
+            {%- if section.settings.show_level %}&nbsp;·&nbsp;<span data-gt-vlt-out>70</span>% VLT{% endif -%}
+          </p>
+        {%- endif -%}
+      </div>
+
+      <button
+        type="button"
+        class="gt-sticky__cta"
+        data-gt-sticky-cta
+        data-variant-fallback="{{ v.id }}"
+        {% unless v.available %}disabled{% endunless %}
+      >
+        <span data-gt-sticky-cta-label>
+          {%- if v.available -%}
+            {{ section.settings.cta_label | default: 'Shop Now' }}
+          {%- else -%}
+            Sold out
+          {%- endif -%}
+        </span>
+        <span class="gt-sticky__spinner" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "GT · Sticky add to cart",
+  "tag": "div",
+  "settings": [
+    { "type": "product", "id": "product", "label": "Product", "info": "Leave empty on a product template to use the current product." },
+    { "type": "text", "id": "label", "label": "Label", "info": "Defaults to the product title." },
+    { "type": "text", "id": "cta_label", "label": "Button label", "default": "Shop Now" },
+    { "type": "checkbox", "id": "show_price", "label": "Show price", "default": false },
+    { "type": "checkbox", "id": "show_level", "label": "Show selected VLT level", "info": "Only shown when price is shown.", "default": false }
+  ],
+  "presets": [{ "name": "GT · Sticky add to cart" }]
+}
+{% endschema %}
