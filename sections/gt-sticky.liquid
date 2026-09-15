@@ -18,7 +18,12 @@
 
 <div class="gt">
   <div class="gt-sticky" data-gt-sticky data-product-url="{{ p.url }}">
-    <div class="gt-sticky__surface"></div>
+    {%- comment -%}
+      The theme's base.css hides empty divs globally (div:empty { display: none }),
+      which would collapse this decorative layer entirely — the nested span gives
+      it a child so :empty never matches, without adding any visible content.
+    {%- endcomment -%}
+    <div class="gt-sticky__surface" aria-hidden="true"><span></span></div>
     <div class="gt-sticky__panel">
       <div class="gt-sticky__main">
         <div class="gt-sticky__media">
