@@ -303,11 +303,11 @@
                 {%- endif -%}
                 {%- if gt_legal_terms != blank -%}
                   {%- if gt_legal_contact != blank -%}<span aria-hidden="true">&middot;</span>{%- endif -%}
-                  <a href="{{ gt_legal_terms.url }}">{{ gt_legal_terms.title }}</a>
+                  <a href="{{ gt_legal_terms.url }}">Terms</a>
                 {%- endif -%}
                 {%- if gt_legal_shipping != blank -%}
                   {%- if gt_legal_contact != blank or gt_legal_terms != blank -%}<span aria-hidden="true">&middot;</span>{%- endif -%}
-                  <a href="{{ gt_legal_shipping.url }}">{{ gt_legal_shipping.title }}</a>
+                  <a href="{{ gt_legal_shipping.url }}">Shipping</a>
                 {%- endif -%}
               </div>
             {%- endif -%}

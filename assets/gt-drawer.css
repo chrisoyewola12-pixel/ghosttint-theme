@@ -1,62 +1,129 @@
 /* Mobile nav drawer — VUSI-style light structure applied on top of the
    Dawn/Shrine menu-drawer markup. The drawer's own slide-in position,
    width and open/close animation are untouched; only content presentation
-   changes. Colour now comes from the header section's menu_color_scheme
-   (set to background-1 = white bg / dark text), so nothing here hardcodes
-   a background or text colour — only the divider/pill/legal-link details
-   VUSI adds on top of a plain list, using the theme's own
-   rgba(var(--color-foreground), x) convention already used elsewhere in
-   base.css (e.g. .menu-drawer__title-and-close-btn's border-bottom). */
+   changes. Colour comes from the header section's menu_color_scheme (set
+   to background-1 = white bg / dark text) — everything below is typography,
+   spacing and layout to match VUSI's computed values.
+
+   GhostTint's body font (Fjalla One, set in theme settings) is a bold
+   condensed display face with no true regular weight, so it can't read as
+   VUSI's plain Inter list even at font-weight 500 — the same problem the
+   site's own platform_customizations custom_css already solves for the
+   desktop .header__menu-item with a system-ui override. Reused here for
+   the drawer's nav items for the same reason and to stay consistent with
+   that existing precedent rather than inventing a second approach. */
+
+:root {
+  --gt-drawer-font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ---- Header row: no divider, VUSI's 10px/24px proportions ----
+   GhostTint has no compact square logo mark (checked both the shop logo
+   and favicon — both are wide wordmark lockups with a tagline, not an
+   icon), so the "Menu" text label stays per the fallback instruction,
+   just resized down to the row's own proportions instead of Dawn's
+   default H3/heading-font styling. */
+#menu-drawer .menu-drawer__title-and-close-btn {
+  padding: 10px 12px 10px 24px;
+  border-bottom: 0;
+  min-height: 44px;
+}
+
+#menu-drawer .menu-drawer__title {
+  font-family: var(--gt-drawer-font);
+  font-size: 14px;
+  font-weight: 500;
+  color: rgb(var(--color-foreground));
+}
+
+/* Match VUSI's 18x18 close icon (theirs is stroke-based; GhostTint's is a
+   filled path, so height/width is the fair comparison, not stroke-width). */
+#menu-drawer .menu-drawer__close-btn .icon {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* ---- Nav list: VUSI's proportions (16px 0 list padding, 24px item
+   inset, 14px/500 Inter-equivalent, no chevrons since none of GhostTint's
+   items expand into sub-content) ---- */
+#menu-drawer .menu-drawer__navigation {
+  padding: 16px 0;
+}
 
 #menu-drawer .menu-drawer__navigation > ul.menu-drawer__menu > li {
   border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
 }
 
 #menu-drawer .menu-drawer__menu-item {
+  font-family: var(--gt-drawer-font);
+  font-size: 14px;
   font-weight: 500;
+  line-height: normal;
+  padding: 12px 24px;
 }
 
-/* Utility row: drop the shaded panel background so the Log in pill reads
-   as a standalone element on the white drawer, matching VUSI's plain
-   footer area rather than a boxed-in strip. */
+/* ---- Push the pill + legal links to the bottom of the drawer, the same
+   flex mechanism VUSI uses (its gap above the pill is not a fixed value —
+   it's whatever space is left in the viewport), rather than a guessed
+   fixed margin. This is also what keeps the legal-links row from ever
+   fighting the pill for space: it's a sibling below in normal flow, not
+   independently positioned. ---- */
+#menu-drawer .menu-drawer__navigation-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 #menu-drawer .menu-drawer__utility-links {
+  margin-top: auto;
   background-color: transparent;
-  padding: 1.6rem 2rem 2rem;
+  padding: 16px 24px 32px;
 }
 
 /* Log in — restyled as VUSI's rounded "Community" pill. Genuine GhostTint
    equivalent: it's the one secondary utility action set apart from the
-   plain nav list, same role VUSI's pill plays. */
+   plain nav list, same role VUSI's pill plays. Regular (400) weight and a
+   1px inset border, matching VUSI's pill exactly. */
 #menu-drawer .menu-drawer__account {
   justify-content: center;
   width: 100%;
   margin-left: 0;
-  padding: 1.2rem 2rem;
+  padding: 12px 20px;
   border-radius: 999px;
   box-shadow: 0 0 0 1px rgba(var(--color-foreground), 0.15) inset;
-  font-weight: 500;
+  font-family: var(--gt-drawer-font);
+  font-size: 14px;
+  font-weight: 400;
 }
 
 #menu-drawer .menu-drawer__account .icon-account {
   margin-right: 0.8rem;
 }
 
-/* Bottom legal links — Contact · Terms · Shipping, GhostTint's real
+/* ---- Bottom legal links — Contact · Terms · Shipping, GhostTint's real
    contact page and Shopify policies, styled to match VUSI's small muted
-   footer row. */
+   footer row. white-space: nowrap on each link is the actual fix for the
+   overlap bug: the container itself never wrapped, but "Terms of service"
+   and "Shipping policy" each wrapped internally onto a second line, and
+   that taller multi-line block is what climbed up into the pill above.
+   flex-wrap stays available as a fallback only if the row genuinely can't
+   fit at very narrow widths, so it wraps as whole links, never mid-word. */
 #menu-drawer .menu-drawer__legal-links {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 0.7rem;
-  margin-top: 1.6rem;
-  font-size: 1.2rem;
+  gap: 6px 10px;
+  margin-top: 16px;
+  font-family: var(--gt-drawer-font);
+  font-size: 12px;
   color: rgba(var(--color-foreground), 0.35);
 }
 
 #menu-drawer .menu-drawer__legal-links a {
   color: inherit;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 #menu-drawer .menu-drawer__legal-links a:hover {
