@@ -1,0 +1,288 @@
+/* ==========================================================================
+   Ghost Tints — VUSI-inspired design system
+   Restrained, premium, monochromatic visual language applied on top of the
+   existing Shrine/Dawn theme architecture. Ghost Tints content, media and
+   Shopify functionality are untouched; only presentation is restyled.
+   ========================================================================== */
+
+:root {
+  --gt-page-bg: #ffffff;
+  --gt-surface-bg: #fafafa;
+  --gt-text-primary: rgba(0, 0, 0, 0.81);
+  --gt-text-secondary: #555555;
+  --gt-text-muted: rgba(0, 0, 0, 0.6);
+  --gt-border-subtle: rgba(0, 0, 0, 0.08);
+  --gt-border-subtle-strong: rgba(0, 0, 0, 0.15);
+  --gt-radius-small: 8px;
+  --gt-radius-medium: 14px;
+  --gt-radius-large: 20px;
+  --gt-font-body: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --gt-transition-fast: 150ms ease;
+  --gt-transition-standard: 250ms ease;
+}
+
+/* ---- Typography: Inter everywhere, restrained near-black text ---- */
+body, .h1, .h2, .h3, .h4, .h5, h1, h2, h3, h4, h5, h6,
+.rte, p, .product__title, .price, .accordion__title, .button,
+.newsletter-form, .footer, .facets, input, select, textarea {
+  font-family: var(--gt-font-body) !important;
+}
+body {
+  color: var(--gt-text-primary) !important;
+  background-color: var(--gt-page-bg);
+}
+
+/* ---- Eyebrow / label pattern: small caps label above a large heading ---- */
+.gt-eyebrow,
+[class*='eyebrow'] {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gt-text-muted);
+}
+
+/* ---- Buttons: one coherent system, 14px radius, dark-gray primary fill ---- */
+.button,
+.product-form__submit,
+input[type='submit'],
+.shopify-payment-button__button--unbranded {
+  border-radius: var(--gt-radius-medium) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  transition: background-color var(--gt-transition-fast), border-color var(--gt-transition-fast), color var(--gt-transition-fast);
+}
+.product-form__submit.button--primary,
+.product-form__submit:not(.button--secondary) {
+  background-color: #2e2e2e !important;
+  border-color: #2e2e2e !important;
+  color: #ffffff !important;
+}
+.product-form__submit.button--primary:hover,
+.product-form__submit:not(.button--secondary):hover {
+  background-color: #1a1a1a !important;
+  border-color: #1a1a1a !important;
+}
+.button--secondary {
+  border-color: var(--gt-border-subtle-strong) !important;
+  color: #111111 !important;
+  background-color: transparent !important;
+}
+.button--secondary:hover {
+  border-color: #111111 !important;
+}
+
+/* ---- Quantity selector: restrained pill matching the button radius ---- */
+.quantity {
+  border-radius: var(--gt-radius-medium) !important;
+  border-color: var(--gt-border-subtle-strong) !important;
+}
+.quantity__button { color: #333333 !important; }
+.quantity__input { color: #111111 !important; }
+
+/* ---- Product info column: title/price hierarchy close to reference ---- */
+.product__title {
+  font-size: 40px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.01em !important;
+  color: var(--gt-text-primary) !important;
+  margin-bottom: 4px !important;
+}
+.product__info-container .price {
+  font-size: 18px !important;
+  font-weight: 400 !important;
+}
+.product__info-container > * + * {
+  margin-top: 16px;
+}
+
+/* ---- Accordion / collapsible specs: thin dividers, restrained label row ---- */
+.product__info-container .accordion {
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  border-bottom: none !important;
+}
+.product__info-container .accordion:last-of-type {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+.product__info-container .accordion__title {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em;
+  padding: 11.2px 0 !important;
+  color: var(--gt-text-primary) !important;
+}
+.product__info-container .accordion__content {
+  color: #333333 !important;
+  font-size: 14px;
+}
+.product__info-container .accordion__content h1,
+.product__info-container .accordion__content h2,
+.product__info-container .accordion__content h3,
+.product__info-container .accordion__content h4,
+.product__info-container .accordion__content h5,
+.product__info-container .accordion__content h6 {
+  color: #111111 !important;
+}
+
+/* ---- GhostTint custom_liquid PDP blocks (klarna / benefits / included / demo):
+        these ship dark-theme inline styles from an earlier design; re-themed
+        for the new light background without touching merchant content ---- */
+.klarna-message { color: var(--gt-text-primary) !important; }
+.klarna-message__pill { background: #f0f0f0 !important; color: #111111 !important; }
+.ghosttint-benefits__list li { color: #222222 !important; }
+.ghosttint-benefits__list li:before { color: #6F6F6F !important; }
+.ghosttint-included { background: var(--gt-surface-bg) !important; border-color: var(--gt-border-subtle-strong) !important; }
+.ghosttint-included h3 { color: #111111 !important; }
+.ghosttint-included__grid { color: #333333 !important; }
+.ghosttint-included__grid span:before { color: #6F6F6F !important; }
+.ghosttint-demo__title, .ghosttint-demo__label { color: #111111 !important; }
+
+/* ---- quantity-breaks widget: previously light-on-dark text ---- */
+quantity-breaks .quantity-breaks__title,
+quantity-breaks .quantity-break__label-text { color: #111111 !important; }
+quantity-breaks .quantity-break__caption,
+quantity-breaks .quantity-break__compare-price { color: #555555 !important; }
+.upsell h3 { color: #111111 !important; }
+
+/* ---- Footer: restrained newsletter input + muted link hierarchy ---- */
+.footer input[type='email'] {
+  border-radius: var(--gt-radius-small) !important;
+  border-color: var(--gt-border-subtle-strong) !important;
+}
+.footer .newsletter-form__button {
+  border-radius: var(--gt-radius-small) !important;
+}
+.footer a { color: var(--gt-text-muted) !important; }
+.footer__content-bottom, .footer__copyright {
+  color: var(--gt-text-muted) !important;
+  font-size: 12px !important;
+}
+
+/* ---- Section spacing: generous, deliberate negative space ---- */
+.shopify-section + .shopify-section {
+  margin-top: 0;
+}
+
+/* ==========================================================================
+   Breakpoint audit fixes (1024px / 768px vs. vusistudios.com/products/dot)
+   The PDP actually renders through the custom `product-hero` section
+   (product-hero__*), not Dawn's default main-product markup, so the rules
+   above targeting .product__title / .product__info-container never reached
+   it. Reference keeps its h1 at a constant 40px across 1024/768/1440+; this
+   section inherits Dawn's ~55px heading scale with no override, which was
+   forcing "GhostTint" to wrap mid-word ("GhostTi" / "nt") in the narrowed
+   info column at laptop width. Fixing the source of the defect rather than
+   just papering over it.
+   ========================================================================== */
+.product-hero__title {
+  font-size: 40px !important;
+  line-height: 1 !important;
+  letter-spacing: -0.01em !important;
+  overflow-wrap: normal;
+  word-break: normal;
+  color: var(--gt-text-primary) !important;
+}
+.product-hero__price .price {
+  font-size: 18px !important;
+  font-weight: 400 !important;
+}
+
+/* Reference's Add to Cart stays a fixed 52px-tall, legibly-padded button at
+   every width down to 768px because its info column never drops below
+   ~304px. This section's info column can get squeezed by the "large" media
+   setting at laptop/tablet widths, and .product-hero__add-to-cart uses
+   min-width:0 + overflow:hidden, which was silently clipping the button
+   label instead of reflowing it. Let the row wrap instead of clipping. */
+@media screen and (min-width: 750px) and (max-width: 1439px) {
+  .product-hero__cart-row {
+    flex-wrap: wrap;
+  }
+  .product-hero__quantity {
+    flex: 0 0 auto;
+  }
+  .product-hero__add-to-cart {
+    flex: 1 1 200px;
+    min-width: 180px;
+  }
+}
+
+/* ==========================================================================
+   gt-* section audit (customer-spotlight, gt-remote, gt-value, gt-faq,
+   gt-sticky — the sections actually rendered on this product template;
+   gt-showcase and gt-how are disabled and don't render).
+
+   assets/gt-pdp.css is a genuinely well-built, self-contained system: its
+   --gt-r radius (14px) and .gt-btn (52px tall, 14px radius, 14px font)
+   already match the reference's measured button almost exactly, and
+   .gt-h2 / .gt-faq__q already match the reference's 64px section heading
+   and FAQ question size. The one real defect: --gt-accent is set to a
+   teal (#00758f) that isn't part of the Ghost Tints palette (the brand's
+   actual accent, colors_accent_1, is #6F6F6F) and the brief was explicit
+   about not introducing accent colors outside the brand. It shows up on
+   every eyebrow label (TRY IT / THE MATH / BEFORE YOU BUY), the FAQ "+"
+   icons, comparison-table checkmarks, and a couple of interactive-state
+   borders. Overriding the token at its source rather than chasing each
+   consumer. !important is required because gt-pdp.css is re-emitted by
+   each section and so lands after this stylesheet in the cascade. ---- */
+.gt {
+  --gt-accent: #6F6F6F !important;
+}
+/* The remote's "transmitting" LED glow is hardcoded blue rather than
+   reading --gt-accent-bright (which is already correctly Ghost-Tints
+   gray); only the glow color needs correcting here. */
+.gt-remote__led.is-on,
+.gt-remote__unit.is-transmitting .gt-remote__led {
+  box-shadow: 0 0 12px 3px rgba(111, 111, 111, 0.6) !important;
+}
+
+/* ==========================================================================
+   Real-device screenshot audit (iPhone Safari, VUSI vs Ghost Tints)
+   ========================================================================== */
+
+/* Reference's mobile header keeps all 4 icons: hamburger + search on the
+   left, account + cart on the right, logo centered between them. Dawn's
+   default mobile behaviour folds search and account into the hamburger
+   drawer to save space (.header__icon--search is display:none below 750px
+   by base.css; .header__icon--account additionally carries Dawn's
+   .small-hide utility class). That's a reasonable default in isolation,
+   but it diverges from the reference's icon layout, so restoring both. */
+@media screen and (max-width: 749px) {
+  .header__icon--search,
+  .header__icon--account.small-hide {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* On mobile the media and info column stack vertically, but
+   .product-hero__info-container still carries the padding: 2.4rem 0 meant
+   to vertically balance it against the image height in the side-by-side
+   desktop layout. Stacked, that same padding reads as a large dead gap
+   between the product image and the title — the reference's title sits
+   right under its image/dots. Trim it to a small breathing gap instead. */
+@media screen and (max-width: 749px) {
+  .product-hero__info-container {
+    padding-top: 0.6rem !important;
+  }
+}
+
+/* Measured vusistudios.com/products/dot's header icons directly at this
+   same 390px viewport: search/account/cart glyphs are 22x22px — which is
+   exactly Dawn's own default here (search/account via base.css's
+   .header__icon svg inline rule, cart already coincidentally landing on
+   22px too since that inline !important rule outranks base.css's
+   non-important 2.4rem cart-specific one). Reference match achieved by
+   leaving the native size alone; no override needed. */
+
+/* Reference header measures 60px tall at 390px width; .header's own
+   padding: 6px 40px here computes to 56px. Grown 2px top+bottom to close
+   the exact 4px gap rather than forcing a min-height. */
+@media screen and (max-width: 749px) {
+  .header {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+}

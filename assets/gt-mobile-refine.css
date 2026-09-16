@@ -1,0 +1,409 @@
+/* ==========================================================================
+   Ghost Tints — mobile design refinement (VUSI-density pass)
+   --------------------------------------------------------------------------
+   Scope: mobile only (<=749px) and, where layout-specific, the product page
+   (body:has(product-info)). Desktop and other templates are untouched.
+   Loaded after vusi-motion-system.css so these rules win the cascade.
+   Target: vusistudios.com/products/dot density + the two Ghost Tints
+   mockups (compact accordions, left-aligned answers, compact white header,
+   tight FAQ, compact newsletter/footer).
+   ========================================================================== */
+
+/* ---- 1. Status-bar / top-of-page: keep it white, no dark rubber-band ---- */
+html { background-color: #ffffff; }
+body { background-color: #ffffff; }
+
+@media screen and (max-width: 749px) {
+
+  /* ======================================================================
+     2. MOBILE HEADER — NOT sticky. It sits at the top of the page and
+     scrolls away with the content. The theme's StickyHeader JS still runs
+     (desktop needs it), so neutralise the sticky positioning it applies,
+     on mobile only. No spacer / offset / scroll-padding is used.
+     ====================================================================== */
+  .section-header.shopify-section-group-header-group,
+  .section-header.shopify-section-header-sticky,
+  .shopify-section-header-sticky,
+  .shopify-section-header-hidden {
+    position: static !important;
+    top: auto !important;
+  }
+
+  /* Solid white background, even on the product page where custom CSS
+     otherwise makes the header transparent. No divider line beneath it. */
+  body:has(product-info) .header-wrapper,
+  body:has(product-info) .section-header,
+  .header-wrapper {
+    background: #ffffff !important;
+  }
+  .header-wrapper,
+  .header-wrapper--border-bottom,
+  .section-header {
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Near-black icons + logo on the product page (mockup shows solid black,
+     not the grey the transparent-header rule leaves behind). */
+  body:has(product-info) .header__icon,
+  body:has(product-info) .header__menu-item,
+  body:has(product-info) .header__icon .icon,
+  body:has(product-info) #menu-drawer .menu-drawer__menu-item {
+    color: #111111 !important;
+  }
+
+  /* ---- VUSI-style compact 3-region layout (CSS only, no DOM changes) ----
+     Left group : hamburger + search
+     Centre     : logo, absolutely centred in the viewport
+     Right group: account + bag
+     Achieved by turning the header into a flex row and promoting the
+     .header__icons children into that row with `display: contents`, then
+     ordering them. The search element stays a DOM child of .header__icons
+     so the theme's cart/predictive-search JS (which looks it up via
+     .header__icons) keeps working.
+     --------------------------------------------------------------------- */
+
+  header.header.page-width {
+    display: flex !important;
+    align-items: center;
+    gap: 2px;
+    position: relative;
+    min-height: 60px;
+    padding: 8px 16px !important;          /* ~16px from both screen edges */
+  }
+  header.header.page-width > header-drawer { order: 1; margin-left: 0 !important; }
+
+  /* Promote search / account / cart out of .header__icons into the header
+     flex row. .header__icons stays in the DOM (display:contents keeps it
+     for querySelector/closest) but contributes no box of its own. */
+  .header--mobile-center .header__icons { display: contents !important; }
+  .header--mobile-center .header__search        { order: 2; }
+  .header--mobile-center .header__icon--account { order: 3; margin-left: auto !important; }
+  .header--mobile-center .header__icon--cart    { order: 4; margin-right: 0 !important; }
+
+  /* Desktop-only header bits: keep them out of the mobile flex row. */
+  .header--mobile-center > .header__inline-menu,
+  .header--mobile-center > .header__localization { display: none !important; }
+
+  /* Touch targets stay 44x44 for accessibility. */
+  .header__icon,
+  .header__icon--summary,
+  .header__icon--cart,
+  .header__icon--menu,
+  .header__icon--search,
+  .header__icon--account {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px;
+    flex: 0 0 auto;
+    padding: 0 !important;
+    position: relative;
+  }
+  /* Close icons (menu / search modal open state) keep the theme's glyph
+     at a matching compact size. */
+  .header__icon .icon-close,
+  .header__icon .modal__toggle-close {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* ---- Visible glyphs: thin, VUSI-weight outline icons -----------------
+     The theme's header glyphs are drawn heavy (filled search, 3-bar
+     hamburger, thick strokes). Replace them, mobile-header-only, with
+     1.5px-stroke outline icons via CSS mask so the swap can't leak to
+     desktop or to the same SVG symbols used elsewhere on the site. Sizes
+     measured off vusistudios.com/products/dot at this viewport. */
+  .header__icon--menu .icon-hamburger,
+  .header__icon--search .modal__toggle-open,
+  .header__icon--account > .icon,
+  .header__icon--cart > .icon {
+    display: none !important;
+  }
+  .header__icon--menu > span::after,
+  .header__icon--search > span::after,
+  .header__icon--account::after,
+  .header__icon--cart::after {
+    content: "" !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background-color: currentColor;
+    -webkit-mask: center / contain no-repeat;
+    mask: center / contain no-repeat;
+    pointer-events: none;
+  }
+  .header__icon--menu > span::after {
+    width: 19px; height: 19px;
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 9.25h14M5 14.75h14' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 9.25h14M5 14.75h14' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  .header__icon--search > span::after {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M15.6 15.6 20 20' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='11' cy='11' r='6.25' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M15.6 15.6 20 20' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  .header__icon--account::after {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='3.5' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.5 19.5c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='8' r='3.5' fill='none' stroke='%23000' stroke-width='1.5'/%3E%3Cpath d='M5.5 19.5c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  .header__icon--cart::after {
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.5 8h11l1 12.5h-13z' fill='none' stroke='%23000' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M9 8V6.5a3 3 0 0 1 6 0V8' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6.5 8h11l1 12.5h-13z' fill='none' stroke='%23000' stroke-width='1.5' stroke-linejoin='round'/%3E%3Cpath d='M9 8V6.5a3 3 0 0 1 6 0V8' fill='none' stroke='%23000' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  }
+  /* When the menu drawer / search modal is open, hand back to the theme's
+     own close (X) glyph. */
+  details[open] > .header__icon--menu > span::after,
+  details[open] > .header__icon--search > span::after {
+    display: none;
+  }
+
+  /* Logo: precisely centred in the viewport, independent of the side
+     groups' widths (they can differ). Absolute so it never shifts the
+     flex row and never collides. */
+  .header--mobile-center > .header__heading,
+  .header--mobile-center > .header__heading-link,
+  .header--mobile-center > h1.header__heading {
+    position: absolute;
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    margin: 0 !important;
+    z-index: 1;
+    max-width: 60vw;
+  }
+  .header--mobile-center > .header__heading .header__heading-link,
+  .header--mobile-center > h1.header__heading .header__heading-link { margin: 0 !important; }
+
+  /* ======================================================================
+     3. PRODUCT-INFO ACCORDIONS  (In the Box / Shipping Policy / Technical)
+     Rendered by product-hero.liquid as .product-hero__accordion >
+     .product__accordion.accordion. Base theme makes them oversized,
+     underlined, centre-ish and heavily indented — rebuild compact.
+     ====================================================================== */
+
+  /* Sit close under the description (the info-container flex gap already
+     provides the space); the per-row border below draws the single divider
+     so the wrapper's own border-top is dropped to avoid a doubled line. */
+  .product-hero__accordion {
+    margin-top: 0 !important;
+    border-top: 0 !important;
+  }
+  .product-hero__accordion .accordion,
+  .product-hero__accordion .accordion.accordion--top-border {
+    border: 0 !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    margin: 0 !important;
+  }
+  .product-hero__accordion .accordion:last-child {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .product-hero__accordion .accordion__summary {
+    padding: 15px 0 !important;
+    align-items: center;
+  }
+  .product-hero__accordion .accordion__title {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    line-height: 1.3 !important;
+    letter-spacing: 0 !important;
+    text-decoration: none !important;
+    text-transform: none !important;
+    color: #1f1f1f !important;
+    max-width: calc(100% - 3rem);
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  /* Chevron: small, thin, right-aligned, consistent. */
+  .product-hero__accordion .summary__title + .icon-caret {
+    height: 7px !important;
+    width: 12px !important;
+    margin-left: auto;
+    opacity: 0.55;
+  }
+  .product-hero__accordion .summary__title + .icon-plus {
+    width: 14px !important;
+    margin-right: 0;
+    margin-left: auto;
+    opacity: 0.55;
+  }
+
+  /* Expanded answer: left-aligned, near the heading gutter, compact. */
+  .product-hero__accordion .accordion__content {
+    padding: 0 0 16px 0 !important;
+    text-align: left !important;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif !important;
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+    color: #55555b !important;
+  }
+  .product-hero__accordion .accordion__content > *:first-child { margin-top: 0 !important; }
+  .product-hero__accordion .accordion__content > *:last-child { margin-bottom: 0 !important; }
+  .product-hero__accordion .accordion__content p,
+  .product-hero__accordion .accordion__content li,
+  .product-hero__accordion .accordion__content span {
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+  }
+  .product-hero__accordion .accordion__content p { margin: 0 0 8px !important; }
+  .product-hero__accordion .accordion__content p:last-child { margin-bottom: 0 !important; }
+  .product-hero__accordion .accordion__content strong { color: #1f1f1f; font-weight: 600; }
+
+  /* Restrained bullet lists — fix the base theme's list-style-position:inside
+     + 2rem padding that produces the ragged hanging indent. */
+  .product-hero__accordion .accordion__content ul,
+  .product-hero__accordion .accordion__content ol {
+    list-style-position: outside !important;
+    padding-left: 18px !important;
+    margin: 0 !important;
+  }
+  .product-hero__accordion .accordion__content li {
+    margin: 0 0 6px !important;
+    padding-left: 2px;
+    line-height: 1.5 !important;
+  }
+  .product-hero__accordion .accordion__content li:last-child { margin-bottom: 0 !important; }
+
+  /* ======================================================================
+     4. "The honest answers." FAQ  (gt-faq.liquid / .gt-faq)
+     Already custom-styled but rows too tall, type too big, gap under the
+     heading too large.
+     ====================================================================== */
+
+  #gt-faq .gt-section { padding-block: 34px !important; }
+  #gt-faq .gt__wrap { padding-left: 16px !important; padding-right: 16px !important; }
+
+  #gt-faq .gt-eyebrow { margin-bottom: 8px !important; font-size: 11px !important; }
+  #gt-faq .gt-h2 {
+    font-size: 30px !important;
+    line-height: 1.05 !important;
+    margin-bottom: 4px !important;
+  }
+  .gt-faq { margin-top: 18px !important; border-top: 1px solid #e3e3e7 !important; }
+  .gt-faq__i { border-bottom: 1px solid #e3e3e7 !important; }
+
+  .gt-faq__q {
+    padding: 16px 0 !important;
+    gap: 16px !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+    color: #1f1f1f !important;
+  }
+  .gt-faq__q::after {
+    font-size: 18px !important;
+    font-weight: 300 !important;
+    color: #6b6b70 !important;
+    line-height: 1 !important;
+  }
+  .gt-faq__a {
+    padding: 2px 0 16px 0 !important;
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+    color: #55555b !important;
+  }
+  .gt-faq__a p { margin: 0 0 8px !important; }
+  .gt-faq__a p:last-child { margin: 0 !important; }
+
+  /* ======================================================================
+     5. NEWSLETTER + FOOTER  (footer.liquid — "Ghost Tints updates")
+     Reduce oversized heading, tighten vertical rhythm, no dead space.
+     ====================================================================== */
+
+  .footer .section-footer-padding,
+  .footer.section-footer-padding {
+    padding-top: 28px !important;
+    padding-bottom: 18px !important;
+  }
+  .footer .footer__content-top {
+    padding-bottom: 12px !important;
+  }
+  /* Empty duplicate newsletter block carries margin-top:48px — dead space. */
+  .footer .footer-block--newsletter:empty,
+  .footer .footer-block--newsletter:not(:has(.newsletter-form)) {
+    margin-top: 0 !important;
+    display: none !important;
+  }
+  .footer .footer__blocks-wrapper { margin: 0 !important; row-gap: 16px; }
+  .footer .footer-block__heading,
+  .footer .footer-block__newsletter .footer-block__heading {
+    font-size: 20px !important;
+    line-height: 1.15 !important;
+    font-weight: 700 !important;
+    margin-bottom: 6px !important;
+  }
+  .footer .footer-block__details-content-mb,
+  .footer .footer-block__newsletter-text,
+  .footer .footer-block__details-content p {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+    margin-bottom: 12px !important;
+  }
+  .footer .newsletter-form { margin-top: 10px !important; }
+  .footer .newsletter-form .field,
+  .footer .newsletter-form .field__input {
+    height: 48px !important;
+    min-height: 48px !important;
+  }
+  .footer .newsletter-form .field__input {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .footer .newsletter-form .field__label { top: 14px !important; }
+  .footer .footer__content-bottom {
+    padding-top: 14px !important;
+    margin-top: 6px !important;
+  }
+  .footer .footer__content-bottom-wrapper { gap: 6px; }
+  .footer .footer__copyright,
+  .footer .copyright__content,
+  .footer .footer__content-bottom small,
+  .footer .policies li a {
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+  }
+  .footer .footer__list-social { display: none; }
+
+  /* ======================================================================
+     6. FLOATING BACK-TO-TOP BUTTON — remove on mobile (overlaps content)
+     Desktop keeps it.
+     ====================================================================== */
+  .scroll-to-top-btn,
+  .floating-btn.scroll-to-top-btn,
+  #shopify-section-scroll-to-top-btn .floating-btn {
+    display: none !important;
+  }
+
+  /* ======================================================================
+     6b. PRODUCT INFO COLUMN — trim oversized vertical gaps
+     ====================================================================== */
+  .product-hero__info-container { padding-bottom: 20px !important; }
+  .product-hero__social-proof { margin-top: 16px !important; }
+  .product-hero__variants { margin-top: 16px !important; }
+
+  /* ======================================================================
+     7. MAIN PRODUCT DESCRIPTION
+     The theme's own section-product-hero.css already styles this to match
+     VUSI (centred, 12px, ~65%-opacity grey, Inter, line-height 19.8px,
+     max-width 30rem on mobile). Earlier this file forced it left-aligned /
+     dark / 15px for a mockup that has since been superseded by the VUSI
+     reference — that override is removed so the native styling applies.
+     Only nudge: keep the wrapped lines from getting too wide, and give a
+     touch more breathing room above so it clears the Add-to-cart button.
+     ====================================================================== */
+  .product-hero__description {
+    max-width: 30rem !important;
+    margin: 4px auto 0 !important;
+    letter-spacing: normal !important;
+  }
+  .product-hero__description.rte p { margin: 0 !important; }
+
+  /* ======================================================================
+     8. Overall spacing polish — trim the biggest empty gaps between
+     the custom gt-* sections so the lower page reads at VUSI density.
+     ====================================================================== */
+  #gt-faq { --gt-step: 40px; }
+}
