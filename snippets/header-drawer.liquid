@@ -135,6 +135,13 @@
                   {%- endif -%}
                 </li>
               {%- endfor -%}
+              {%- if pages['track-your-order'] != blank -%}
+                <li>
+                  <a href="{{ pages['track-your-order'].url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+                    {{ pages['track-your-order'].title | escape }}
+                  </a>
+                </li>
+              {%- endif -%}
             </ul>
           </nav>
 <!--                 start secondary nav -->

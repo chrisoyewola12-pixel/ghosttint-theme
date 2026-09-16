@@ -1,0 +1,104 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "gt_track_hero": {
+      "type": "rich-text",
+      "blocks": {
+        "gt_track_hero_heading": {
+          "type": "heading",
+          "settings": {
+            "title": "Track Your Order",
+            "title_highlight_color": "#6d388b",
+            "heading_size": "h1"
+          }
+        },
+        "gt_track_hero_text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Every GhostTint order ships with tracking, so you can follow your kit from our workshop to your door.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "gt_track_hero_heading",
+        "gt_track_hero_text"
+      ],
+      "settings": {
+        "display_id": false,
+        "visibility": "always-display",
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "full_width": true,
+        "color_scheme": "background-1",
+        "padding_top": 40,
+        "padding_bottom": 12,
+        "custom_colors_background": "#ffffff",
+        "custom_gradient_background": "",
+        "custom_colors_text": "#2e2a39",
+        "custom_colors_solid_button_background": "#dd1d1d",
+        "custom_colors_solid_button_text": "#ffffff",
+        "custom_colors_outline_button": "#dd1d1d"
+      }
+    },
+    "gt_track_steps": {
+      "type": "rich-text",
+      "blocks": {
+        "gt_track_steps_heading": {
+          "type": "heading",
+          "settings": {
+            "title": "How tracking works",
+            "title_highlight_color": "#6d388b",
+            "heading_size": "h2"
+          }
+        },
+        "gt_track_steps_text": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>1. Check your inbox.</strong> As soon as your order ships, we send a shipping confirmation email with your tracking number and a direct link to follow it.</p><p><strong>2. Follow the link.</strong> Click through to see live updates from the carrier, from dispatch to delivery.</p><p><strong>3. Can't find it?</strong> Check your spam folder for the shipping confirmation, or <a href=\"/pages/contact\">contact us</a> with your order number and we'll look it up for you.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "gt_track_steps_heading",
+        "gt_track_steps_text"
+      ],
+      "settings": {
+        "display_id": false,
+        "visibility": "always-display",
+        "desktop_content_position": "center",
+        "content_alignment": "left",
+        "full_width": false,
+        "color_scheme": "background-1",
+        "padding_top": 12,
+        "padding_bottom": 48,
+        "custom_colors_background": "#ffffff",
+        "custom_gradient_background": "",
+        "custom_colors_text": "#2e2a39",
+        "custom_colors_solid_button_background": "#dd1d1d",
+        "custom_colors_solid_button_text": "#ffffff",
+        "custom_colors_outline_button": "#dd1d1d"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "gt_track_hero",
+    "gt_track_steps"
+  ]
+}
