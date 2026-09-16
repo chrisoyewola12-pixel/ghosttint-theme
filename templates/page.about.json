@@ -1,0 +1,64 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "about_content": {
+      "type": "rich-text",
+      "blocks": {
+        "about_heading": {
+          "type": "heading",
+          "settings": {
+            "title": "About GhostTint",
+            "title_highlight_color": "#6d388b",
+            "heading_size": "h1"
+          }
+        },
+        "about_text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>GhostTint exists because window tint has always been a one-time decision. Once film goes on, that's the look and the light level you're stuck with — through winter glare, summer heat, and every drive in between. We built GhostTint to make that decision adjustable instead of permanent.</p><p>At the core is smart film wired to a wireless remote. Instead of one fixed tint percentage, GhostTint moves across seven preset levels — from a nearly clear 70% VLT down to a private 5% — so the same window can suit a bright afternoon or a dark night without swapping film.</p><p>There's no app to install and no separate battery to keep charged. The system draws power straight from your vehicle's ACC circuit, and the remote is the only interface — turn it up, turn it down, done.</p><p>We designed the install around real installers and real DIYers: a wiring path that runs through the door cavity, straightforward panel removal, and a step-by-step guide (with video) for anyone doing it themselves. If a step doesn't make sense, our <a href=\"/pages/installation\">installation</a> and <a href=\"/pages/contact\">support</a> pages are built to answer it directly.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "about_heading",
+        "about_text"
+      ],
+      "settings": {
+        "display_id": false,
+        "visibility": "always-display",
+        "desktop_content_position": "left",
+        "content_alignment": "left",
+        "full_width": false,
+        "color_scheme": "background-1",
+        "padding_top": 48,
+        "padding_bottom": 48,
+        "custom_colors_background": "#ffffff",
+        "custom_gradient_background": "",
+        "custom_colors_text": "#2e2a39",
+        "custom_colors_solid_button_background": "#dd1d1d",
+        "custom_colors_solid_button_text": "#ffffff",
+        "custom_colors_outline_button": "#dd1d1d"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "about_content"
+  ]
+}
