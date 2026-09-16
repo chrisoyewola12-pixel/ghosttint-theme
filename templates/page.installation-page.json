@@ -1,0 +1,171 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "install_guide": {
+      "type": "gt-install-guide",
+      "blocks": {
+        "video_glass": {
+          "type": "video_step",
+          "settings": {
+            "tag": "GLASS",
+            "video_url": "https://cdn.shopify.com/videos/c/vp/3af1d9524a7e4465ba8e1e1b2cbb3f93/3af1d9524a7e4465ba8e1e1b2cbb3f93.HD-1080p-2.5Mbps-94452066.mp4",
+            "poster": "",
+            "caption": "Mount GhostTint onto the glass",
+            "placeholder_text": "Video coming soon"
+          }
+        },
+        "video_wiring": {
+          "type": "video_step",
+          "settings": {
+            "tag": "WIRING",
+            "video_url": "",
+            "poster": "",
+            "caption": "Connect the control box to power",
+            "placeholder_text": "Wiring video coming soon"
+          }
+        },
+        "written_1": {
+          "type": "written_step",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0945/8905/9420/files/ChatGPT_Image_Dec_18_2025_03_16_03_PM.png?v=1766070985",
+            "title": "Step 1 — Clean the Window",
+            "text": "Use a microfiber cloth to clean the glass thoroughly for best adhesion."
+          }
+        },
+        "written_2": {
+          "type": "written_step",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0945/8905/9420/files/ChatGPT_Image_Dec_18_2025_03_19_00_PM.png?v=1766071153",
+            "title": "Step 2 — Measurement",
+            "text": "Measure the window and position the tint film accurately before cutting."
+          }
+        },
+        "written_3": {
+          "type": "written_step",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0945/8905/9420/files/ChatGPT_Image_Dec_18_2025_03_20_13_PM.png?v=1766071240",
+            "title": "Step 3 — Trim Excess Tint Film",
+            "text": "Trim the film carefully to match your window shape for a perfect fit."
+          }
+        },
+        "written_4": {
+          "type": "written_step",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0945/8905/9420/files/ChatGPT_Image_Dec_18_2025_03_23_52_PM.png?v=1766071460",
+            "title": "Step 4 — Remove the Release Liner",
+            "text": "Peel off the liner to expose the adhesive side of the tint film."
+          }
+        },
+        "written_5": {
+          "type": "written_step",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0945/8905/9420/files/ChatGPT_Image_Dec_18_2025_03_30_54_PM.png?v=1766071879",
+            "title": "Step 5 — Position the Tint Film",
+            "text": "Place the film onto the glass and adjust it into the correct position."
+          }
+        },
+        "written_6": {
+          "type": "written_step",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ChatGPT_Image_Dec_18_2025_03_54_03_PM.png?v=1766073259",
+            "title": "Step 6 — Scrape & Remove Bubbles",
+            "text": "Use a squeegee to push out any air bubbles for a smooth finish."
+          }
+        },
+        "written_7": {
+          "type": "written_step",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ChatGPT_Image_Dec_18_2025_03_54_57_PM.png?v=1766073314",
+            "title": "Step 7 — Remove Door Panel",
+            "text": "Carefully remove the door panel to access the power supply and wiring."
+          }
+        },
+        "written_8": {
+          "type": "written_step",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ChatGPT_Image_Dec_18_2025_03_55_39_PM.png?v=1766073356",
+            "title": "Step 8 — Connect Tint to ACC Power Supply",
+            "text": "Connect the tint system's wiring to the ACC circuit for power."
+          }
+        },
+        "written_9": {
+          "type": "written_step",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ChatGPT_Image_Dec_18_2025_04_00_19_PM.png?v=1766073638",
+            "title": "Step 9 — Install Door Panel Back",
+            "text": "Screw the panel back on securely after completing wiring."
+          }
+        },
+        "written_10": {
+          "type": "written_step",
+          "settings": {
+            "image_url": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ChatGPT_Image_Dec_18_2025_04_00_22_PM.png?v=1766073638",
+            "title": "Step 10 — Smart Tint Ready to Use",
+            "text": "Your smart tint is now installed — test with remote/ACC to confirm smooth operation."
+          }
+        }
+      },
+      "block_order": [
+        "video_glass",
+        "video_wiring",
+        "written_1",
+        "written_2",
+        "written_3",
+        "written_4",
+        "written_5",
+        "written_6",
+        "written_7",
+        "written_8",
+        "written_9",
+        "written_10"
+      ],
+      "settings": {
+        "eyebrow": "HOW IT'S DONE",
+        "heading": "Installation",
+        "written_button_label": "Written Instructions"
+      }
+    },
+    "video_A86YRk": {
+      "type": "video",
+      "name": "t:sections.video.presets.name",
+      "settings": {
+        "display_id": false,
+        "visibility": "always-display",
+        "title": "For More detailed Instructions Watch Our Videos Below",
+        "title_highlight_color": "#6d388b",
+        "heading_size": "h1",
+        "cover_image": "shopify://shop_images/ChatGPT_Image_Dec_18_2025_03_13_03_PM.png",
+        "video_url": "https://youtu.be/_rBaU65s_2w?si=bNLzgKWTvKpUgHmc",
+        "description": "",
+        "full_width": false,
+        "color_scheme": "background-1",
+        "padding_top": 36,
+        "padding_bottom": 36,
+        "custom_colors_background": "#ffffff",
+        "custom_gradient_background": "",
+        "custom_colors_text": "#121212"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "install_guide",
+    "video_A86YRk"
+  ]
+}
