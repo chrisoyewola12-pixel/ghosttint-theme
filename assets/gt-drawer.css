@@ -1,0 +1,68 @@
+/* Mobile nav drawer — VUSI-style light structure applied on top of the
+   Dawn/Shrine menu-drawer markup. The drawer's own slide-in position,
+   width and open/close animation are untouched; only content presentation
+   changes. Colour now comes from the header section's menu_color_scheme
+   (set to background-1 = white bg / dark text), so nothing here hardcodes
+   a background or text colour — only the divider/pill/legal-link details
+   VUSI adds on top of a plain list, using the theme's own
+   rgba(var(--color-foreground), x) convention already used elsewhere in
+   base.css (e.g. .menu-drawer__title-and-close-btn's border-bottom). */
+
+#menu-drawer .menu-drawer__navigation > ul.menu-drawer__menu > li {
+  border-bottom: 1px solid rgba(var(--color-foreground), 0.1);
+}
+
+#menu-drawer .menu-drawer__menu-item {
+  font-weight: 500;
+}
+
+/* Utility row: drop the shaded panel background so the Log in pill reads
+   as a standalone element on the white drawer, matching VUSI's plain
+   footer area rather than a boxed-in strip. */
+#menu-drawer .menu-drawer__utility-links {
+  background-color: transparent;
+  padding: 1.6rem 2rem 2rem;
+}
+
+/* Log in — restyled as VUSI's rounded "Community" pill. Genuine GhostTint
+   equivalent: it's the one secondary utility action set apart from the
+   plain nav list, same role VUSI's pill plays. */
+#menu-drawer .menu-drawer__account {
+  justify-content: center;
+  width: 100%;
+  margin-left: 0;
+  padding: 1.2rem 2rem;
+  border-radius: 999px;
+  box-shadow: 0 0 0 1px rgba(var(--color-foreground), 0.15) inset;
+  font-weight: 500;
+}
+
+#menu-drawer .menu-drawer__account .icon-account {
+  margin-right: 0.8rem;
+}
+
+/* Bottom legal links — Contact · Terms · Shipping, GhostTint's real
+   contact page and Shopify policies, styled to match VUSI's small muted
+   footer row. */
+#menu-drawer .menu-drawer__legal-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.7rem;
+  margin-top: 1.6rem;
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.35);
+}
+
+#menu-drawer .menu-drawer__legal-links a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#menu-drawer .menu-drawer__legal-links a:hover {
+  text-decoration: underline;
+}
+
+#menu-drawer .menu-drawer__legal-links span {
+  color: inherit;
+}

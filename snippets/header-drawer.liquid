@@ -291,6 +291,26 @@
                 </li>
               {%- endif -%}
             </ul>
+            {%- liquid
+              assign gt_legal_contact = pages.contact
+              assign gt_legal_terms = shop.terms_of_service
+              assign gt_legal_shipping = shop.shipping_policy
+            -%}
+            {%- if gt_legal_contact != blank or gt_legal_terms != blank or gt_legal_shipping != blank -%}
+              <div class="menu-drawer__legal-links">
+                {%- if gt_legal_contact != blank -%}
+                  <a href="{{ gt_legal_contact.url }}">{{ gt_legal_contact.title }}</a>
+                {%- endif -%}
+                {%- if gt_legal_terms != blank -%}
+                  {%- if gt_legal_contact != blank -%}<span aria-hidden="true">&middot;</span>{%- endif -%}
+                  <a href="{{ gt_legal_terms.url }}">{{ gt_legal_terms.title }}</a>
+                {%- endif -%}
+                {%- if gt_legal_shipping != blank -%}
+                  {%- if gt_legal_contact != blank or gt_legal_terms != blank -%}<span aria-hidden="true">&middot;</span>{%- endif -%}
+                  <a href="{{ gt_legal_shipping.url }}">{{ gt_legal_shipping.title }}</a>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
           </div>
         </div>
       </div>

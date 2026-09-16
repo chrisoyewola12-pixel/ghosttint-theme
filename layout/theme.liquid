@@ -1,12 +1,40 @@
 <!doctype html>
 <html class="no-js" lang="{{ request.locale.iso_code }}">
   <head>
-    
+    {%- comment -%}
+      GhostTint is currently a single-product store — the homepage has no
+      content of its own worth visiting. Send it straight to the product
+      page instead. Gated strictly to request.page_type == 'index' so no
+      other page is touched, and placed as the very first thing in <head>
+      so it fires before any other resource loads or paints. A blocking
+      inline script (not meta-refresh) fires the redirect immediately,
+      before the browser gets a chance to paint the old hero content;
+      body is hidden via CSS as a fallback for the instant before the
+      script runs. <noscript> meta-refresh covers JS-disabled browsers.
+      Remove this block if the homepage is ever rebuilt into real content.
+    {%- endcomment -%}
+    {%- if request.page_type == 'index' -%}
+      <style>html,body{background:#fff !important;}body{opacity:0 !important;}</style>
+      <script>window.location.replace({{ all_products['ghosttint'].url | json }});</script>
+      <noscript><meta http-equiv="refresh" content="0; url={{ all_products['ghosttint'].url }}"></noscript>
+    {%- endif -%}
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="theme-color" content="">
+    {%- comment -%}
+      Mobile Safari status-bar area: the viewport stays inset (no
+      viewport-fit=cover) so Safari fills the status-bar strip with the
+      theme-color. Forced white in both light and dark OS appearance so the
+      time / Wi-Fi / battery sit on white with dark glyphs. color-scheme
+      light keeps form controls / scrollbars light. apple-mobile-web-app-*
+      only affects home-screen web-app mode but is harmless.
+    {%- endcomment -%}
+    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: dark)">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="color-scheme" content="light">
     <link rel="canonical" href="{{ canonical_url }}">
 
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
@@ -24,7 +52,7 @@
 
     <script src="{{ 'main.js' | asset_url }}" defer="defer" data-defer="true" data-country-list-function="{{ settings.country_list_function }}" data-country-list="{{ settings.country_list }}" data-country-list-error="{{ settings.country_invalid_error_msg }}" data-animations-type="{{ settings.animations_type }}"></script>
     <script src="{{ 'secondary.js' | asset_url }}" defer="defer" data-defer="true" data-is-rtl="{{ is_rtl }}"></script>
-    
+
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
@@ -49,7 +77,7 @@
     {% endif %}
 
     {% render 'meta-tags' %}
-    
+
     {{ content_for_header }}
 
     {%- liquid
@@ -185,7 +213,7 @@
         --blog-card-shadow-blur-radius: {{ settings.blog_card_shadow_blur | divided_by: 10.0 }}rem;
 
         --badge-corner-radius: {{ settings.badge_corner_radius | divided_by: 10.0 }}rem;
-        
+
         --slider-arrow-size: {{ settings.slider_arrow_size | divided_by: 10.0  }}rem;
         --slider-arrow-border-radius: {{ settings.slider_arrow_border_radius | divided_by: 2.0 }}%;
         --slider-arrow-icon-size: {{ settings.slider_arrow_icon_size | divided_by: 100.0 }}em;
@@ -282,7 +310,7 @@
         --inputs-shadow-blur-radius: {{ settings.inputs_shadow_blur }}px;
         --inputs-radius-outset: {% if settings.inputs_radius > 0 %}{{ settings.inputs_radius | plus: settings.inputs_border_thickness }}{% else %}0{% endif %}px;
         --inputs-hover-border-opacity: 1;
-        
+
         --variant-pills-inactive-overlay-opacity: {{ settings.variant_pills_inactive_overlay_opacity | divided_by: 100.0 }};
         --variant-pills-text-size: {{ settings.variant_pills_text_size | divided_by: 10.0 }}rem;
         --variant-pills-padding-y: {{ settings.variant_pills_padding_y | divided_by: 10.0 }}rem;
@@ -427,6 +455,9 @@
     </noscript>
 
     {{ 'base.css' | asset_url | stylesheet_tag: preload: true }}
+    {{ 'vusi-motion-system.css' | asset_url | stylesheet_tag }}
+    {{ 'gt-mobile-refine.css' | asset_url | stylesheet_tag }}
+    {{ 'gt-drawer.css' | asset_url | stylesheet_tag }}
     {% if is_rtl %}
       {{ 'rtl.css' | asset_url | stylesheet_tag: preload: true }}
     {% endif %}
@@ -465,7 +496,7 @@
     </a>
 
     {% sections 'header-group' %}
-    
+
     {%- if settings.cart_type == 'drawer' -%}
       {%- section 'cart-drawer' -%}
     {%- endif -%}
@@ -533,7 +564,7 @@
           elements.forEach(element => {
             if (element.isIntersecting) {
               element.target.classList.add('animate--shown');
-            } 
+            }
             {% if settings.repeat_section_animations %}
               else {
                 element.target.classList.remove('animate--shown');
@@ -546,12 +577,12 @@
           const elementsToAnimate = rootElement.querySelectorAll('.animate-section');
           if (elementsToAnimate.length == 0) return;
 
-          
+
           elementsToAnimate.forEach(element => {
             if (isThemeEditorEvent) {
               element.classList.add('animate--shown');
               return;
-            } 
+            }
             shrineAnimationsObserver.observe(element);
           })
         }
@@ -613,7 +644,7 @@
   {% section 'ms-smtprice-sec' %}
 
 {% if template == 'index' %}
- 
+
 <style>
 .shopify-section-group-header-group.announcement-bar-section{
 height: 5px;
@@ -627,7 +658,7 @@ background: transparent;
 margin-top: 20px;
 }
 </style>
- 
+
 {% endif %}
 
         </body>
