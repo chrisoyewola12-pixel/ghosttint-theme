@@ -1,0 +1,148 @@
+/* GT · Installation guide — VUSI-style stacked video card carousel.
+   Depends on gt-pdp.css for the shared .gt design tokens/typography. */
+
+.gt-ig {
+  margin-top: 40px;
+  --gt-ig-card-w: min(78vw, 340px);
+}
+
+.gt-ig__track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 8px calc(50% - (var(--gt-ig-card-w) / 2)) 24px;
+}
+.gt-ig__track::-webkit-scrollbar { display: none; }
+
+.gt-ig-card {
+  position: relative;
+  flex: none;
+  width: var(--gt-ig-card-w);
+  aspect-ratio: 3 / 4;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #101014;
+  scroll-snap-align: center;
+  transform: scale(.9);
+  opacity: .55;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .35s ease;
+  box-shadow: 0 18px 40px rgba(0,0,0,.18);
+}
+.gt-ig-card.is-active { transform: scale(1); opacity: 1; }
+
+.gt-ig-card__video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #101014;
+}
+
+.gt-ig-card__tag {
+  position: absolute; left: 14px; top: 14px; z-index: 2;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.55);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+}
+
+.gt-ig-card__caption {
+  position: absolute; left: 12px; right: 12px; bottom: 62px; z-index: 2;
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.55);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  color: #fff;
+  font-size: 13px; line-height: 1.4; font-weight: 600;
+}
+
+.gt-ig-card__controls {
+  position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 2;
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.5);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+.gt-ig-card__btn {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 26px; height: 26px; padding: 0; border: 0; background: none; cursor: pointer;
+  color: #fff;
+}
+.gt-ig-card__btn .icon { width: 11px; height: 15px; }
+.gt-ig-card__btn[data-gt-ig-play] .icon-pause { display: none; }
+.gt-ig-card__btn[data-gt-ig-play].is-playing .icon-play { display: none; }
+.gt-ig-card__btn[data-gt-ig-play].is-playing .icon-pause { display: inline-block; }
+
+.gt-ig-icon { width: 18px; height: 18px; }
+.gt-ig-card__btn[data-gt-ig-mute] .gt-ig-icon--sound { display: none; }
+.gt-ig-card__btn[data-gt-ig-mute].is-unmuted .gt-ig-icon--muted { display: none; }
+.gt-ig-card__btn[data-gt-ig-mute].is-unmuted .gt-ig-icon--sound { display: block; }
+
+.gt-ig-card__scrub {
+  flex: 1; min-width: 0; height: 3px;
+  -webkit-appearance: none; appearance: none;
+  background: rgba(255,255,255,.3); border-radius: 999px; outline: none;
+}
+.gt-ig-card__scrub::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 11px; height: 11px; border-radius: 50%; background: #fff; cursor: pointer;
+}
+.gt-ig-card__scrub::-moz-range-thumb {
+  width: 11px; height: 11px; border-radius: 50%; background: #fff; border: 0; cursor: pointer;
+}
+.gt-ig-card__scrub::-webkit-slider-runnable-track { background: transparent; }
+
+.gt-ig-card__placeholder {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; padding: 24px;
+  background: linear-gradient(180deg, #fafafc, #eef0f2);
+}
+.gt-ig-card__placeholder .gt-media { max-width: 78%; }
+.gt-ig-card__soon {
+  margin: 0; font-size: 12px; font-weight: 650; letter-spacing: .04em;
+  color: var(--gt-muted, #6b6b70); text-transform: uppercase;
+}
+
+.gt-ig__dots {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  margin-top: 4px;
+}
+.gt-ig__dot {
+  width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%;
+  background: var(--gt-line, #e3e3e7); cursor: pointer;
+  transition: background .18s ease, transform .18s ease;
+}
+.gt-ig__dot.is-active { background: var(--gt-text, #1f1f1f); transform: scale(1.3); }
+
+.gt-ig-written {
+  margin-top: 36px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.gt-ig-written__toggle { min-width: 220px; }
+.gt-ig-written__panel {
+  width: 100%;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height .35s ease;
+}
+.gt-ig-written__panel[data-open] { max-height: 6000px; }
+.gt-ig-written__step { padding-top: 8px; }
+
+@media (min-width: 750px) {
+  .gt-ig { --gt-ig-card-w: min(34vw, 300px); }
+}
+@media (min-width: 990px) {
+  .gt-ig { --gt-ig-card-w: 280px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gt-ig-card, .gt-ig__dot, .gt-ig-written__panel { transition: none; }
+}

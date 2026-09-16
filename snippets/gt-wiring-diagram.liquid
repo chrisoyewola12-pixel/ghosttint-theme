@@ -1,0 +1,93 @@
+{%- comment -%}
+  gt-wiring-diagram — animated SVG of the power route.
+
+  Mirrors the real install: an amber ribbon tab bonded to the lower edge
+  of the glass, running down to the control box mounted low in the door
+  cavity, then out through the loom to the vehicle's ACC supply.
+
+  Inline SVG rather than video on purpose — a few KB, sharp at any size,
+  loops forever with no decode cost and no autoplay handling.
+
+  Accepts:
+    ratio        {String}  css aspect-ratio for the box, e.g. '3/2'
+    glass_label  {String}
+    box_label    {String}
+    acc_label    {String}
+{%- endcomment -%}
+
+{%- assign gt_w_ratio = ratio | default: '3/2' -%}
+
+<style>
+  .gt-wire { width: 100%; height: 100%; display: block; }
+  .gt-wire__base { fill: none; stroke: #cdd3d8; stroke-width: 9; stroke-linecap: round; stroke-linejoin: round; }
+  /* A dashed stroke whose offset animates reads as current moving along
+     the wire, and costs nothing to run. */
+  .gt-wire__flow {
+    fill: none; stroke: var(--gt-accent, #00758f); stroke-width: 5;
+    stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 16 22;
+    animation: gtWireFlow 1.5s linear infinite;
+  }
+  .gt-wire__flow--b { animation-delay: .25s; }
+  @keyframes gtWireFlow { to { stroke-dashoffset: -38; } }
+
+  .gt-wire__pip { fill: var(--gt-accent, #00758f); animation: gtWirePip 1.5s ease-in-out infinite; }
+  @keyframes gtWirePip { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
+
+  .gt-wire__label { font-family: inherit; font-weight: 650; font-size: 27px; fill: #1f1f1f; }
+  .gt-wire__label--muted { fill: #6b6b70; font-size: 24px; font-weight: 600; }
+  .gt-wire__label--onDark { fill: #ffffff; font-size: 28px; font-weight: 700; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gt-wire__flow, .gt-wire__pip { animation: none; }
+    .gt-wire__flow { stroke-dasharray: none; }
+  }
+</style>
+
+<div class="gt-media" style="aspect-ratio: {{ gt_w_ratio }};">
+  <svg class="gt-wire" viewBox="0 0 900 600" preserveAspectRatio="xMidYMid meet"
+       role="img" aria-labelledby="gtWireT gtWireD">
+    <title id="gtWireT">How GhostTint is powered</title>
+    <desc id="gtWireD">A ribbon contact on the lower edge of the glass runs to a control box inside the door, which connects to the vehicle's accessory power supply.</desc>
+
+    <defs>
+      <linearGradient id="gtWireGlass" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#e2eaee"/>
+        <stop offset="1" stop-color="#c2d0d8"/>
+      </linearGradient>
+    </defs>
+
+    {%- comment -%} the glass {%- endcomment -%}
+    <path d="M 155 95 L 695 78 L 720 235 L 172 254 Z"
+          fill="url(#gtWireGlass)" stroke="#aab7bf" stroke-width="3" stroke-linejoin="round"/>
+    <text class="gt-wire__label" x="437" y="180" text-anchor="middle">{{ glass_label | default: 'SPD film' }}</text>
+
+    {%- comment -%} amber ribbon tab on the lower edge {%- endcomment -%}
+    <rect x="418" y="231" width="48" height="29" rx="5"
+          fill="#f2a33c" stroke="#cf861f" stroke-width="2"/>
+
+    {%- comment -%} glass tab down to the control box {%- endcomment -%}
+    <path class="gt-wire__base"
+          d="M 442 258 L 442 306 Q 442 326 422 326 L 300 326 Q 280 326 280 346 L 280 372"/>
+    <path class="gt-wire__flow"
+          d="M 442 258 L 442 306 Q 442 326 422 326 L 300 326 Q 280 326 280 346 L 280 372"/>
+
+    {%- comment -%} control box {%- endcomment -%}
+    <rect x="268" y="362" width="24" height="14" rx="3" fill="#9aa3a9"/>
+    <rect x="212" y="372" width="136" height="160" rx="16"
+          fill="#ffffff" stroke="#c3c9cf" stroke-width="3"/>
+    <circle class="gt-wire__pip" cx="280" cy="404" r="7"/>
+    <text class="gt-wire__label" x="280" y="566" text-anchor="middle">{{ box_label | default: 'Control box' }}</text>
+
+    {%- comment -%} control box out to vehicle power {%- endcomment -%}
+    <path class="gt-wire__base"
+          d="M 348 452 L 556 452 Q 586 452 586 422 L 586 384"/>
+    <path class="gt-wire__flow gt-wire__flow--b"
+          d="M 348 452 L 556 452 Q 586 452 586 422 L 586 384"/>
+
+    {%- comment -%} ACC terminal {%- endcomment -%}
+    <rect x="532" y="322" width="108" height="62" rx="10" fill="#1f1f1f"/>
+    <text class="gt-wire__label--onDark gt-wire__label" x="586" y="362" text-anchor="middle" fill="#ffffff">ACC</text>
+    <text class="gt-wire__label gt-wire__label--muted" x="586" y="302" text-anchor="middle">{{ acc_label | default: 'Vehicle power' }}</text>
+  </svg>
+</div>
