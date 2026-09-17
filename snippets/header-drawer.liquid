@@ -142,6 +142,13 @@
                   </a>
                 </li>
               {%- endif -%}
+              {%- if pages['about'] != blank -%}
+                <li>
+                  <a href="{{ pages['about'].url }}" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+                    {{ pages['about'].title | escape }}
+                  </a>
+                </li>
+              {%- endif -%}
             </ul>
           </nav>
 <!--                 start secondary nav -->
