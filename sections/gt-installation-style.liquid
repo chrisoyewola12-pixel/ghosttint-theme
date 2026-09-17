@@ -1,0 +1,15 @@
+{%- comment -%}
+  gt-installation-style — loads the Installation page's font-system CSS
+  (assets/gt-installation-page.css). A tiny loader section rather than
+  inlining a <style> tag directly in the template, consistent with how
+  every other gt-* component on this page ships its own stylesheet.
+{%- endcomment -%}
+{{ 'gt-installation-page.css' | asset_url | stylesheet_tag }}
+
+{% schema %}
+{
+  "name": "GT · Installation page styles",
+  "tag": "section",
+  "settings": []
+}
+{% endschema %}

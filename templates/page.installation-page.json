@@ -17,6 +17,10 @@
         "padding_bottom": 36
       }
     },
+    "gt_style": {
+      "type": "gt-installation-style",
+      "settings": {}
+    },
     "install_intro": {
       "type": "rich-text",
       "blocks": {
@@ -54,6 +58,15 @@
         "custom_colors_solid_button_background": "#dd1d1d",
         "custom_colors_solid_button_text": "#ffffff",
         "custom_colors_outline_button": "#dd1d1d"
+      }
+    },
+    "vehicle_lookup": {
+      "type": "gt-vehicle-lookup",
+      "settings": {
+        "eyebrow": "FIND YOUR VEHICLE",
+        "heading": "Where's my ACC power?",
+        "subtext": "Enter your vehicle's make and model to find the ACC/12V tap point for your GhostTint install.",
+        "placeholder": "e.g. Toyota Camry, Honda Civic…"
       }
     },
     "install_guide": {
@@ -202,42 +215,11 @@
       }
     },
     "install_troubleshoot": {
-      "type": "rich-text",
-      "blocks": {
-        "install_troubleshoot_heading": {
-          "type": "heading",
-          "settings": {
-            "title": "Troubleshooting",
-            "title_highlight_color": "#6d388b",
-            "heading_size": "h2"
-          }
-        },
-        "install_troubleshoot_text": {
-          "type": "text",
-          "settings": {
-            "text": "<ul><li><strong>Remote isn't responding:</strong> confirm the vehicle's ignition or ACC circuit is on — GhostTint draws power only when ACC is live, with no separate battery to charge.</li><li><strong>Film won't sit flat:</strong> re-wet the glass and re-squeegee outward from the center to push out trapped air before the adhesive sets.</li><li><strong>Bubbles appear after a few days:</strong> small bubbles usually clear as the adhesive fully cures over 48–72 hours; if they persist, get in touch.</li></ul>"
-          }
-        }
-      },
-      "block_order": [
-        "install_troubleshoot_heading",
-        "install_troubleshoot_text"
-      ],
+      "type": "gt-troubleshooter",
       "settings": {
-        "display_id": false,
-        "visibility": "always-display",
-        "desktop_content_position": "left",
-        "content_alignment": "left",
-        "full_width": false,
-        "color_scheme": "background-1",
-        "padding_top": 24,
-        "padding_bottom": 24,
-        "custom_colors_background": "#ffffff",
-        "custom_gradient_background": "",
-        "custom_colors_text": "#2e2a39",
-        "custom_colors_solid_button_background": "#dd1d1d",
-        "custom_colors_solid_button_text": "#ffffff",
-        "custom_colors_outline_button": "#dd1d1d"
+        "heading": "Troubleshooter",
+        "subtext": "Submits straight to our support inbox — a real person replies, not a live bot.",
+        "greeting": "Hi — tell us what's going on with your GhostTint install and we'll get back to you."
       }
     },
     "install_faq": {
@@ -288,7 +270,9 @@
   },
   "order": [
     "main",
+    "gt_style",
     "install_intro",
+    "vehicle_lookup",
     "install_guide",
     "video_A86YRk",
     "install_troubleshoot",

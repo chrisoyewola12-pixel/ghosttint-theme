@@ -1,0 +1,122 @@
+/* GT · Installation page — font-system fixes matched to VUSI's Instructions
+   page computed values (measured directly via devtools at 375px and 1440px,
+   not guessed). Scoped to this page only via each section's own rendered
+   ID substring (Shopify always prefixes shopify-section-<our-key>, and our
+   section keys — install_intro, install_guide, video_A86YRk, install_faq —
+   are fixed in templates/page.installation-page.json), so nothing here
+   touches the product page or any other page that happens to share the
+   same rich-text/gt-h2/gt-eyebrow/gt-faq classes. */
+
+/* ---- Hero ("Here to help you install it right.") ----
+   VUSI "Here to Help": 36px/36px, 700, normal tracking, mobile;
+   48px/48px desktop. Body: 14px/22.4px, 400, normal tracking, both. */
+[id*="__install_intro"] .rich-text__heading {
+  font-family: Inter, sans-serif;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 36px;
+  letter-spacing: normal;
+  color: rgba(0, 0, 0, .81);
+}
+[id*="__install_intro"] .rich-text__text {
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22.4px;
+  letter-spacing: normal;
+  color: rgba(0, 0, 0, .81);
+}
+
+/* ---- Install guide eyebrow + "Installation" heading ----
+   VUSI eyebrow: 11px/11px, 400, 1px tracking, uppercase, mobile;
+   14px/14px desktop. VUSI "Installation": 42px/42px, 700, mobile;
+   60px/60px desktop. */
+[id*="__install_guide"] .gt-eyebrow {
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 11px;
+  letter-spacing: 1px;
+  color: rgb(111, 111, 111);
+}
+[id*="__install_guide"] .gt-h2 {
+  font-family: Inter, sans-serif;
+  font-weight: 700;
+  font-size: 42px;
+  line-height: 42px;
+  letter-spacing: normal;
+  color: rgb(17, 17, 17);
+}
+
+/* ---- "For More Detailed Instructions" video heading ----
+   No direct VUSI equivalent on this page (bonus section) — matched to the
+   same hero-level treatment for consistency across the page. */
+[id*="__video_A86YRk"] .title {
+  font-family: Inter, sans-serif;
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1.05;
+  letter-spacing: normal;
+  color: rgb(17, 17, 17);
+}
+
+/* ---- FAQ ("The honest answers.") ----
+   VUSI "Answers.": 34px/37.4px, 700, -1.19px tracking, mobile;
+   72px/79.2px, -2.52px tracking, desktop. Question/answer text:
+   14px/22.4px, 400, normal tracking, both. */
+[id*="__install_faq"] .gt-eyebrow {
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 11px;
+  letter-spacing: 1px;
+  color: rgb(111, 111, 111);
+}
+[id*="__install_faq"] .gt-h2 {
+  font-family: Inter, sans-serif;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 37.4px;
+  letter-spacing: -1.19px;
+  color: rgb(10, 10, 10);
+}
+[id*="__install_faq"] .gt-faq__q {
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22.4px;
+  letter-spacing: normal;
+  color: rgb(33, 33, 33);
+}
+[id*="__install_faq"] .gt-faq__a {
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 22.4px;
+  letter-spacing: normal;
+  color: rgba(33, 33, 33, .8);
+}
+
+@media (min-width: 750px) {
+  [id*="__install_intro"] .rich-text__heading {
+    font-size: 48px;
+    line-height: 48px;
+  }
+  [id*="__install_guide"] .gt-eyebrow,
+  [id*="__install_faq"] .gt-eyebrow {
+    font-size: 14px;
+    line-height: 14px;
+  }
+  [id*="__install_guide"] .gt-h2 {
+    font-size: 60px;
+    line-height: 60px;
+  }
+  [id*="__video_A86YRk"] .title {
+    font-size: 48px;
+  }
+  [id*="__install_faq"] .gt-h2 {
+    font-size: 72px;
+    line-height: 79.2px;
+    letter-spacing: -2.52px;
+  }
+}

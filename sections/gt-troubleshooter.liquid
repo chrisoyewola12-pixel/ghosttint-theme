@@ -1,0 +1,217 @@
+{%- comment -%}
+  gt-troubleshooter — honest equivalent of VUSI's "Troubleshooter".
+
+  VUSI's version calls /apps/ai-bots (a real installed Shopify AI-chatbot
+  app) — confirmed by inspecting its network requests. Standing up an
+  equivalent live AI chat is a separate app/backend decision, out of
+  scope for a layout pass (confirmed with the store owner before
+  building this). This section is the honest alternative instead: a
+  chat-styled UI that submits to Shopify's own native contact form
+  pipeline ({% form 'contact' %}, the same mechanism the Contact page
+  form uses), so the customer's message is a real submission that
+  reaches the store — not a static list, and not a fabricated live
+  reply.
+{%- endcomment -%}
+<style>
+  .gt-tshoot {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 48px 20px;
+  }
+  .gt-tshoot__card {
+    border: 1px solid #e3e3e7;
+    border-radius: 18px;
+    background: #ffffff;
+    overflow: hidden;
+  }
+  .gt-tshoot__head {
+    padding: 20px 22px 16px;
+    border-bottom: 1px solid #eeeef1;
+  }
+  .gt-tshoot__heading {
+    margin: 0;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    color: #000000;
+  }
+  .gt-tshoot__sub {
+    margin: 6px 0 0;
+    font-family: Inter, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #666666;
+  }
+  .gt-tshoot__thread {
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 120px;
+  }
+  .gt-tshoot__bubble {
+    align-self: flex-start;
+    max-width: 88%;
+    padding: 10px 14px;
+    border-radius: 14px 14px 14px 4px;
+    background: #f4f4f6;
+    font-family: Inter, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: #222222;
+  }
+  .gt-tshoot__bubble--success {
+    align-self: flex-start;
+    background: #eefcf3;
+    color: #0f5c34;
+  }
+  .gt-tshoot__bubble--error {
+    align-self: flex-start;
+    background: #fff5f5;
+    color: #a12a2a;
+  }
+  .gt-tshoot__form {
+    border-top: 1px solid #eeeef1;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .gt-tshoot__row {
+    display: flex;
+    gap: 8px;
+  }
+  .gt-tshoot__field {
+    flex: 1;
+    min-width: 0;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid #e3e3e7;
+    border-radius: 999px;
+    background: #fafafc;
+    font-family: Inter, sans-serif;
+    font-size: 13.5px;
+    color: #111111;
+  }
+  .gt-tshoot__field::placeholder { color: #7d7d86; }
+  .gt-tshoot__composer {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
+  }
+  .gt-tshoot__textarea {
+    flex: 1;
+    min-width: 0;
+    min-height: 44px;
+    max-height: 140px;
+    padding: 11px 16px;
+    border: 1px solid #e3e3e7;
+    border-radius: 18px;
+    background: #fafafc;
+    font-family: Inter, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.4;
+    color: #111111;
+    resize: none;
+  }
+  .gt-tshoot__textarea::placeholder { color: #7d7d86; }
+  .gt-tshoot__send {
+    flex: none;
+    height: 44px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 999px;
+    background: #1f1f1f;
+    color: #ffffff;
+    font-family: Inter, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .gt-tshoot__send:hover { background: #3a3a3a; }
+</style>
+
+<div class="gt-tshoot">
+  <div class="gt-tshoot__card">
+    <div class="gt-tshoot__head">
+      <h2 class="gt-tshoot__heading">{{ section.settings.heading | default: 'Troubleshooter' }}</h2>
+      <p class="gt-tshoot__sub">{{ section.settings.subtext }}</p>
+    </div>
+
+    <div class="gt-tshoot__thread">
+      <div class="gt-tshoot__bubble">
+        {{ section.settings.greeting | default: "Hi — tell us what's going on with your GhostTint install and we'll get back to you." }}
+      </div>
+
+      {%- if form.posted_successfully? -%}
+        <div class="gt-tshoot__bubble gt-tshoot__bubble--success" role="status" tabindex="-1" autofocus>
+          Got it — thanks! We'll reply to your email as soon as we can.
+        </div>
+      {%- elsif form.errors -%}
+        <div class="gt-tshoot__bubble gt-tshoot__bubble--error" role="alert" tabindex="-1" autofocus>
+          {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {% form 'contact', id: 'GtTroubleshooterForm' %}
+      <div class="gt-tshoot__form">
+        <div class="gt-tshoot__row">
+          <input
+            class="gt-tshoot__field"
+            type="text"
+            name="contact[Name]"
+            placeholder="Your name"
+            autocomplete="name"
+          >
+          <input
+            class="gt-tshoot__field"
+            type="email"
+            name="contact[email]"
+            placeholder="Your email"
+            autocomplete="email"
+            aria-required="true"
+            required
+          >
+        </div>
+        <div class="gt-tshoot__composer">
+          <textarea
+            class="gt-tshoot__textarea"
+            name="contact[Comment]"
+            placeholder="Describe your GhostTint issue…"
+            rows="1"
+            required
+          ></textarea>
+          <button type="submit" class="gt-tshoot__send">Send</button>
+        </div>
+      </div>
+    {% endform %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "GT · Troubleshooter",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Troubleshooter" },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Submits straight to our support inbox — a real person replies, not a live bot."
+    },
+    {
+      "type": "textarea",
+      "id": "greeting",
+      "label": "Greeting bubble text",
+      "default": "Hi — tell us what's going on with your GhostTint install and we'll get back to you."
+    }
+  ],
+  "presets": [
+    { "name": "GT · Troubleshooter" }
+  ]
+}
+{% endschema %}

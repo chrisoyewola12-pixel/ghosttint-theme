@@ -1,0 +1,208 @@
+{%- comment -%}
+  gt-vehicle-lookup — ACC/12V wiring point lookup for GhostTint's control
+  box, modeled on VUSI's BMW fuse finder (inspected directly: a static
+  JSON array of {chassis_code, location, fuse_number, fuse_type} embedded
+  in the page and filtered client-side — no backend, no third-party API).
+
+  GhostTint has no equivalent vehicle-specific wiring dataset yet. Rather
+  than invent locations (this is safety-relevant wiring information), the
+  data array below ships empty and every search — match or not — returns
+  an honest "not in our database yet" result with general ACC guidance
+  and a link to contact support. The moment real, verified per-vehicle
+  data exists, add entries to gt-vehicle-lookup__data below (or wire this
+  to a real data source) and the empty-state note stops firing for any
+  entry that's present.
+{%- endcomment -%}
+<style>
+  .gt-vlookup {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 48px 20px;
+    text-align: center;
+  }
+  .gt-vlookup__eyebrow {
+    margin: 0 0 10px;
+    font-family: Inter, sans-serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: rgb(111, 111, 111);
+  }
+  .gt-vlookup__heading {
+    margin: 0 0 10px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    font-size: 28px;
+    line-height: 1.1;
+    letter-spacing: -1px;
+    color: #111111;
+  }
+  .gt-vlookup__sub {
+    margin: 0 0 24px;
+    font-family: Inter, sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #666666;
+  }
+  .gt-vlookup__form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .gt-vlookup__input {
+    flex: 1;
+    min-width: 0;
+    height: 56px;
+    padding: 0 16px;
+    border: 1px solid #e3e3e7;
+    border-radius: 18px;
+    background: #ffffff;
+    font-family: Inter, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: #111111;
+  }
+  .gt-vlookup__input::placeholder { color: #7d7d86; }
+  .gt-vlookup__submit {
+    flex: none;
+    height: 56px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: 18px;
+    background: #1f1f1f;
+    color: #ffffff;
+    font-family: Inter, sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .gt-vlookup__submit:hover { background: #3a3a3a; }
+  .gt-vlookup__result {
+    margin-top: 20px;
+    padding: 18px 20px;
+    border: 1px solid #e3e3e7;
+    border-radius: 14px;
+    background: #fafafc;
+    text-align: left;
+    display: none;
+  }
+  .gt-vlookup__result.is-visible { display: block; }
+  .gt-vlookup__result-title {
+    margin: 0 0 6px;
+    font-family: Inter, sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: #111111;
+  }
+  .gt-vlookup__result-text {
+    margin: 0;
+    font-family: Inter, sans-serif;
+    font-weight: 400;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #444444;
+  }
+  .gt-vlookup__result-text a { color: #00758f; }
+
+  @media (min-width: 750px) {
+    .gt-vlookup__heading { font-size: 42px; letter-spacing: -1px; }
+    .gt-vlookup__sub { font-size: 16px; }
+    .gt-vlookup__input { height: 68px; border-radius: 22px; padding: 0 22px; font-size: 18px; }
+    .gt-vlookup__submit { height: 68px; border-radius: 22px; padding: 0 30px; }
+  }
+</style>
+
+<div class="gt-vlookup" data-gt-vlookup>
+  {%- if section.settings.eyebrow != blank -%}
+    <p class="gt-vlookup__eyebrow">{{ section.settings.eyebrow }}</p>
+  {%- endif -%}
+  <h2 class="gt-vlookup__heading">{{ section.settings.heading }}</h2>
+  <p class="gt-vlookup__sub">{{ section.settings.subtext }}</p>
+
+  <form class="gt-vlookup__form" data-gt-vlookup-form>
+    <input
+      type="text"
+      class="gt-vlookup__input"
+      data-gt-vlookup-input
+      placeholder="{{ section.settings.placeholder | default: 'e.g. Toyota Camry, Honda Civic…' }}"
+      aria-label="Vehicle make and model"
+      autocomplete="off"
+    >
+    <button type="submit" class="gt-vlookup__submit">Find it</button>
+  </form>
+
+  <div class="gt-vlookup__result" data-gt-vlookup-result></div>
+</div>
+
+<script type="application/json" data-gt-vlookup-data>
+[]
+</script>
+
+<script>
+  (function () {
+    var root = document.currentScript.closest('[data-gt-vlookup]') || document.querySelector('[data-gt-vlookup]');
+    if (!root || root.dataset.gtVlookupInit) return;
+    root.dataset.gtVlookupInit = '1';
+
+    var dataScript = root.querySelector('[data-gt-vlookup-data]') || document.querySelector('[data-gt-vlookup-data]');
+    var entries = [];
+    try { entries = JSON.parse(dataScript.textContent) || []; } catch (e) { entries = []; }
+
+    var form = root.querySelector('[data-gt-vlookup-form]');
+    var input = root.querySelector('[data-gt-vlookup-input]');
+    var result = root.querySelector('[data-gt-vlookup-result]');
+
+    function render(query) {
+      var q = query.trim().toLowerCase();
+      var match = q ? entries.find(function (e) {
+        return (e.vehicle || '').toLowerCase().indexOf(q) !== -1;
+      }) : null;
+
+      result.classList.add('is-visible');
+
+      if (match) {
+        result.innerHTML =
+          '<p class="gt-vlookup__result-title">' + match.vehicle + '</p>' +
+          '<p class="gt-vlookup__result-text"><strong>ACC tap point:</strong> ' + match.location +
+          (match.notes ? ' — ' + match.notes : '') + '</p>';
+        return;
+      }
+
+      result.innerHTML =
+        '<p class="gt-vlookup__result-title">We don’t have that vehicle in our database yet</p>' +
+        '<p class="gt-vlookup__result-text">GhostTint’s control box needs a 12V connection that’s only ' +
+        'live when the ignition or ACC circuit is on — commonly available at the fuse box or via an ' +
+        'add-a-fuse tap near the steering column, but the exact spot varies by vehicle. ' +
+        '<a href="/pages/contact">Tell us your vehicle</a> and we’ll help you find it, or check your ' +
+        'vehicle’s owner’s manual for its accessory/ACC fuse location.</p>';
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      render(input.value);
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GT · Vehicle wiring lookup",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "FIND YOUR VEHICLE" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Where's my ACC power?" },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Enter your vehicle's make and model to find the ACC/12V tap point for your GhostTint install."
+    },
+    { "type": "text", "id": "placeholder", "label": "Input placeholder", "default": "e.g. Toyota Camry, Honda Civic…" }
+  ],
+  "presets": [
+    { "name": "GT · Vehicle wiring lookup" }
+  ]
+}
+{% endschema %}
