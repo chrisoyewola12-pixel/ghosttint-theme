@@ -86,10 +86,20 @@
           "type": "video_step",
           "settings": {
             "tag": "WIRING",
-            "video_url": "",
+            "video_url": "https://cdn.shopify.com/videos/c/vp/024e26b5226f435f84e9cecb127b162a/024e26b5226f435f84e9cecb127b162a.SD-480p-0.9Mbps-94729022.mp4",
             "poster": "",
-            "caption": "Connect the control box to power",
+            "caption": "Connecting the control box wiring",
             "placeholder_text": "Wiring video coming soon"
+          }
+        },
+        "video_result": {
+          "type": "video_step",
+          "settings": {
+            "tag": "RESULT",
+            "video_url": "https://cdn.shopify.com/videos/c/vp/513ffaff623549f1814bbd0219487017/513ffaff623549f1814bbd0219487017.SD-480p-0.9Mbps-94028114.mp4",
+            "poster": "",
+            "caption": "The finished tint, remote in hand",
+            "placeholder_text": "Video coming soon"
           }
         },
         "written_1": {
@@ -176,6 +186,7 @@
       "block_order": [
         "video_glass",
         "video_wiring",
+        "video_result",
         "written_1",
         "written_2",
         "written_3",

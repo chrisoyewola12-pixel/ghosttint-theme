@@ -33,14 +33,14 @@
           card.style.setProperty('--gt-ig-offset', diff > 0 ? cardW : -cardW);
           return;
         }
-        // VUSI's own measured offset ratio (.177 of card width) reads as
-        // an almost-invisible sliver against GhostTint's near-black video
-        // thumbnails, where VUSI's brighter footage still shows through at
-        // that size. Widened so the peek is unmistakable here too — the
-        // technique (stacked cards, per-card transform) still matches
-        // VUSI's; only this tuning value differs to suit darker source
-        // video.
-        var offset = diff * cardW * 0.4;
+        // .26 keeps the peek clearly visible against GhostTint's darker
+        // video thumbnails (VUSI's own .177 ratio read as near-invisible
+        // here) while staying within .gt-ig's own bounds at every
+        // breakpoint — paired with the smaller --gt-ig-card-w in
+        // gt-install-guide.css. A larger ratio (tried .4) pushed the
+        // neighbour's edge past the container at narrow widths, which is
+        // what read as off-center bleed rather than a clean peek.
+        var offset = diff * cardW * 0.26;
         card.style.setProperty('--gt-ig-offset', offset.toFixed(2));
         card.style.setProperty('--gt-ig-scale', diff === 0 ? 1 : 0.82);
         card.style.setProperty('--gt-ig-opacity', diff === 0 ? 1 : 0.6);

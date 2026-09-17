@@ -3,7 +3,14 @@
 
 .gt-ig {
   margin-top: 40px;
-  --gt-ig-card-w: min(78vw, 340px);
+  /* Card width relative to the container, sized so a visible peek (see
+     gt-install-guide.js) always fits within this element's own box at
+     every breakpoint, with margin to spare — this is what the previous
+     78vw formula got wrong: at narrow widths the card left almost no
+     room for a neighbour to peek without spilling past the section into
+     the page's own margin, which is what read as off-center bleed. */
+  --gt-ig-card-w: min(60vw, 300px);
+  overflow: hidden;
 }
 
 /* VUSI-style peek carousel: cards are stacked on a shared center point and
@@ -12,10 +19,11 @@
    a neighbour if there happens to be leftover space in its own box after
    centering the active card — with the numbers here there wasn't any,
    which is why no peek showed before. Positioning every card on top of
-   itself and offsetting it in JS (see gt-install-guide.js, values matched
-   to VUSI's own measured transform: ~0.177 * card-width offset, 0.8 scale,
-   0.42 opacity on neighbours) reproduces the peek regardless of container
-   width. */
+   itself and offsetting it in JS (see gt-install-guide.js) reproduces the
+   peek regardless of container width. The offset ratio is sized (in JS)
+   to always stay within this element's own bounds — `.gt-ig`'s own
+   `overflow: hidden` above is a safety net, not something the peek is
+   meant to rely on. */
 .gt-ig__track {
   position: relative;
   overflow: visible;
