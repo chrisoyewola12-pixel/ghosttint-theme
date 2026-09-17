@@ -140,23 +140,23 @@
       <p class="gt-tshoot__sub">{{ section.settings.subtext }}</p>
     </div>
 
-    <div class="gt-tshoot__thread">
-      <div class="gt-tshoot__bubble">
-        {{ section.settings.greeting | default: "Hi — tell us what's going on with your GhostTint install and we'll get back to you." }}
+    {% form 'contact', id: 'GtTroubleshooterForm' %}
+      <div class="gt-tshoot__thread">
+        <div class="gt-tshoot__bubble">
+          {{ section.settings.greeting | default: "Hi — tell us what's going on with your GhostTint install and we'll get back to you." }}
+        </div>
+
+        {%- if form.posted_successfully? -%}
+          <div class="gt-tshoot__bubble gt-tshoot__bubble--success" role="status" tabindex="-1" autofocus>
+            Got it — thanks! We'll reply to your email as soon as we can.
+          </div>
+        {%- elsif form.errors -%}
+          <div class="gt-tshoot__bubble gt-tshoot__bubble--error" role="alert" tabindex="-1" autofocus>
+            {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
+          </div>
+        {%- endif -%}
       </div>
 
-      {%- if form.posted_successfully? -%}
-        <div class="gt-tshoot__bubble gt-tshoot__bubble--success" role="status" tabindex="-1" autofocus>
-          Got it — thanks! We'll reply to your email as soon as we can.
-        </div>
-      {%- elsif form.errors -%}
-        <div class="gt-tshoot__bubble gt-tshoot__bubble--error" role="alert" tabindex="-1" autofocus>
-          {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
-        </div>
-      {%- endif -%}
-    </div>
-
-    {% form 'contact', id: 'GtTroubleshooterForm' %}
       <div class="gt-tshoot__form">
         <div class="gt-tshoot__row">
           <input
