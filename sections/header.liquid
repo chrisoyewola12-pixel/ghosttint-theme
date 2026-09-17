@@ -52,6 +52,46 @@
     }
   {% endif %}
 
+  {%- comment -%}
+    GT · Installation page only, mobile only (<750px): match VUSI's minimal
+    mobile header (Shop Now pill + hamburger). Logo and cart are kept per
+    the store owner's explicit choice, so this only adds the pill and hides
+    the search icon — the account icon and nav are already hidden at this
+    width site-wide. Values below are VUSI's own measured computed styles
+    (https://vusistudios.com/pages/instructions at 390px).
+  {%- endcomment -%}
+  .gt-header-shop-pill {
+    display: none;
+  }
+  @media screen and (max-width: 749px) {
+    .header__icons--gt-simple {
+      align-items: center;
+    }
+    .header__icons--gt-simple .header__icon--search {
+      display: none;
+    }
+    .gt-header-shop-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 36px;
+      padding: 8px 15px;
+      margin-right: 8px;
+      border-radius: 999px;
+      background: #383838;
+      color: #ffffff;
+      font-family: Inter, sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+    .gt-header-shop-pill:hover {
+      background: #4a4a4a;
+    }
+  }
+
   .menu-drawer-container {
     display: flex;
   }
@@ -582,7 +622,10 @@
       </div>
     {%- endif -%}
 
-    <div class="header__icons">
+    <div class="header__icons{% if template.suffix == 'installation-page' %} header__icons--gt-simple{% endif %}">
+      {%- if template.suffix == 'installation-page' -%}
+        <a href="{{ all_products['instant-tints'].url | default: '/products/instant-tints' }}" class="gt-header-shop-pill">Shop Now</a>
+      {%- endif -%}
       <details-modal class="header__search">
         <details>
           <summary class="header__icon header__icon--search header__icon--summary link focus-inset modal__toggle" aria-haspopup="dialog" aria-label="{{ 'general.search.search' | t }}">
