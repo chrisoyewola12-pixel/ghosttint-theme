@@ -99,15 +99,19 @@
     .header--gt-mobile-fix .header__icon--account {
       display: none !important;
     }
+    {%- comment -%}
+      header-drawer keeps its original order:1 (true left edge, from
+      gt-mobile-refine.css) so it never competes with the centered logo for
+      space. Only the pill + cart move as a pair: the pill inherits the
+      auto-margin that used to sit on the (now-hidden) account icon, which
+      pushes just this pair to the header's right edge.
+    {%- endcomment -%}
     .header--gt-mobile-fix .gt-header-shop-pill {
       order: 3 !important;
       margin-left: auto !important;
     }
     .header--gt-mobile-fix .header__icon--cart {
       order: 4 !important;
-    }
-    .header--gt-mobile-fix > header-drawer {
-      order: 5 !important;
     }
     .header--gt-mobile-fix .header__icon {
       color: #0a0a0a;
