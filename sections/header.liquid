@@ -114,10 +114,18 @@
       flex flow (as its own item between the hamburger and the pill/cart
       pair) guarantees no overlap at any width, at the cost of it no longer
       being pixel-perfectly centered on this page.
+
+      Keeping position:relative (not static) matters: the logo's own <img>
+      is itself position:absolute (the theme's .ratio/.media aspect-box
+      pattern), anchored to its nearest positioned ancestor. Forcing the
+      link to position:static removes that anchor, so the image escapes up
+      to the header itself and renders over the hamburger instead of inside
+      its own link — position:relative keeps the containing block local
+      while still cancelling the centering offsets above it.
     {%- endcomment -%}
     .header--gt-mobile-fix > .header__heading-link,
     .header--gt-mobile-fix > .header__heading > .header__heading-link {
-      position: static !important;
+      position: relative !important;
       left: auto !important;
       top: auto !important;
       transform: none !important;
