@@ -19,7 +19,29 @@
     var dots = dotsWrap ? Array.prototype.slice.call(dotsWrap.querySelectorAll('[data-gt-ig-dot]')) : [];
     var activeIndex = 0;
 
+    // Cards are stacked on the same center point (see gt-install-guide.css)
+    // and pulled apart here with per-card custom properties, the same
+    // transform-based technique VUSI's own carousel uses instead of a
+    // scrolling strip — offset ratio (.177 of card width), scale (.8) and
+    // opacity (.42) for neighbours are matched to VUSI's measured values.
+    function positionCards() {
+      var cardW = cards[0] ? cards[0].getBoundingClientRect().width : 0;
+      cards.forEach(function (card, i) {
+        var diff = i - activeIndex;
+        if (Math.abs(diff) > 1) {
+          card.style.setProperty('--gt-ig-opacity', 0);
+          card.style.setProperty('--gt-ig-offset', diff > 0 ? cardW : -cardW);
+          return;
+        }
+        var offset = diff * cardW * 0.177;
+        card.style.setProperty('--gt-ig-offset', offset.toFixed(2));
+        card.style.setProperty('--gt-ig-scale', diff === 0 ? 1 : 0.8);
+        card.style.setProperty('--gt-ig-opacity', diff === 0 ? 1 : 0.42);
+      });
+    }
+
     function setActive(index) {
+      if (index < 0 || index >= cards.length) return;
       if (index === activeIndex && cards[index].classList.contains('is-active')) return;
       activeIndex = index;
 
@@ -47,24 +69,44 @@
       });
 
       dots.forEach(function (d, i) { d.classList.toggle('is-active', i === index); });
-    }
-
-    // Track which card is closest to centre as the shopper scrolls/swipes.
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
-            setActive(cards.indexOf(entry.target));
-          }
-        });
-      }, { root: track, threshold: [0, 0.6, 1] });
-      cards.forEach(function (c) { io.observe(c); });
+      positionCards();
     }
 
     dots.forEach(function (dot, i) {
-      dot.addEventListener('click', function () {
-        cards[i].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      dot.addEventListener('click', function () { setActive(i); });
+    });
+
+    // Tapping a peeking (non-active) card brings it to the front, same as
+    // clicking its dot — but ignore taps on the active card's own controls.
+    cards.forEach(function (card, i) {
+      card.addEventListener('click', function (e) {
+        if (i === activeIndex) return;
+        if (e.target.closest('[data-gt-ig-controls]')) return;
+        setActive(i);
       });
+    });
+
+    // Basic drag/swipe: works for touch and mouse via pointer events.
+    var dragState = null;
+    track.addEventListener('pointerdown', function (e) {
+      dragState = { startX: e.clientX, moved: false };
+    });
+    track.addEventListener('pointermove', function (e) {
+      if (!dragState) return;
+      if (Math.abs(e.clientX - dragState.startX) > 8) dragState.moved = true;
+    });
+    window.addEventListener('pointerup', function (e) {
+      if (!dragState) return;
+      var dx = e.clientX - dragState.startX;
+      if (dragState.moved && Math.abs(dx) > 40) {
+        setActive(dx < 0 ? activeIndex + 1 : activeIndex - 1);
+      }
+      dragState = null;
+    });
+
+    window.addEventListener('resize', function () {
+      window.clearTimeout(track._gtIgResizeT);
+      track._gtIgResizeT = window.setTimeout(positionCards, 120);
     });
 
     cards.forEach(function (card) {
@@ -113,33 +155,9 @@
     setActive(0);
   }
 
-  function initWritten(root) {
-    var toggle = root.querySelector('[data-gt-ig-written-toggle]');
-    var panel = root.querySelector('[data-gt-ig-written-panel]');
-    if (!toggle || !panel || !once(toggle)) return;
-
-    toggle.addEventListener('click', function () {
-      var open = panel.hasAttribute('data-open');
-      if (open) {
-        panel.removeAttribute('data-open');
-        panel.hidden = false; // let the max-height transition finish, then hide
-        window.setTimeout(function () {
-          if (!panel.hasAttribute('data-open')) panel.hidden = true;
-        }, 380);
-      } else {
-        panel.hidden = false;
-        // Force layout so the max-height transition runs from 0.
-        void panel.offsetHeight;
-        panel.setAttribute('data-open', '');
-      }
-      toggle.setAttribute('aria-expanded', open ? 'false' : 'true');
-    });
-  }
-
   function boot() {
     document.querySelectorAll('[data-gt-ig]').forEach(function (root) {
       initCarousel(root);
-      initWritten(root.closest('.gt') || document);
     });
   }
 

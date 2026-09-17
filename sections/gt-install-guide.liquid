@@ -81,25 +81,19 @@
     {%- assign written_blocks = section.blocks | where: 'type', 'written_step' -%}
     {%- if written_blocks.size > 0 -%}
       <div class="gt-ig-written">
-        <button type="button" class="gt-btn gt-btn--ghost gt-ig-written__toggle" data-gt-ig-written-toggle aria-expanded="false">
+        {%- comment -%}
+          VUSI's own "Written Instructions" button is a plain link to a
+          static PDF (confirmed by inspecting its href), not a modal or an
+          inline panel — matched here the same way rather than guessed.
+        {%- endcomment -%}
+        <a
+          href="{{ 'gt-installation-guide.pdf' | asset_url }}"
+          class="gt-btn gt-btn--ghost gt-ig-written__toggle"
+          target="_blank"
+          rel="noopener"
+        >
           {{ section.settings.written_button_label | default: 'Written Instructions' }}
-        </button>
-        <div class="gt-ig-written__panel" data-gt-ig-written-panel hidden>
-          <div class="gt-steps">
-            {%- for block in written_blocks -%}
-              <div class="gt-ig-written__step" {{ block.shopify_attributes }}>
-                <span class="gt-step__n">{{ forloop.index }}</span>
-                {%- if block.settings.image_url != blank -%}
-                  <div class="gt-media gt-step__media" style="aspect-ratio: 4/3;">
-                    <img class="gt-media__v" src="{{ block.settings.image_url }}" alt="{{ block.settings.title | escape }}" loading="lazy" width="600" height="450">
-                  </div>
-                {%- endif -%}
-                <h3 class="gt-h3">{{ block.settings.title }}</h3>
-                <p class="gt-micro">{{ block.settings.text }}</p>
-              </div>
-            {%- endfor -%}
-          </div>
-        </div>
+        </a>
       </div>
     {%- endif -%}
 

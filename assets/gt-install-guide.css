@@ -6,32 +6,44 @@
   --gt-ig-card-w: min(78vw, 340px);
 }
 
+/* VUSI-style peek carousel: cards are stacked on a shared center point and
+   pushed apart with transform (translateX/scale/opacity), not laid out
+   side-by-side in a scrolling strip. A scroll container can only ever show
+   a neighbour if there happens to be leftover space in its own box after
+   centering the active card — with the numbers here there wasn't any,
+   which is why no peek showed before. Positioning every card on top of
+   itself and offsetting it in JS (see gt-install-guide.js, values matched
+   to VUSI's own measured transform: ~0.177 * card-width offset, 0.8 scale,
+   0.42 opacity on neighbours) reproduces the peek regardless of container
+   width. */
 .gt-ig__track {
-  display: flex;
-  gap: 20px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  padding: 8px calc(50% - (var(--gt-ig-card-w) / 2)) 24px;
+  position: relative;
+  overflow: visible;
+  height: calc(var(--gt-ig-card-w) * 4 / 3);
+  padding: 8px 0 24px;
 }
-.gt-ig__track::-webkit-scrollbar { display: none; }
 
 .gt-ig-card {
-  position: relative;
-  flex: none;
+  position: absolute;
+  top: 8px;
+  left: 50%;
   width: var(--gt-ig-card-w);
   aspect-ratio: 3 / 4;
+  margin-left: calc(var(--gt-ig-card-w) / -2);
   border-radius: 22px;
   overflow: hidden;
   background: #101014;
-  scroll-snap-align: center;
-  transform: scale(.9);
-  opacity: .55;
+  transform: translateX(calc(var(--gt-ig-offset, 0) * 1px)) scale(var(--gt-ig-scale, .8));
+  opacity: var(--gt-ig-opacity, 0);
   transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .35s ease;
   box-shadow: 0 18px 40px rgba(0,0,0,.18);
+  cursor: pointer;
 }
-.gt-ig-card.is-active { transform: scale(1); opacity: 1; }
+.gt-ig-card.is-active {
+  z-index: 2;
+  cursor: default;
+}
+.gt-ig-card:not(.is-active) { z-index: 1; }
 
 .gt-ig-card__video {
   position: absolute; inset: 0;
@@ -127,14 +139,6 @@
   display: flex; flex-direction: column; align-items: center;
 }
 .gt-ig-written__toggle { min-width: 220px; }
-.gt-ig-written__panel {
-  width: 100%;
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height .35s ease;
-}
-.gt-ig-written__panel[data-open] { max-height: 6000px; }
-.gt-ig-written__step { padding-top: 8px; }
 
 @media (min-width: 750px) {
   .gt-ig { --gt-ig-card-w: min(34vw, 300px); }
@@ -144,5 +148,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gt-ig-card, .gt-ig__dot, .gt-ig-written__panel { transition: none; }
+  .gt-ig-card, .gt-ig__dot { transition: none; }
 }
