@@ -33,10 +33,17 @@
           card.style.setProperty('--gt-ig-offset', diff > 0 ? cardW : -cardW);
           return;
         }
-        var offset = diff * cardW * 0.177;
+        // VUSI's own measured offset ratio (.177 of card width) reads as
+        // an almost-invisible sliver against GhostTint's near-black video
+        // thumbnails, where VUSI's brighter footage still shows through at
+        // that size. Widened so the peek is unmistakable here too — the
+        // technique (stacked cards, per-card transform) still matches
+        // VUSI's; only this tuning value differs to suit darker source
+        // video.
+        var offset = diff * cardW * 0.4;
         card.style.setProperty('--gt-ig-offset', offset.toFixed(2));
-        card.style.setProperty('--gt-ig-scale', diff === 0 ? 1 : 0.8);
-        card.style.setProperty('--gt-ig-opacity', diff === 0 ? 1 : 0.42);
+        card.style.setProperty('--gt-ig-scale', diff === 0 ? 1 : 0.82);
+        card.style.setProperty('--gt-ig-opacity', diff === 0 ? 1 : 0.6);
       });
     }
 
