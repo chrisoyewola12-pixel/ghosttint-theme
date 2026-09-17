@@ -67,9 +67,6 @@
     .header__icons--gt-simple {
       align-items: center;
     }
-    .header__icons--gt-simple .header__icon--search {
-      display: none;
-    }
     .gt-header-shop-pill {
       display: inline-flex;
       align-items: center;
@@ -91,12 +88,27 @@
       background: #4a4a4a;
     }
     {%- comment -%}
-      The site-wide header uses the "inverse" color scheme (white icons),
-      meant for sitting over a dark hero. On this page the header sits on
-      a plain white background at mobile widths, which made the hamburger
-      and cart icons render white-on-white — invisible, not just minimal.
-      Scoped to this page/width only so it doesn't touch other pages.
+      Two pre-existing theme bugs, invisible until now because the header's
+      "inverse" color scheme made every icon white — and thus white-on-white
+      against this page's plain background, so nobody could see them:
+      1. header-drawer (hamburger) only gets `grid-area: left-icons` under
+         `.header--top-center`; on this middle-left header it's unplaced,
+         so the grid auto-places it into the "heading" column, overlapping
+         the logo. Forcing its grid-area fixes that.
+      2. The account icon's own `small-hide` class doesn't take effect here
+         (a more specific rule wins), so it renders even though it wasn't
+         part of the approved mobile set — hidden explicitly instead.
+      Both fixes and the icon recolor below are scoped to this page/width
+      only, since they're pre-existing site-wide conditions we're not
+      otherwise asked to touch.
     {%- endcomment -%}
+    .header--gt-mobile-fix header-drawer {
+      grid-area: left-icons;
+    }
+    .header--gt-mobile-fix .header__icon--search,
+    .header--gt-mobile-fix .header__icon--account {
+      display: none !important;
+    }
     .header--gt-mobile-fix .header__icon {
       color: #0a0a0a;
     }
