@@ -55,18 +55,26 @@
   {%- comment -%}
     GT · Installation page only, mobile only (<750px): match VUSI's minimal
     mobile header (Shop Now pill + hamburger). Logo and cart are kept per
-    the store owner's explicit choice, so this only adds the pill and hides
-    the search icon — the account icon and nav are already hidden at this
-    width site-wide. Values below are VUSI's own measured computed styles
-    (https://vusistudios.com/pages/instructions at 390px).
+    the store owner's explicit choice. Values below are VUSI's own measured
+    computed styles (https://vusistudios.com/pages/instructions at 390px).
+
+    gt-mobile-refine.css (an earlier, site-wide pass) already turns the
+    mobile header into a flex row and promotes .header__icons' children
+    into it via `display: contents`, ordering them with flex `order`
+    (hamburger 1, search 2, account 3 + margin-left:auto to push the
+    right-hand group to the edge, cart 4). It also swaps in thin custom
+    icon glyphs, but only recolors them dark under `body:has(product-info)`
+    — the product page. Elsewhere, including this page, they inherit the
+    header's "inverse" white, so they render white-on-white: present but
+    invisible. This page's pill joins that same promoted flex row (no
+    order of its own, so it defaulted to the very front), so the block
+    below gives it an explicit order and moves the auto-margin from the
+    now-hidden account icon onto it, then recolors the icons for this page.
   {%- endcomment -%}
   .gt-header-shop-pill {
     display: none;
   }
   @media screen and (max-width: 749px) {
-    .header__icons--gt-simple {
-      align-items: center;
-    }
     .gt-header-shop-pill {
       display: inline-flex;
       align-items: center;
@@ -87,27 +95,19 @@
     .gt-header-shop-pill:hover {
       background: #4a4a4a;
     }
-    {%- comment -%}
-      Two pre-existing theme bugs, invisible until now because the header's
-      "inverse" color scheme made every icon white — and thus white-on-white
-      against this page's plain background, so nobody could see them:
-      1. header-drawer (hamburger) only gets `grid-area: left-icons` under
-         `.header--top-center`; on this middle-left header it's unplaced,
-         so the grid auto-places it into the "heading" column, overlapping
-         the logo. Forcing its grid-area fixes that.
-      2. The account icon's own `small-hide` class doesn't take effect here
-         (a more specific rule wins), so it renders even though it wasn't
-         part of the approved mobile set — hidden explicitly instead.
-      Both fixes and the icon recolor below are scoped to this page/width
-      only, since they're pre-existing site-wide conditions we're not
-      otherwise asked to touch.
-    {%- endcomment -%}
-    .header--gt-mobile-fix header-drawer {
-      grid-area: left-icons;
-    }
     .header--gt-mobile-fix .header__icon--search,
     .header--gt-mobile-fix .header__icon--account {
       display: none !important;
+    }
+    .header--gt-mobile-fix .gt-header-shop-pill {
+      order: 3 !important;
+      margin-left: auto !important;
+    }
+    .header--gt-mobile-fix .header__icon--cart {
+      order: 4 !important;
+    }
+    .header--gt-mobile-fix > header-drawer {
+      order: 5 !important;
     }
     .header--gt-mobile-fix .header__icon {
       color: #0a0a0a;
