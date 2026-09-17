@@ -105,7 +105,25 @@
       space. Only the pill + cart move as a pair: the pill inherits the
       auto-margin that used to sit on the (now-hidden) account icon, which
       pushes just this pair to the header's right edge.
+
+      At the narrowest supported widths (375-390px), gt-mobile-refine.css's
+      logo centering (position:absolute, independent of the flex row) is
+      wide enough, combined with the pill, that the two overlap — the logo
+      sits on top of flex content rather than beside it, so nothing in a
+      flex context stops that collision. Putting the logo back in normal
+      flex flow (as its own item between the hamburger and the pill/cart
+      pair) guarantees no overlap at any width, at the cost of it no longer
+      being pixel-perfectly centered on this page.
     {%- endcomment -%}
+    .header--gt-mobile-fix > .header__heading-link,
+    .header--gt-mobile-fix > .header__heading > .header__heading-link {
+      position: static !important;
+      left: auto !important;
+      top: auto !important;
+      transform: none !important;
+      order: 2;
+      margin: 0 auto !important;
+    }
     .header--gt-mobile-fix .gt-header-shop-pill {
       order: 3 !important;
       margin-left: auto !important;
