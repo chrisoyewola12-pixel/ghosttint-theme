@@ -90,6 +90,16 @@
     .gt-header-shop-pill:hover {
       background: #4a4a4a;
     }
+    {%- comment -%}
+      The site-wide header uses the "inverse" color scheme (white icons),
+      meant for sitting over a dark hero. On this page the header sits on
+      a plain white background at mobile widths, which made the hamburger
+      and cart icons render white-on-white — invisible, not just minimal.
+      Scoped to this page/width only so it doesn't touch other pages.
+    {%- endcomment -%}
+    .header--gt-mobile-fix .header__icon {
+      color: #0a0a0a;
+    }
   }
 
   .menu-drawer-container {
@@ -213,7 +223,7 @@
   </symbol>
 </svg>
 <{% if section.settings.sticky_header_type != 'none' %}sticky-header data-sticky-type="{{ section.settings.sticky_header_type }}"{% else %}static-header{% endif %} class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}{% if section.settings.sticky_header_type == 'none' %} header-wrapper--not-sticky{% endif %}">
-  <header class="header header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}">
+  <header class="header header--{{ section.settings.logo_position }} header--mobile-{{ section.settings.mobile_logo_position }} page-width{% if section.settings.menu_type_desktop == 'drawer' %} drawer-menu{% endif %}{% if section.settings.menu != blank %} header--has-menu{% endif %}{% if template.suffix == 'installation-page' %} header--gt-mobile-fix{% endif %}">
     {%- if section.settings.menu != blank -%}
       {% render 'header-drawer', section: section %}
     {%- endif -%}
