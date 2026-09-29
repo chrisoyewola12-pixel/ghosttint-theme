@@ -39,10 +39,15 @@
     margin: 0;
     font-family: var(--font-heading-family);
     font-weight: 700;
-    font-size: 112px;
-    line-height: 1;
-    letter-spacing: -4px;
+    font-size: clamp(34px, 5.6vw, 80px);
+    line-height: 1.05;
+    letter-spacing: -0.035em;
     color: {{ section.settings.text_color }};
+  }
+
+  .gt-vh-{{ section.id }} .gt-vh__heading .gt-vh__heading--muted,
+  .gt-vh-{{ section.id }} .gt-vh__heading .gt-vh__heading--bold {
+    display: block;
   }
 
   .gt-vh-{{ section.id }} .gt-vh__heading .gt-vh__heading--muted {
@@ -82,11 +87,6 @@
     .gt-vh-{{ section.id }} .gt-vh__content {
       padding: 80px 20px 56px;
       max-width: none;
-    }
-
-    .gt-vh-{{ section.id }} .gt-vh__heading {
-      font-size: 52px;
-      letter-spacing: -1.8px;
     }
 
     .gt-vh-{{ section.id }} .gt-vh__desc {
@@ -130,7 +130,7 @@
     <h1 class="gt-vh__heading">
       {%- if section.settings.heading_muted != blank -%}
         <span class="gt-vh__heading--muted">{{ section.settings.heading_muted }}</span>
-        {{ section.settings.heading_bold }}
+        <span class="gt-vh__heading--bold">{{ section.settings.heading_bold }}</span>
       {%- else -%}
         {{ section.settings.heading_bold }}
       {%- endif -%}
