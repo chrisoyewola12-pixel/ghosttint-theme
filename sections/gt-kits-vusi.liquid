@@ -1,0 +1,180 @@
+{%- style -%}
+  .gt-kits-{{ section.id }} {
+    background: {{ section.settings.background_color }};
+    padding: 16px 40px;
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__grid {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat({{ section.blocks.size }}, 1fr);
+    gap: 20px;
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__card {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 280px;
+    padding: 24px;
+    border-radius: 16px;
+    background: {{ section.settings.card_background }};
+    text-decoration: none;
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__name {
+    font-family: var(--font-body-family);
+    font-size: 16px;
+    font-weight: 500;
+    color: {{ section.settings.card_text_color }};
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__price {
+    margin: 4px 0 0;
+    font-family: var(--font-body-family);
+    font-size: 13px;
+    color: {{ section.settings.card_price_color }};
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    border-radius: 100px;
+    background: {{ section.settings.btn_background }};
+    color: {{ section.settings.btn_text_color }};
+    font-family: var(--font-body-family);
+    font-size: 13px;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .gt-kits-{{ section.id }} {
+      padding: 12px 16px;
+    }
+
+    .gt-kits-{{ section.id }} .gt-kits__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .gt-kits-{{ section.id }} .gt-kits__card {
+      min-height: 180px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="gt-kits-{{ section.id }}">
+  <div class="gt-kits__grid">
+    {%- for block in section.blocks -%}
+      <a
+        href="{{ block.settings.link }}"
+        class="gt-kits__card"
+        {{ block.shopify_attributes }}
+      >
+        <div class="gt-kits__row">
+          <div>
+            <div class="gt-kits__name">{{ block.settings.name }}</div>
+            {%- if block.settings.price != blank -%}
+              <p class="gt-kits__price">{{ block.settings.price }}</p>
+            {%- endif -%}
+          </div>
+          <span class="gt-kits__btn">{{ block.settings.button_label | default: 'Shop' }} →</span>
+        </div>
+      </a>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GT Kits (Vusi layout)",
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Section background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#f1f1f1"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Card text",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "card_price_color",
+      "label": "Card price text",
+      "default": "#6f6f6f"
+    },
+    {
+      "type": "color",
+      "id": "btn_background",
+      "label": "Button background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "btn_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "kit",
+      "name": "Kit",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Kit name",
+          "default": "Kit"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "Price"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label",
+          "default": "Shop"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GT Kits (Vusi layout)",
+      "blocks": [
+        { "type": "kit" },
+        { "type": "kit" },
+        { "type": "kit" }
+      ]
+    }
+  ]
+}
+{% endschema %}
