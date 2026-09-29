@@ -1,0 +1,265 @@
+{%- style -%}
+  .gt-int-{{ section.id }} {
+    background: {{ section.settings.background_color }};
+    padding: 64px 40px;
+  }
+
+  .gt-int-{{ section.id }} .gt-int__inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .gt-int-{{ section.id }} .gt-int__eyebrow {
+    display: block;
+    margin: 0 0 18px;
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: {{ section.settings.eyebrow_color }};
+  }
+
+  .gt-int-{{ section.id }} .gt-int__heading {
+    margin: 0 auto;
+    max-width: 680px;
+    font-family: var(--font-heading-family);
+    font-weight: 600;
+    font-size: clamp(28px, 3.4vw, 44px);
+    line-height: 1.15;
+    letter-spacing: -0.022em;
+    color: {{ section.settings.heading_color }};
+  }
+
+  .gt-int-{{ section.id }} .gt-int__desc {
+    margin: 20px auto 0;
+    max-width: 560px;
+    font-family: var(--font-body-family);
+    font-size: 16px;
+    line-height: 1.5;
+    color: {{ section.settings.desc_color }};
+  }
+
+  .gt-int-{{ section.id }} .gt-int__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .gt-int-{{ section.id }} .gt-int__btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: -0.3px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    transition: opacity 0.2s ease;
+  }
+
+  .gt-int-{{ section.id }} .gt-int__btn:hover {
+    opacity: 0.8;
+  }
+
+  .gt-int-{{ section.id }} .gt-int__btn--solid {
+    background: {{ section.settings.btn_solid_bg }};
+    color: {{ section.settings.btn_solid_text_color }};
+    border-color: {{ section.settings.btn_solid_bg }};
+  }
+
+  .gt-int-{{ section.id }} .gt-int__btn--outline {
+    background: transparent;
+    color: {{ section.settings.btn_outline_text_color }};
+    border-color: {{ section.settings.btn_outline_border }};
+  }
+
+  .gt-int-{{ section.id }} .gt-int__reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .gt-int-{{ section.id }}.gt-int--in .gt-int__reveal {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .gt-int-{{ section.id }} .gt-int__reveal:nth-child(1) { transition-delay: 0ms; }
+  .gt-int-{{ section.id }} .gt-int__reveal:nth-child(2) { transition-delay: 90ms; }
+  .gt-int-{{ section.id }} .gt-int__reveal:nth-child(3) { transition-delay: 180ms; }
+  .gt-int-{{ section.id }} .gt-int__reveal:nth-child(4) { transition-delay: 270ms; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gt-int-{{ section.id }} .gt-int__reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .gt-int-{{ section.id }} {
+      padding: 40px 16px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="gt-int-{{ section.id }}" data-gt-intro>
+  <div class="gt-int__inner">
+    {%- if section.settings.eyebrow != blank -%}
+      <span class="gt-int__eyebrow gt-int__reveal">{{ section.settings.eyebrow }}</span>
+    {%- endif -%}
+    <h2 class="gt-int__heading gt-int__reveal">{{ section.settings.heading }}</h2>
+    {%- if section.settings.description != blank -%}
+      <p class="gt-int__desc gt-int__reveal">{{ section.settings.description }}</p>
+    {%- endif -%}
+    {%- if section.settings.btn_solid_text != blank or section.settings.btn_outline_text != blank -%}
+      <div class="gt-int__actions gt-int__reveal">
+        {%- if section.settings.btn_solid_text != blank -%}
+          <a href="{{ section.settings.btn_solid_link }}" class="gt-int__btn gt-int__btn--solid">{{ section.settings.btn_solid_text }}</a>
+        {%- endif -%}
+        {%- if section.settings.btn_outline_text != blank -%}
+          <a href="{{ section.settings.btn_outline_link }}" class="gt-int__btn gt-int__btn--outline">{{ section.settings.btn_outline_text }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section = document.currentScript.previousElementSibling;
+    if (!section || !section.hasAttribute('data-gt-intro')) return;
+
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      section.classList.add('gt-int--in');
+      return;
+    }
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            section.classList.add('gt-int--in');
+            observer.unobserve(section);
+          }
+        });
+      }, { threshold: 0.2 });
+      observer.observe(section);
+    } else {
+      section.classList.add('gt-int--in');
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GT Intro (Vusi layout)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "header",
+      "content": "Buttons"
+    },
+    {
+      "type": "text",
+      "id": "btn_solid_text",
+      "label": "Primary button label"
+    },
+    {
+      "type": "url",
+      "id": "btn_solid_link",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "btn_outline_text",
+      "label": "Secondary button label"
+    },
+    {
+      "type": "url",
+      "id": "btn_outline_link",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "eyebrow_color",
+      "label": "Eyebrow",
+      "default": "#8a8a8a"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "desc_color",
+      "label": "Description",
+      "default": "#6f6f6f"
+    },
+    {
+      "type": "color",
+      "id": "btn_solid_bg",
+      "label": "Primary button background",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "btn_solid_text_color",
+      "label": "Primary button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "btn_outline_text_color",
+      "label": "Secondary button text",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "btn_outline_border",
+      "label": "Secondary button border",
+      "default": "#b8b8b8"
+    }
+  ],
+  "presets": [
+    {
+      "name": "GT Intro (Vusi layout)"
+    }
+  ]
+}
+{% endschema %}
