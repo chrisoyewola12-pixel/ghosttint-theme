@@ -1,0 +1,280 @@
+{%- style -%}
+  .gt-vh-{{ section.id }} {
+    position: relative;
+    min-height: 100vh;
+    display: block;
+    overflow: hidden;
+    background: {{ section.settings.background_color }};
+  }
+
+  .gt-vh-{{ section.id }} .gt-vh__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: {{ section.settings.media_focal_point }};
+  }
+
+  .gt-vh-{{ section.id }} .gt-vh__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.45) 100%);
+    pointer-events: none;
+  }
+
+  .gt-vh-{{ section.id }} .gt-vh__content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    min-height: 100vh;
+    padding: 100px 40px 80px;
+    max-width: 900px;
+  }
+
+  .gt-vh-{{ section.id }} .gt-vh__heading {
+    margin: 0;
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    font-size: 112px;
+    line-height: 1;
+    letter-spacing: -4px;
+    color: {{ section.settings.text_color }};
+  }
+
+  .gt-vh-{{ section.id }} .gt-vh__heading .gt-vh__heading--muted {
+    color: rgba({{ section.settings.text_color_rgb }}, 0.5);
+  }
+
+  .gt-vh-{{ section.id }} .gt-vh__desc {
+    margin: 24px 0 0;
+    font-family: var(--font-body-family);
+    font-size: 18px;
+    line-height: 1.4;
+    color: {{ section.settings.text_color }};
+    max-width: 620px;
+  }
+
+  .gt-vh-{{ section.id }} .gt-vh__btn {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 32px;
+    padding: 15px 40px;
+    border-radius: 100px;
+    background: {{ section.settings.button_bg }};
+    color: {{ section.settings.button_text_color }};
+    font-family: var(--font-body-family);
+    font-size: 16px;
+    font-weight: 500;
+    text-decoration: none;
+    border: none;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  .gt-vh-{{ section.id }} .gt-vh__btn:hover {
+    opacity: 0.85;
+  }
+
+  @media screen and (max-width: 749px) {
+    .gt-vh-{{ section.id }} .gt-vh__content {
+      padding: 80px 20px 56px;
+      max-width: none;
+    }
+
+    .gt-vh-{{ section.id }} .gt-vh__heading {
+      font-size: 52px;
+      letter-spacing: -1.8px;
+    }
+
+    .gt-vh-{{ section.id }} .gt-vh__desc {
+      font-size: 16px;
+      margin-top: 16px;
+    }
+
+    .gt-vh-{{ section.id }} .gt-vh__btn {
+      margin-top: 24px;
+      padding: 13px 32px;
+      font-size: 15px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="gt-vh-{{ section.id }} gt-hero-vusi" data-pause-offscreen="true" data-respect-motion="true">
+  {%- if section.settings.video_url != blank -%}
+    <video
+      class="gt-vh__media"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster="{{ section.settings.poster_image | image_url: width: 1920 }}"
+      data-gt-hero-video
+    >
+      <source src="{{ section.settings.video_url }}" type="video/mp4">
+    </video>
+  {%- elsif section.settings.poster_image != blank -%}
+    {{
+      section.settings.poster_image
+      | image_url: width: 1920
+      | image_tag: class: 'gt-vh__media', loading: 'eager', fetchpriority: 'high'
+    }}
+  {%- endif -%}
+
+  <div class="gt-vh__overlay"></div>
+
+  <div class="gt-vh__content page-width">
+    <h1 class="gt-vh__heading">
+      {%- if section.settings.heading_muted != blank -%}
+        <span class="gt-vh__heading--muted">{{ section.settings.heading_muted }}</span>
+        {{ section.settings.heading_bold }}
+      {%- else -%}
+        {{ section.settings.heading_bold }}
+      {%- endif -%}
+    </h1>
+    {%- if section.settings.description != blank -%}
+      <p class="gt-vh__desc">{{ section.settings.description }}</p>
+    {%- endif -%}
+    {%- if section.settings.button_text != blank -%}
+      <a href="{{ section.settings.button_link }}" class="gt-vh__btn">{{ section.settings.button_text }}</a>
+    {%- endif -%}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var video = document.currentScript.previousElementSibling;
+    if (!video) return;
+    var section = video.closest('.gt-hero-vusi');
+    if (!section) return;
+    var mediaVideo = section.querySelector('[data-gt-hero-video]');
+    if (!mediaVideo) return;
+
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      mediaVideo.removeAttribute('autoplay');
+      mediaVideo.pause();
+      return;
+    }
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            mediaVideo.play().catch(function () {});
+          } else {
+            mediaVideo.pause();
+          }
+        });
+      }, { threshold: 0.1 });
+      observer.observe(section);
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GT Hero (Vusi layout)",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Background video URL (mp4)",
+      "info": "Direct CDN URL to an mp4 file. Falls back to the poster image if left blank."
+    },
+    {
+      "type": "image_picker",
+      "id": "poster_image",
+      "label": "Poster / fallback image"
+    },
+    {
+      "type": "select",
+      "id": "media_focal_point",
+      "label": "Focal point",
+      "options": [
+        { "value": "center center", "label": "Center" },
+        { "value": "center top", "label": "Top" },
+        { "value": "center bottom", "label": "Bottom" }
+      ],
+      "default": "center center"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading_muted",
+      "label": "Heading — muted lead-in",
+      "info": "Rendered at 50% opacity, matching Vusi's two-tone heading pattern. Leave blank for a single-tone heading."
+    },
+    {
+      "type": "text",
+      "id": "heading_bold",
+      "label": "Heading — emphasized",
+      "default": "Heading"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background (shown before media loads)",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "text",
+      "id": "text_color_rgb",
+      "label": "Text color as R, G, B (for the muted lead-in opacity)",
+      "default": "245, 245, 245"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Button background",
+      "default": "#f5f6f6"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "GT Hero (Vusi layout)"
+    }
+  ]
+}
+{% endschema %}
