@@ -80,14 +80,12 @@
   }
 
   .gt-int-{{ section.id }} .gt-int__reveal {
-    opacity: 0;
-    transform: translateY(14px);
-    transition: opacity 0.35s ease, transform 0.35s ease;
+    filter: blur(10px);
+    transition: filter 0.4s ease-out;
   }
 
   .gt-int-{{ section.id }}.gt-int--in .gt-int__reveal {
-    opacity: 1;
-    transform: translateY(0);
+    filter: blur(0);
   }
 
   .gt-int-{{ section.id }} .gt-int__reveal:nth-child(1) { transition-delay: 0ms; }
@@ -97,8 +95,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .gt-int-{{ section.id }} .gt-int__reveal {
-      opacity: 1;
-      transform: none;
+      filter: none;
       transition: none;
     }
   }
