@@ -16,6 +16,25 @@
     object-position: {{ section.settings.media_focal_point }};
   }
 
+  .gt-vh-{{ section.id }} .gt-vh__media-wrap {
+    position: absolute;
+    inset: 0;
+  }
+
+  .gt-vh-{{ section.id }} .gt-vh__media-wrap--mobile {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .gt-vh-{{ section.id }} .gt-vh__media-wrap--desktop {
+      display: none;
+    }
+
+    .gt-vh-{{ section.id }} .gt-vh__media-wrap--mobile {
+      display: block;
+    }
+  }
+
   .gt-vh-{{ section.id }} .gt-vh__overlay {
     position: absolute;
     inset: 0;
@@ -107,8 +126,33 @@
   }
 {%- endstyle -%}
 
-<section class="gt-vh-{{ section.id }} gt-hero-vusi" data-pause-offscreen="true" data-respect-motion="true">
-  {%- if section.settings.video_url != blank -%}
+<section class="gt-vh-{{ section.id }} gt-hero-vusi" data-pause-offscreen="true" data-respect-motion="true" data-desktop-media="{% if section.settings.video_url != blank %}video{% else %}image{% endif %}" data-mobile-media="{% if section.settings.mobile_video_url != blank or section.settings.video_url != blank %}video{% else %}image{% endif %}">
+  {%- comment -%}
+    Desktop media. Hidden on mobile via CSS when a distinct mobile_video_url/
+    mobile_poster_image is set (matches Vusi's own data-desktop-media /
+    data-mobile-media split); falls back to the same desktop asset on mobile
+    when no mobile-specific media is configured, rather than inventing one.
+  {%- endcomment -%}
+  {%- if section.settings.mobile_video_url != blank or section.settings.mobile_poster_image != blank -%}
+    <div class="gt-vh__media-wrap gt-vh__media-wrap--desktop">
+      {%- if section.settings.video_url != blank -%}
+        <video class="gt-vh__media" autoplay muted loop playsinline preload="metadata" poster="{{ section.settings.poster_image | image_url: width: 1920 }}" data-gt-hero-video>
+          <source src="{{ section.settings.video_url }}" type="video/mp4">
+        </video>
+      {%- elsif section.settings.poster_image != blank -%}
+        {{ section.settings.poster_image | image_url: width: 1920 | image_tag: class: 'gt-vh__media', loading: 'eager', fetchpriority: 'high' }}
+      {%- endif -%}
+    </div>
+    <div class="gt-vh__media-wrap gt-vh__media-wrap--mobile">
+      {%- if section.settings.mobile_video_url != blank -%}
+        <video class="gt-vh__media" autoplay muted loop playsinline preload="metadata" poster="{{ section.settings.mobile_poster_image | default: section.settings.poster_image | image_url: width: 1200 }}" data-gt-hero-video>
+          <source src="{{ section.settings.mobile_video_url }}" type="video/mp4">
+        </video>
+      {%- elsif section.settings.mobile_poster_image != blank -%}
+        {{ section.settings.mobile_poster_image | image_url: width: 1200 | image_tag: class: 'gt-vh__media', loading: 'eager', fetchpriority: 'high' }}
+      {%- endif -%}
+    </div>
+  {%- elsif section.settings.video_url != blank -%}
     <video
       class="gt-vh__media"
       autoplay
@@ -151,28 +195,32 @@
 
 <script>
   (function () {
-    var video = document.currentScript.previousElementSibling;
-    if (!video) return;
-    var section = video.closest('.gt-hero-vusi');
+    var prev = document.currentScript.previousElementSibling;
+    var section = prev && prev.classList.contains('gt-hero-vusi') ? prev : null;
     if (!section) return;
-    var mediaVideo = section.querySelector('[data-gt-hero-video]');
-    if (!mediaVideo) return;
+    var mediaVideos = section.querySelectorAll('[data-gt-hero-video]');
+    if (!mediaVideos.length) return;
 
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduceMotion) {
-      mediaVideo.removeAttribute('autoplay');
-      mediaVideo.pause();
+      mediaVideos.forEach(function (v) {
+        v.removeAttribute('autoplay');
+        v.pause();
+      });
       return;
     }
 
     if ('IntersectionObserver' in window) {
       var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            mediaVideo.play().catch(function () {});
-          } else {
-            mediaVideo.pause();
-          }
+          mediaVideos.forEach(function (v) {
+            if (v.offsetParent === null) return; // skip the hidden (desktop/mobile) media
+            if (entry.isIntersecting) {
+              v.play().catch(function () {});
+            } else {
+              v.pause();
+            }
+          });
         });
       }, { threshold: 0.1 });
       observer.observe(section);
@@ -198,6 +246,17 @@
       "type": "image_picker",
       "id": "poster_image",
       "label": "Poster / fallback image"
+    },
+    {
+      "type": "text",
+      "id": "mobile_video_url",
+      "label": "Mobile background video URL (mp4)",
+      "info": "Optional. Leave blank to reuse the desktop video/image on mobile. Vusi itself serves distinct desktop vs. mobile hero media."
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_poster_image",
+      "label": "Mobile poster / fallback image"
     },
     {
       "type": "select",
