@@ -505,9 +505,7 @@
       {{ content_for_layout }}
     </main>
 
-    {% section 'promo-popup' %}
-    {% section 'scroll-to-top-btn' %}
-    {% section 'global-music-player' %}
+    {% section 'gt-sticky-product' %}
     {% sections 'footer-group' %}
 
     <ul hidden>
@@ -641,7 +639,6 @@
     {% if settings.display_store_languages %}
       {% render 'enabled-languages-modal' %}
     {% endif %}
-  {% section 'ms-smtprice-sec' %}
 
 {% if template == 'index' %}
 

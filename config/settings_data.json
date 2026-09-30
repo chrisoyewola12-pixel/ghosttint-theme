@@ -224,60 +224,6 @@
           "color_scheme": "background-1"
         }
       },
-      "promo-popup": {
-        "type": "promo-popup",
-        "settings": {
-          "mode": "disabled",
-          "popup_seconds": 5,
-          "popup_days": 30,
-          "display_timer": true,
-          "timer_duration": 3,
-          "layout": "image_second",
-          "color_scheme": "background-1",
-          "heading_prefix": "Sign up and",
-          "heading": "GET 10% OFF",
-          "heading_size": "h1",
-          "heading_suffix": "",
-          "text": "<p>Sign up for our email newsletter for special discounts and exclusive offers.</p>",
-          "button_label": "Sign up",
-          "dismiss_btn_label": "No thanks",
-          "discount_code": "EXAMPLE10",
-          "success_heading_prefix": "Enjoy your",
-          "success_heading": "DISCOUNT!",
-          "success_heading_size": "h1",
-          "success_heading_suffix": "",
-          "success_text": "<p>Use the code bellow to get 10% off your whole order!</p>",
-          "discount_code_label": "Discount code:",
-          "copy_button_label": "Copy",
-          "copy_message": "Code copied successfully!",
-          "success_dismiss_btn_label": "Close",
-          "success_display_image": true
-        }
-      },
-      "scroll-to-top-btn": {
-        "type": "scroll-to-top-btn",
-        "settings": {
-          "enable_scroll_btn": true,
-          "display_after": 400,
-          "color_scheme": "accent-1",
-          "position": "bottom-right",
-          "offset_x": 20,
-          "offset_y": 20
-        }
-      },
-      "global-music-player": {
-        "type": "global-music-player",
-        "settings": {
-          "enabled": false,
-          "audio_src": "",
-          "volume": 10,
-          "position": "bottom-left",
-          "offset_x": 20,
-          "offset_y": 20,
-          "btn_animation": true,
-          "color_scheme": "accent-1"
-        }
-      },
       "cart-drawer": {
         "type": "cart-drawer",
         "blocks": {
@@ -402,9 +348,14 @@
           "custom_colors_outline_button": "#ffffff"
         }
       },
-      "ms-smtprice-sec": {
-        "type": "ms-smtprice-sec",
-        "settings": {}
+      "gt-sticky-product": {
+        "type": "gt-sticky-product",
+        "settings": {
+          "product_handle": "ghosttint",
+          "button_label": "Shop Now",
+          "scroll_desktop": 800,
+          "scroll_mobile": 600
+        }
       }
     },
     "content_for_index": []

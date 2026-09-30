@@ -75,17 +75,19 @@
 
 <section class="gt-kits-{{ section.id }}">
   <div class="gt-kits__grid">
+    {%- assign gt_product = all_products['ghosttint'] -%}
     {%- for block in section.blocks -%}
+      {%- assign gt_variant = gt_product.variants | where: 'id', block.settings.variant_id | first -%}
       <a
-        href="{{ block.settings.link }}"
+        href="{{ gt_product.url }}?variant={{ gt_variant.id }}"
         class="gt-kits__card"
         {{ block.shopify_attributes }}
       >
         <div class="gt-kits__row">
           <div>
             <div class="gt-kits__name">{{ block.settings.name }}</div>
-            {%- if block.settings.price != blank -%}
-              <p class="gt-kits__price">{{ block.settings.price }}</p>
+            {%- if gt_variant != blank -%}
+              <p class="gt-kits__price">{{ gt_variant.price | money }}</p>
             {%- endif -%}
           </div>
           <span class="gt-kits__btn">{{ block.settings.button_label | default: 'Shop' }} →</span>
@@ -149,13 +151,9 @@
         },
         {
           "type": "text",
-          "id": "price",
-          "label": "Price"
-        },
-        {
-          "type": "url",
-          "id": "link",
-          "label": "Link"
+          "id": "variant_id",
+          "label": "GhostTint variant ID",
+          "info": "The numeric variant ID for this bundle quantity. Price and checkout link are pulled live from this variant — GhostTint is a single product sold in bundle-quantity variants, not separate products."
         },
         {
           "type": "text",
