@@ -127,11 +127,13 @@
   .gt-faq-{{ section.id }} .gt-faq__answer-panel {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 0.25s ease;
+    opacity: 0;
+    transition: grid-template-rows 0.5s linear(0 0%, 0.1641 3.52%, 0.311 7.18%, 0.4413 10.99%, 0.5553 14.96%, 0.6539 19.12%, 0.738 23.5%, 0.8086 28.15%, 0.8662 33.12%, 0.9078 37.92%, 0.9405 43.12%, 0.965 48.84%, 0.9821 55.28%, 0.992 61.97%, 0.9976 70.09%, 1 100%), opacity 0.35s;
   }
 
   .gt-faq-{{ section.id }} details[open] .gt-faq__answer-panel {
     grid-template-rows: 1fr;
+    opacity: 1;
   }
 
   .gt-faq-{{ section.id }} .gt-faq__answer-wrap {

@@ -39,7 +39,7 @@
   .gt-su-{{ section.id }} .gt-su__input {
     width: 100%;
     padding: 14px 52px 14px 20px;
-    border-radius: 100px;
+    border-radius: 4px;
     border: 1px solid {{ section.settings.input_border }};
     background: {{ section.settings.input_background }};
     color: {{ section.settings.heading_color }};
@@ -73,9 +73,9 @@
     right: 6px;
     top: 50%;
     transform: translateY(-50%);
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    height: 34px;
+    padding: 0 8px;
+    border-radius: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -107,17 +107,21 @@
   }
 
   .gt-su-{{ section.id }} .gt-su__reveal {
-    filter: blur(10px);
-    transition: filter 0.4s ease-out;
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(18px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), filter 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .gt-su-{{ section.id }}.gt-su--in .gt-su__reveal {
+    opacity: 1;
     filter: blur(0);
+    transform: translateY(0);
   }
 
   .gt-su-{{ section.id }} .gt-su__reveal:nth-child(1) { transition-delay: 0ms; }
-  .gt-su-{{ section.id }} .gt-su__reveal:nth-child(2) { transition-delay: 90ms; }
-  .gt-su-{{ section.id }} .gt-su__reveal:nth-child(3) { transition-delay: 180ms; }
+  .gt-su-{{ section.id }} .gt-su__reveal:nth-child(2) { transition-delay: 100ms; }
+  .gt-su-{{ section.id }} .gt-su__reveal:nth-child(3) { transition-delay: 200ms; }
 
   @media (prefers-reduced-motion: reduce) {
     .gt-su-{{ section.id }} .gt-su__reveal {

@@ -104,11 +104,11 @@
     font-weight: 500;
     text-decoration: none;
     border: none;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition: background-color 0.2s, color 0.2s;
   }
 
   .gt-vh-{{ section.id }} .gt-vh__btn:hover {
-    opacity: 0.85;
+    background-color: {{ section.settings.button_hover_bg }};
   }
 
   @media screen and (max-width: 749px) {
@@ -337,6 +337,12 @@
       "id": "button_bg",
       "label": "Button background",
       "default": "#f5f6f6"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_bg",
+      "label": "Button hover background",
+      "default": "#e5e6e6"
     },
     {
       "type": "color",

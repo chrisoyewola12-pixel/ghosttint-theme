@@ -1,3 +1,17 @@
+{%- comment -%}
+  Structural equivalent of Vusi's vusi-product-cards component: full-bleed
+  media card with a floating frosted-glass pill (title + colored "Shop"
+  button) overlaid at the bottom-left, not a name/price/button row — this
+  replaces an earlier, structurally wrong version of this section. GhostTint
+  has no per-variant video/image, so the media area shows Shopify's native
+  placeholder graphic rather than being left empty or filled with something
+  that doesn't belong, matching the same rule applied to the carousel
+  section. Literal geometry/timing values (card radius, pill radius/blur,
+  reveal duration/lift/stagger) are taken directly from Vusi's computed
+  styles; the per-card accent color is Vusi's own per-product branding data,
+  not a structural constant, so GhostTint uses one consistent accent instead
+  of copying three different product-specific hues.
+{%- endcomment -%}
 {%- style -%}
   .gt-kits-{{ section.id }} {
     background: {{ section.settings.background_color }};
@@ -13,49 +27,111 @@
   }
 
   .gt-kits-{{ section.id }} .gt-kits__card {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    min-height: 280px;
-    padding: 24px;
-    border-radius: 16px;
+    position: relative;
+    display: block;
+    height: 420px;
+    border-radius: 12px;
+    overflow: clip;
     background: {{ section.settings.card_background }};
     text-decoration: none;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease-out, transform 0.7s ease-out;
   }
 
-  .gt-kits-{{ section.id }} .gt-kits__row {
+  .gt-kits-{{ section.id }}.gt-kits--in .gt-kits__card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__card:nth-child(1) { transition-delay: 0ms; }
+  .gt-kits-{{ section.id }} .gt-kits__card:nth-child(2) { transition-delay: 140ms; }
+  .gt-kits-{{ section.id }} .gt-kits__card:nth-child(3) { transition-delay: 280ms; }
+
+  .gt-kits-{{ section.id }} .gt-kits__media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__media video,
+  .gt-kits-{{ section.id }} .gt-kits__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__media svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__pill-position {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__pill {
+    position: relative;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    gap: 14px;
+    min-height: 44px;
+    padding: 6px 6px 6px 14px;
+    border-radius: 100px;
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__surface {
+    position: absolute;
+    inset: 0;
+    border-radius: 100px;
+    background: rgba(184, 184, 184, 0.6);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
   }
 
   .gt-kits-{{ section.id }} .gt-kits__name {
+    position: relative;
     font-family: var(--font-body-family);
     font-size: 16px;
-    font-weight: 500;
+    font-weight: 400;
     color: {{ section.settings.card_text_color }};
-  }
-
-  .gt-kits-{{ section.id }} .gt-kits__price {
-    margin: 4px 0 0;
-    font-family: var(--font-body-family);
-    font-size: 13px;
-    color: {{ section.settings.card_price_color }};
+    white-space: nowrap;
   }
 
   .gt-kits-{{ section.id }} .gt-kits__btn {
+    position: relative;
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 8px 16px;
+    padding: 0 12px;
+    height: 32px;
     border-radius: 100px;
     background: {{ section.settings.btn_background }};
     color: {{ section.settings.btn_text_color }};
     font-family: var(--font-body-family);
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 400;
     flex-shrink: 0;
+    transition: background 0.16s;
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__btn:hover {
+    background: {{ section.settings.btn_hover_background }};
+  }
+
+  .gt-kits-{{ section.id }} .gt-kits__btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gt-kits-{{ section.id }} .gt-kits__card {
+      transition: none;
+    }
   }
 
   @media screen and (max-width: 749px) {
@@ -65,15 +141,16 @@
 
     .gt-kits-{{ section.id }} .gt-kits__grid {
       grid-template-columns: 1fr;
+      gap: 14px;
     }
 
     .gt-kits-{{ section.id }} .gt-kits__card {
-      min-height: 180px;
+      height: 240px;
     }
   }
 {%- endstyle -%}
 
-<section class="gt-kits-{{ section.id }}">
+<section class="gt-kits-{{ section.id }}" data-gt-kits>
   <div class="gt-kits__grid">
     {%- assign gt_product = all_products['ghosttint'] -%}
     {%- for block in section.blocks -%}
@@ -83,19 +160,58 @@
         class="gt-kits__card"
         {{ block.shopify_attributes }}
       >
-        <div class="gt-kits__row">
-          <div>
-            <div class="gt-kits__name">{{ block.settings.name }}</div>
-            {%- if gt_variant != blank -%}
-              <p class="gt-kits__price">{{ gt_variant.price | money }}</p>
-            {%- endif -%}
-          </div>
-          <span class="gt-kits__btn">{{ block.settings.button_label | default: 'Shop' }} →</span>
+        <div class="gt-kits__media" aria-hidden="true">
+          {%- if block.settings.video_url != blank -%}
+            <video muted loop playsinline preload="none" poster="{{ block.settings.poster_url }}">
+              <source src="{{ block.settings.video_url }}" type="video/mp4">
+            </video>
+          {%- elsif block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 900 | image_tag: loading: 'lazy' }}
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'gt-kits__placeholder' }}
+          {%- endif -%}
+        </div>
+        <div class="gt-kits__pill-position">
+          <span class="gt-kits__pill">
+            <span class="gt-kits__surface" aria-hidden="true"></span>
+            <span class="gt-kits__name">{{ block.settings.name }}</span>
+            <span class="gt-kits__btn">
+              {{ block.settings.button_label | default: 'Shop' }}
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 10h13m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </span>
+          </span>
         </div>
       </a>
     {%- endfor -%}
   </div>
 </section>
+
+<script>
+  (function () {
+    var section = document.currentScript.previousElementSibling;
+    if (!section || !section.hasAttribute('data-gt-kits')) return;
+
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      section.classList.add('gt-kits--in');
+      return;
+    }
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            section.classList.add('gt-kits--in');
+            observer.unobserve(section);
+          }
+        });
+      }, { threshold: 0.15 });
+      observer.observe(section);
+    } else {
+      section.classList.add('gt-kits--in');
+    }
+  })();
+</script>
 
 {% schema %}
 {
@@ -110,31 +226,31 @@
     {
       "type": "color",
       "id": "card_background",
-      "label": "Card background",
+      "label": "Card background (behind media)",
       "default": "#f1f1f1"
     },
     {
       "type": "color",
       "id": "card_text_color",
-      "label": "Card text",
-      "default": "#111111"
-    },
-    {
-      "type": "color",
-      "id": "card_price_color",
-      "label": "Card price text",
-      "default": "#6f6f6f"
+      "label": "Pill title text",
+      "default": "#505050"
     },
     {
       "type": "color",
       "id": "btn_background",
-      "label": "Button background",
+      "label": "Shop button background",
       "default": "#111111"
     },
     {
       "type": "color",
+      "id": "btn_hover_background",
+      "label": "Shop button hover background",
+      "default": "#2b2b2b"
+    },
+    {
+      "type": "color",
       "id": "btn_text_color",
-      "label": "Button text",
+      "label": "Shop button text",
       "default": "#ffffff"
     }
   ],
@@ -153,7 +269,23 @@
           "type": "text",
           "id": "variant_id",
           "label": "GhostTint variant ID",
-          "info": "The numeric variant ID for this bundle quantity. Price and checkout link are pulled live from this variant — GhostTint is a single product sold in bundle-quantity variants, not separate products."
+          "info": "The numeric variant ID for this bundle quantity. Checkout link is pulled live from this variant — GhostTint is a single product sold in bundle-quantity variants, not separate products."
+        },
+        {
+          "type": "text",
+          "id": "video_url",
+          "label": "Video URL (mp4)",
+          "info": "Optional. Leave blank to show a native placeholder until real footage exists."
+        },
+        {
+          "type": "text",
+          "id": "poster_url",
+          "label": "Video poster image URL"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image (used only if no video URL is set)"
         },
         {
           "type": "text",

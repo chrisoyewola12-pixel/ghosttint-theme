@@ -8,6 +8,11 @@
   real customer quotes or per-clip vehicle tagging to put there, so both are
   left as optional, blank-by-default block settings rather than invented —
   the footer line only renders once a merchant fills in a real quote.
+
+  Cards with no video/image assigned render Shopify's native placeholder
+  graphic rather than being skipped, so the section stays visible and
+  structurally complete (full autoplay/pause-hover/dot-nav mechanism intact)
+  even before real footage is added.
 {%- endcomment -%}
 {%- style -%}
   .gt-car-{{ section.id }} {
@@ -76,6 +81,11 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__media svg {
+    width: 100%;
+    height: 100%;
   }
 
   .gt-car-{{ section.id }} .gt-car__caption {
@@ -184,22 +194,22 @@
 <section class="gt-car-{{ section.id }}" data-gt-carousel data-interval="5000" data-duration="800">
   <div class="gt-car__track" data-gt-carousel-track tabindex="0" aria-label="{{ section.settings.heading | default: 'Video carousel' }}">
     {%- for block in section.blocks -%}
-      {%- if block.settings.video_url != blank or block.settings.image != blank -%}
-        <div class="gt-car__card" data-gt-carousel-card data-quote="{{ block.settings.quote | escape }}" {{ block.shopify_attributes }}>
-          <div class="gt-car__media">
-            {%- if block.settings.video_url != blank -%}
-              <video muted loop playsinline preload="none" poster="{{ block.settings.poster_url }}">
-                <source src="{{ block.settings.video_url }}" type="video/mp4">
-              </video>
-            {%- elsif block.settings.image != blank -%}
-              {{ block.settings.image | image_url: width: 1080 | image_tag: loading: 'lazy' }}
-            {%- endif -%}
-          </div>
-          {%- if block.settings.caption != blank -%}
-            <span class="gt-car__caption">{{ block.settings.caption }}</span>
+      <div class="gt-car__card" data-gt-carousel-card data-quote="{{ block.settings.quote | escape }}" {{ block.shopify_attributes }}>
+        <div class="gt-car__media">
+          {%- if block.settings.video_url != blank -%}
+            <video muted loop playsinline preload="none" poster="{{ block.settings.poster_url }}">
+              <source src="{{ block.settings.video_url }}" type="video/mp4">
+            </video>
+          {%- elsif block.settings.image != blank -%}
+            {{ block.settings.image | image_url: width: 1080 | image_tag: loading: 'lazy' }}
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'gt-car__placeholder' }}
           {%- endif -%}
         </div>
-      {%- endif -%}
+        {%- if block.settings.caption != blank -%}
+          <span class="gt-car__caption">{{ block.settings.caption }}</span>
+        {%- endif -%}
+      </div>
     {%- endfor -%}
   </div>
 
@@ -207,9 +217,7 @@
 
   <div class="gt-car__dots" data-gt-carousel-dots role="tablist">
     {%- for block in section.blocks -%}
-      {%- if block.settings.video_url != blank or block.settings.image != blank -%}
-        <button type="button" class="gt-car__dot" data-index="{{ forloop.index0 }}" aria-label="Show slide {{ forloop.index }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"><span></span></button>
-      {%- endif -%}
+      <button type="button" class="gt-car__dot" data-index="{{ forloop.index0 }}" aria-label="Show slide {{ forloop.index }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"><span></span></button>
     {%- endfor -%}
   </div>
 </section>
