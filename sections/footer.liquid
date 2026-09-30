@@ -44,36 +44,70 @@
     }
   {% endif %}
 
-  /* Compact newsletter pill — Dawn's default field/button sizing (1rem/2rem
-     padding, 4.4rem-wide button) reads oversized against the rest of this
-     footer once the surrounding blocks were stripped back. Scoped to
-     .footer only so the cart/search/product forms elsewhere keep their
-     normal sizing. */
+  {%- comment -%}
+    GT · Literal VUSI footer email-signup values (border-radius, border,
+    background, padding, button size) — replaces an earlier pill-shaped
+    approximation (radius 999px) built before the literal-value standing
+    rule. Verified via computed styles against vusistudios.com's footer:
+    input radius 12px / border 1px solid #dfdfdf / background
+    rgba(255,255,255,.78) / padding 16px 28px / ~56px tall; submit button
+    ~38x38px, radius 12px, transparent background.
+  {%- endcomment -%}
   .footer .newsletter-form {
     max-width: 38rem;
   }
   .footer .newsletter-form__field-wrapper .field__input {
-    padding-right: 4.2rem;
+    padding-right: 4.4rem;
   }
   .footer .field__input {
-    min-height: 3.6rem;
+    min-height: 5.6rem;
     padding-top: 0;
     padding-bottom: 0;
-    padding-left: 1.4rem;
+    padding-left: 2.8rem;
     font-size: 1.3rem;
-    border-radius: 999px;
+    border-radius: 12px;
+    border: 1px solid #dfdfdf;
+    background: rgba(255, 255, 255, 0.78);
   }
   .footer .field__label {
     font-size: 1.3rem;
   }
   .footer .newsletter-form__button {
-    width: 3.6rem;
+    width: 3.84rem;
+    height: 3.84rem;
+    right: 0.6rem;
+    border-radius: 12px;
+    background: transparent;
   }
   .footer .newsletter-form__button .icon {
     width: 1.2rem;
     height: 1.2rem;
   }
 
+  {%- comment -%}
+    GT · VUSI's footer splits into two columns on desktop — heading +
+    subtext on the left, the signup form on the right, bottom-aligned —
+    rather than Dawn's default stacked single block. Scoped to
+    :only-child since the image/link-list blocks were removed to match
+    VUSI's own footer, which has neither.
+  {%- endcomment -%}
+  @media screen and (min-width: 750px) {
+    .footer__blocks-wrapper .footer-block:only-child {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 64px;
+    }
+    .footer__blocks-wrapper .footer-block:only-child .footer-block__details-content-mb {
+      margin-bottom: 0;
+    }
+    .footer__blocks-wrapper .footer-block:only-child .newsletter-form {
+      flex: 0 0 auto;
+      width: 38rem;
+      max-width: 100%;
+    }
+  }
 {%- endstyle -%}
 {{ 'gt-footer-overrides.css' | asset_url | stylesheet_tag }}
 
