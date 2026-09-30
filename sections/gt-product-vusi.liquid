@@ -1,0 +1,462 @@
+{%- comment -%}
+  Structural equivalent of Vusi's product page main section: two-column
+  layout on desktop (media gallery left, sticky buy box right), stacked on
+  mobile. Gallery is a multi-slot, thumbnail-nav, click-to-zoom component
+  matching Vusi's structure; slots render Shopify's native placeholder
+  graphic until real product photos/video are added (per request, not
+  wired to product.media yet). Buy box uses GhostTint's real product data:
+  title, price, the real "Pack" option (1/2/4 Window Kit), quantity, and
+  the theme's own cart form — no fabricated content.
+{%- endcomment -%}
+{%- style -%}
+  .gt-product-{{ section.id }} {
+    background: #ffffff;
+    padding: 32px 24px 64px;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__inner {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  @media screen and (min-width: 990px) {
+    .gt-product-{{ section.id }} .gt-product__layout {
+      grid-template-columns: minmax(0, 1.15fr) minmax(360px, 480px);
+      gap: 64px;
+      align-items: start;
+    }
+
+    .gt-product-{{ section.id }} .gt-product__info {
+      position: sticky;
+      top: 120px;
+    }
+  }
+
+  /* Gallery */
+  .gt-product-{{ section.id }} .gt-product__gallery-main {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #f4f4f4;
+    cursor: zoom-in;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__gallery-main img,
+  .gt-product-{{ section.id }} .gt-product__gallery-main svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__zoom-icon {
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__thumbs {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__thumbs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__thumb {
+    flex: 0 0 72px;
+    width: 72px;
+    height: 72px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f4f4f4;
+    border: 1px solid transparent;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__thumb[aria-current="true"] {
+    border-color: #0a0a0a;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__thumb img,
+  .gt-product-{{ section.id }} .gt-product__thumb svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Info */
+  .gt-product-{{ section.id }} .gt-product__title {
+    margin: 0 0 8px;
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    font-size: clamp(26px, 3.4vw, 36px);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: #0a0a0a;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__price {
+    margin: 0 0 24px;
+    font-family: var(--font-body-family);
+    font-size: 20px;
+    font-weight: 500;
+    color: #0a0a0a;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__description {
+    margin: 0 0 28px;
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    line-height: 1.6;
+    color: #4a4a4a;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__option {
+    margin-bottom: 20px;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__option-label {
+    display: block;
+    margin-bottom: 8px;
+    font-family: var(--font-body-family);
+    font-size: 13px;
+    font-weight: 500;
+    color: #0a0a0a;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__select {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 16px;
+    border-radius: 10px;
+    border: 1px solid #dfdfdf;
+    background: #ffffff;
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    color: #0a0a0a;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__quantity {
+    display: flex;
+    align-items: center;
+    border: 1px solid #dfdfdf;
+    border-radius: 10px;
+    height: 48px;
+    flex: 0 0 128px;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__quantity button {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    width: 40px;
+    height: 100%;
+    font-size: 16px;
+    cursor: pointer;
+    color: #0a0a0a;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__quantity input {
+    width: 48px;
+    height: 100%;
+    border: 0;
+    text-align: center;
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    color: #0a0a0a;
+    background: transparent;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__submit {
+    flex: 1 1 auto;
+    appearance: none;
+    border: 0;
+    min-height: 48px;
+    border-radius: 10px;
+    background: #0a0a0a;
+    color: #ffffff;
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__submit:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__trust-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    color: #4a4a4a;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__zoom-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(10, 10, 10, 0.9);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__zoom-modal[data-open="true"] {
+    display: flex;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__zoom-modal img,
+  .gt-product-{{ section.id }} .gt-product__zoom-modal svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .gt-product-{{ section.id }} .gt-product__zoom-close {
+    position: absolute;
+    top: 24px;
+    right: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(255, 255, 255, 0.9);
+    cursor: pointer;
+  }
+
+  @media screen and (max-width: 749px) {
+    .gt-product-{{ section.id }} {
+      padding: 20px 16px 48px;
+    }
+  }
+{%- endstyle -%}
+
+{%- assign gallery_count = 4 -%}
+
+<section class="gt-product-{{ section.id }}" data-gt-product>
+  <div class="gt-product__inner">
+    <div class="gt-product__layout">
+      <div class="gt-product__gallery">
+        <div class="gt-product__gallery-main" data-gt-product-main data-zoom-target>
+          {{ 'product-1' | placeholder_svg_tag }}
+          <span class="gt-product__zoom-icon" aria-hidden="true">{% render 'icon-zoom' %}</span>
+        </div>
+        <div class="gt-product__thumbs" role="tablist" aria-label="Product media">
+          {%- for i in (1..gallery_count) -%}
+            <button
+              type="button"
+              class="gt-product__thumb"
+              data-gt-product-thumb
+              data-index="{{ forloop.index0 }}"
+              aria-current="{% if forloop.first %}true{% else %}false{% endif %}"
+            >
+              {{ 'product-' | append: i | placeholder_svg_tag }}
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <div class="gt-product__info">
+        <h1 class="gt-product__title">{{ product.title }}</h1>
+        <p class="gt-product__price">{{ product.selected_or_first_available_variant.price | money }}</p>
+
+        {%- if product.description != blank -%}
+          <div class="gt-product__description">{{ product.description }}</div>
+        {%- endif -%}
+
+        {%- form 'product', product, class: 'gt-product__form' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-gt-product-variant-id>
+          <script type="application/json" data-gt-product-variants>
+            [
+              {%- for variant in product.variants -%}
+                {
+                  "id": {{ variant.id | json }},
+                  "available": {{ variant.available | json }},
+                  "price": {{ variant.price | money | json }},
+                  "options": {{ variant.options | json }}
+                }{%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            ]
+          </script>
+
+          {%- for option in product.options_with_values -%}
+            <div class="gt-product__option">
+              <label class="gt-product__option-label" for="gt-product-option-{{ section.id }}-{{ forloop.index }}">{{ option.name }}</label>
+              <select class="gt-product__select" id="gt-product-option-{{ section.id }}-{{ forloop.index }}" data-gt-product-option="{{ forloop.index0 }}">
+                {%- for value in option.values -%}
+                  <option value="{{ value | escape }}" {% if value == option.selected_value %}selected="selected"{% endif %}>{{ value }}</option>
+                {%- endfor -%}
+              </select>
+            </div>
+          {%- endfor -%}
+
+          <div class="gt-product__row">
+            <div class="gt-product__quantity">
+              <button type="button" data-gt-qty-minus aria-label="Decrease quantity">&minus;</button>
+              <input type="number" name="quantity" value="1" min="1" data-gt-qty-input>
+              <button type="button" data-gt-qty-plus aria-label="Increase quantity">&plus;</button>
+            </div>
+            <button type="submit" class="gt-product__submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+              {%- if product.selected_or_first_available_variant.available -%}
+                Add to cart
+              {%- else -%}
+                Sold out
+              {%- endif -%}
+            </button>
+          </div>
+        {%- endform -%}
+
+        <div class="gt-product__trust">
+          <span class="gt-product__trust-item">{% render 'icon-checkmark' %} Installation support</span>
+          <span class="gt-product__trust-item">{% render 'icon-checkmark' %} Secure checkout</span>
+          <span class="gt-product__trust-item">{% render 'icon-checkmark' %} Warranty cover</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gt-product__zoom-modal" data-gt-product-zoom-modal>
+    <button type="button" class="gt-product__zoom-close" data-gt-product-zoom-close aria-label="Close">&times;</button>
+    <div data-gt-product-zoom-image>{{ 'product-1' | placeholder_svg_tag }}</div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section = document.currentScript.previousElementSibling;
+    if (!section || !section.hasAttribute('data-gt-product')) return;
+
+    var thumbs = Array.prototype.slice.call(section.querySelectorAll('[data-gt-product-thumb]'));
+    var mainWrap = section.querySelector('[data-gt-product-main]');
+    var zoomModal = section.querySelector('[data-gt-product-zoom-modal]');
+    var zoomImage = section.querySelector('[data-gt-product-zoom-image]');
+    var zoomClose = section.querySelector('[data-gt-product-zoom-close]');
+
+    thumbs.forEach(function (thumb) {
+      thumb.addEventListener('click', function () {
+        thumbs.forEach(function (t) { t.setAttribute('aria-current', 'false'); });
+        thumb.setAttribute('aria-current', 'true');
+        var media = thumb.querySelector('svg, img');
+        var mainMedia = mainWrap.querySelector('svg, img');
+        if (media && mainMedia) {
+          mainMedia.outerHTML = media.outerHTML;
+        }
+      });
+    });
+
+    if (mainWrap) {
+      mainWrap.addEventListener('click', function () {
+        var media = mainWrap.querySelector('svg, img');
+        if (media && zoomImage) {
+          zoomImage.innerHTML = media.outerHTML;
+        }
+        zoomModal.setAttribute('data-open', 'true');
+      });
+    }
+
+    if (zoomClose) {
+      zoomClose.addEventListener('click', function () {
+        zoomModal.setAttribute('data-open', 'false');
+      });
+    }
+
+    var variantDataEl = section.querySelector('[data-gt-product-variants]');
+    var variants = variantDataEl ? JSON.parse(variantDataEl.textContent) : [];
+    var optionSelects = Array.prototype.slice.call(section.querySelectorAll('[data-gt-product-option]'));
+    var variantIdInput = section.querySelector('[data-gt-product-variant-id]');
+    var priceEl = section.querySelector('.gt-product__price');
+    var submitBtn = section.querySelector('.gt-product__submit');
+
+    function currentOptions() {
+      return optionSelects.map(function (select) { return select.value; });
+    }
+
+    function findVariant(options) {
+      return variants.filter(function (variant) {
+        return variant.options.length === options.length && variant.options.every(function (value, i) {
+          return value === options[i];
+        });
+      })[0];
+    }
+
+    function updateVariant() {
+      var variant = findVariant(currentOptions());
+      if (!variant) return;
+      variantIdInput.value = variant.id;
+      if (priceEl) priceEl.textContent = variant.price;
+      if (submitBtn) {
+        submitBtn.disabled = !variant.available;
+        submitBtn.textContent = variant.available ? 'Add to cart' : 'Sold out';
+      }
+    }
+
+    optionSelects.forEach(function (select) {
+      select.addEventListener('change', updateVariant);
+    });
+
+    var qtyInput = section.querySelector('[data-gt-qty-input]');
+    var qtyMinus = section.querySelector('[data-gt-qty-minus]');
+    var qtyPlus = section.querySelector('[data-gt-qty-plus]');
+
+    if (qtyMinus && qtyInput) {
+      qtyMinus.addEventListener('click', function () {
+        var val = parseInt(qtyInput.value, 10) || 1;
+        qtyInput.value = Math.max(1, val - 1);
+      });
+    }
+
+    if (qtyPlus && qtyInput) {
+      qtyPlus.addEventListener('click', function () {
+        var val = parseInt(qtyInput.value, 10) || 1;
+        qtyInput.value = val + 1;
+      });
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GT Product (Vusi layout)",
+  "settings": []
+}
+{% endschema %}

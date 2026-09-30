@@ -1,0 +1,89 @@
+{%- comment -%}
+  Structural equivalent of Vusi's allocation-progress banner on the product
+  page (their real copy: "2347 claimed" / "Batch 2 - Ships Mid/Late October
+  2026"). Uses GhostTint's own real batch numbers, not Vusi's. No fill-bar
+  percentage is rendered since GhostTint has no published batch capacity to
+  compute a real proportion against — showing one would imply a number we
+  don't have.
+{%- endcomment -%}
+{%- style -%}
+  .gt-product-allocation-{{ section.id }} {
+    background: {{ section.settings.background_color }};
+    padding: 20px 24px;
+  }
+
+  .gt-product-allocation-{{ section.id }} .gt-product-allocation__inner {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    text-align: center;
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    color: {{ section.settings.text_color }};
+  }
+
+  .gt-product-allocation-{{ section.id }} .gt-product-allocation__claimed {
+    font-weight: 600;
+    color: {{ section.settings.accent_color }};
+  }
+
+  .gt-product-allocation-{{ section.id }} .gt-product-allocation__dot {
+    color: {{ section.settings.text_color }};
+    opacity: 0.4;
+  }
+{%- endstyle -%}
+
+<section class="gt-product-allocation-{{ section.id }}">
+  <div class="gt-product-allocation__inner">
+    <span class="gt-product-allocation__claimed">{{ section.settings.claimed_count }} claimed</span>
+    <span class="gt-product-allocation__dot" aria-hidden="true">&middot;</span>
+    <span>{{ section.settings.batch_label }}</span>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GT Product alloc",
+  "settings": [
+    {
+      "type": "text",
+      "id": "claimed_count",
+      "label": "Claimed count",
+      "default": "1540"
+    },
+    {
+      "type": "text",
+      "id": "batch_label",
+      "label": "Batch / ship label",
+      "default": "Batch 2 — ships mid-October"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#4a4a4a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Claimed count accent",
+      "default": "#0a0a0a"
+    }
+  ],
+  "presets": [
+    {
+      "name": "GT Product alloc"
+    }
+  ]
+}
+{% endschema %}

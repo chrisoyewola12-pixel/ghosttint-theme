@@ -1,0 +1,166 @@
+{%- comment -%}
+  Structural equivalent of Vusi's "In The Box" / "Technical Specifications"
+  collapsible sections on the product page: stacked <details> groups below
+  the buy box. Content is GhostTint's own real copy (what ships in the box,
+  and the real spec sheet from the "Features & Specs SPD" page), not
+  Vusi's Dot-specific components.
+{%- endcomment -%}
+{%- style -%}
+  .gt-product-details-{{ section.id }} {
+    background: #ffffff;
+    padding: 0 24px 64px;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__inner {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__group {
+    border-top: 1px solid #e5e5e5;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__group:last-child {
+    border-bottom: 1px solid #e5e5e5;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-heading-family);
+    font-weight: 500;
+    font-size: 16px;
+    color: #0a0a0a;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__icon svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.2s ease;
+  }
+
+  .gt-product-details-{{ section.id }} details[open] .gt-product-details__icon svg {
+    transform: rotate(45deg);
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__body {
+    padding: 0 0 24px;
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    line-height: 1.7;
+    color: #4a4a4a;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__body ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__body li {
+    padding: 6px 0;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__spec-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__spec-row:last-child {
+    border-bottom: 0;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__spec-label {
+    color: #0a0a0a;
+    font-weight: 500;
+    flex: 0 0 auto;
+  }
+
+  .gt-product-details-{{ section.id }} .gt-product-details__spec-value {
+    text-align: right;
+    color: #4a4a4a;
+  }
+{%- endstyle -%}
+
+<section class="gt-product-details-{{ section.id }}">
+  <div class="gt-product-details__inner">
+    {%- for block in section.blocks -%}
+      <div class="gt-product-details__group" {{ block.shopify_attributes }}>
+        <details {% if block.settings.open_by_default %}open{% endif %}>
+          <summary class="gt-product-details__summary">
+            <span>{{ block.settings.heading }}</span>
+            <span class="gt-product-details__icon" aria-hidden="true">{% render 'icon-plus' %}</span>
+          </summary>
+          <div class="gt-product-details__body">
+            {%- if block.type == 'spec_list' -%}
+              {%- assign rows = block.settings.rows | newline_to_br | split: '<br />' -%}
+              {%- for row in rows -%}
+                {%- assign pair = row | split: ':' -%}
+                {%- if pair.size == 2 -%}
+                  <div class="gt-product-details__spec-row">
+                    <span class="gt-product-details__spec-label">{{ pair[0] | strip }}</span>
+                    <span class="gt-product-details__spec-value">{{ pair[1] | strip }}</span>
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- else -%}
+              {{ block.settings.content }}
+            {%- endif -%}
+          </div>
+        </details>
+      </div>
+    {%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "GT Product details",
+  "blocks": [
+    {
+      "type": "text_list",
+      "name": "Text group",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "In the box" },
+        { "type": "checkbox", "id": "open_by_default", "label": "Open by default", "default": true },
+        { "type": "richtext", "id": "content", "label": "Content" }
+      ]
+    },
+    {
+      "type": "spec_list",
+      "name": "Spec list",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Technical specifications" },
+        { "type": "checkbox", "id": "open_by_default", "label": "Open by default", "default": false },
+        {
+          "type": "textarea",
+          "id": "rows",
+          "label": "Spec rows",
+          "info": "One per line, formatted as Label: Value"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GT Product details",
+      "blocks": [
+        { "type": "text_list" },
+        { "type": "spec_list" }
+      ]
+    }
+  ]
+}
+{% endschema %}

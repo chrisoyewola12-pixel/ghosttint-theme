@@ -1,0 +1,92 @@
+{
+  "sections": {
+    "main": {
+      "type": "gt-product-vusi",
+      "settings": {}
+    },
+    "details": {
+      "type": "gt-product-details-vusi",
+      "blocks": {
+        "included": {
+          "type": "text_list",
+          "settings": {
+            "heading": "In the box",
+            "open_by_default": true,
+            "content": "<ul><li>SPD smart tint film</li><li>Wireless remote control</li><li>Control system</li><li>Vehicle connection kit</li><li>Setup guide</li><li>Tinting tool kit</li><li>Warranty cover</li><li>Installation support</li></ul>"
+          }
+        },
+        "specs": {
+          "type": "spec_list",
+          "settings": {
+            "heading": "Technical specifications",
+            "open_by_default": false,
+            "rows": "Model: GhostTint™ Smart SPD Window Tint Film\nSwitching type: Smooth gradual dimming, 7-level adjustable transparency\nTint range (VLT): Clear ~65–70%, Dark ~5–10%\nFilm size: 100cm x 100cm, trim-to-fit\nControl method: Wireless remote control\nPower source: Vehicle ACC, ignition-linked power\nMaterial: Automotive-grade SPD smart film\nInstallation type: Professional installation recommended, DIY possible for flat glass\nCompatibility: Most sedans, SUVs and coupes; side and rear windows only\nOperating voltage: 12V DC\nOperating temperature: -30°C to +85°C\nUV / heat rejection: Blocks over 99% UV rays\nPower consumption: Low power, draws only when transitioning or holding clear state"
+          }
+        }
+      },
+      "block_order": ["included", "specs"]
+    },
+    "faq": {
+      "type": "gt-faq-vusi",
+      "settings": {
+        "eyebrow": "Support",
+        "heading": "Frequently asked questions",
+        "subtext": "",
+        "background_color": "#ffffff"
+      },
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "What VLT range can I select?",
+            "answer": "<p>GhostTint™ adjusts across seven levels, spanning approximately 5% to 70% VLT. Tint laws vary by location, so always check the rules that apply to your vehicle and windows.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "How is GhostTint™ controlled?",
+            "answer": "<p>With the included wireless remote. The control system is powered from the vehicle and lets you adjust the tint level on demand.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "What is included with the 2-window option?",
+            "answer": "<p>The 2-window kit includes two trim-to-fit smart tint films plus the wireless remote and control system. Setup guidance, tinting tools, warranty cover and installation support are also included.</p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "question": "What is included with the 4-window option?",
+            "answer": "<p>The 4-window kit includes four trim-to-fit smart tint films plus the wireless remote and control system. It also includes the same setup guidance, tinting tools, warranty cover and installation support.</p>"
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "question": "Is installation support available?",
+            "answer": "<p>Yes. Installation guidance and support are included. Professional installation is recommended for the cleanest result, while experienced DIY installers can follow the supplied guidance.</p>"
+          }
+        },
+        "q6": {
+          "type": "question",
+          "settings": {
+            "question": "Which window option should I choose?",
+            "answer": "<p>Choose 1 Window for a single install, 2 Windows for a smaller multi-window installation, or 4 Windows for full side-window coverage.</p>"
+          }
+        }
+      },
+      "block_order": ["q1", "q2", "q3", "q4", "q5", "q6"]
+    },
+    "allocation": {
+      "type": "gt-product-allocation-vusi",
+      "settings": {
+        "claimed_count": "1540",
+        "batch_label": "Batch 2 — ships mid-October"
+      }
+    }
+  },
+  "order": ["main", "details", "faq", "allocation"]
+}
