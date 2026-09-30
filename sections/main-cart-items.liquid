@@ -96,11 +96,24 @@
   .cart-items tbody {
     display: block;
   }
+  {%- comment -%}
+    GT · Row layout corrected against a real screenshot of VUSI's mobile
+    cart (user-supplied) rather than a flex-wrap guess. Real structure:
+    image spans both rows on the left; name/variant/price and the total
+    price share the top row (price pinned to the far right); the
+    quantity stepper + remove icon form their own row below, indented to
+    align with the name text, NOT with the image. A 3-column grid
+    (image | content | price), with quantity placed back in the content
+    column on row 2, reproduces this exactly — same structure at every
+    width, matching what the screenshot showed at mobile size.
+  {%- endcomment -%}
   .cart-items .cart-item {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 24px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-template-rows: auto auto;
+    column-gap: 24px;
+    row-gap: 16px;
+    align-items: start;
     padding: 32px 0;
     border-bottom: 1px solid #e5e5e5;
   }
@@ -110,7 +123,8 @@
     border: 0;
   }
   .cart-item__media {
-    flex: 0 0 auto;
+    grid-column: 1;
+    grid-row: 1 / span 2;
   }
   .cart-item__image-container {
     width: 140px;
@@ -124,7 +138,8 @@
     object-fit: cover;
   }
   .cart-item__details {
-    flex: 1 1 260px;
+    grid-column: 2;
+    grid-row: 1;
   }
   .cart-item__name {
     display: block;
@@ -142,7 +157,8 @@
     font-size: 15px;
   }
   .cart-item__quantity {
-    flex: 0 0 auto;
+    grid-column: 2;
+    grid-row: 2;
   }
   .cart-item__quantity-wrapper {
     display: flex;
@@ -185,7 +201,8 @@
     display: block !important;
   }
   .cart-item__totals {
-    margin-left: auto;
+    grid-column: 3;
+    grid-row: 1;
     text-align: right;
   }
   .cart-item__totals .price {
