@@ -1,0 +1,370 @@
+{%- comment -%}
+  Structural equivalent of Vusi's vusi-image-carousel component (neo_carousel
+  section): native scroll-snap track, autoplay every 5000ms with an 800ms
+  smooth-scroll advance, pause on hover, loop back to the first card, dot
+  navigation. Vusi's original also carries a per-card literal customer quote
+  ("Feels like a natural part of the car.") synced to a footer line below the
+  track, and pill captions naming the customer's car model. GhostTint has no
+  real customer quotes or per-clip vehicle tagging to put there, so both are
+  left as optional, blank-by-default block settings rather than invented —
+  the footer line only renders once a merchant fills in a real quote.
+{%- endcomment -%}
+{%- style -%}
+  .gt-car-{{ section.id }} {
+    display: block;
+    position: relative;
+    width: 100vw;
+    max-width: none;
+    margin-inline: calc(50% - 50vw);
+    background: {{ section.settings.background_color }};
+    padding: 52px 0 20px;
+    overflow: hidden;
+    --gt-car-inset: 24px;
+    --gt-car-max: 540px;
+    --gt-car-height: 540px;
+    --gt-car-gap: 12px;
+    --gt-car-radius: 48px;
+    --gt-car-width: min(var(--gt-car-max), calc(100% - var(--gt-car-inset) * 2));
+  }
+
+  .gt-car-{{ section.id }} * {
+    box-sizing: border-box;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__track {
+    display: flex;
+    position: relative;
+    gap: var(--gt-car-gap);
+    overflow: auto hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    align-items: stretch;
+    cursor: grab;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__track::before,
+  .gt-car-{{ section.id }} .gt-car__track::after {
+    content: "";
+    flex: 0 0 max(0px, calc((100% - var(--gt-car-width)) / 2 - var(--gt-car-gap)));
+  }
+
+  .gt-car-{{ section.id }} .gt-car__track.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__card {
+    position: relative;
+    flex: 0 0 var(--gt-car-width);
+    height: var(--gt-car-height);
+    border-radius: var(--gt-car-radius);
+    overflow: hidden;
+    scroll-snap-align: center;
+    background: #e5e5e5;
+    isolation: isolate;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__media,
+  .gt-car-{{ section.id }} .gt-car__media video,
+  .gt-car-{{ section.id }} .gt-car__media img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__caption {
+    position: absolute;
+    left: 50%;
+    bottom: 24px;
+    transform: translateX(-50%);
+    max-width: calc(100% - 32px);
+    padding: 8px 14px;
+    border-radius: 100px;
+    background: rgba(0, 0, 0, 0.44);
+    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(24px);
+    color: #ffffff;
+    font-family: var(--font-body-family);
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__footer {
+    width: var(--gt-car-width);
+    max-width: 100%;
+    margin: 24px auto 8px;
+    padding: 8px 0;
+    color: #858585;
+    font-family: var(--font-body-family);
+    font-style: italic;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: center;
+    transition: filter 0.38s ease-out;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__footer[hidden] {
+    display: none;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__dots {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0;
+    margin-top: 20px;
+    padding: 0 16px;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__dot {
+    display: grid;
+    place-items: center;
+    appearance: none;
+    width: 16px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__dot span {
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #e5e5e5;
+    transition: background-color 0.25s;
+  }
+
+  .gt-car-{{ section.id }} .gt-car__dot[aria-pressed="true"] span {
+    background: #444444;
+  }
+
+  @media screen and (max-width: 749px) {
+    .gt-car-{{ section.id }} {
+      padding-top: 52px;
+      padding-bottom: 8px;
+      --gt-car-inset: 24px;
+      --gt-car-width: calc(100% - var(--gt-car-inset) * 2);
+      --gt-car-height: 480px;
+      --gt-car-gap: 8px;
+      --gt-car-radius: 24px;
+    }
+
+    .gt-car-{{ section.id }} .gt-car__caption {
+      font-size: 12px;
+    }
+
+    .gt-car-{{ section.id }} .gt-car__footer {
+      margin-top: 24px;
+      margin-bottom: 8px;
+      padding-inline: 16px;
+      font-size: 13px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gt-car-{{ section.id }} .gt-car__dot span,
+    .gt-car-{{ section.id }} .gt-car__footer {
+      transition: none;
+    }
+  }
+{%- endstyle -%}
+
+<section class="gt-car-{{ section.id }}" data-gt-carousel data-interval="5000" data-duration="800">
+  <div class="gt-car__track" data-gt-carousel-track tabindex="0" aria-label="{{ section.settings.heading | default: 'Video carousel' }}">
+    {%- for block in section.blocks -%}
+      {%- if block.settings.video_url != blank or block.settings.image != blank -%}
+        <div class="gt-car__card" data-gt-carousel-card data-quote="{{ block.settings.quote | escape }}" {{ block.shopify_attributes }}>
+          <div class="gt-car__media">
+            {%- if block.settings.video_url != blank -%}
+              <video muted loop playsinline preload="none" poster="{{ block.settings.poster_url }}">
+                <source src="{{ block.settings.video_url }}" type="video/mp4">
+              </video>
+            {%- elsif block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 1080 | image_tag: loading: 'lazy' }}
+            {%- endif -%}
+          </div>
+          {%- if block.settings.caption != blank -%}
+            <span class="gt-car__caption">{{ block.settings.caption }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+
+  <p class="gt-car__footer" data-gt-carousel-footer hidden></p>
+
+  <div class="gt-car__dots" data-gt-carousel-dots role="tablist">
+    {%- for block in section.blocks -%}
+      {%- if block.settings.video_url != blank or block.settings.image != blank -%}
+        <button type="button" class="gt-car__dot" data-index="{{ forloop.index0 }}" aria-label="Show slide {{ forloop.index }}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"><span></span></button>
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section = document.currentScript.previousElementSibling;
+    if (!section || !section.hasAttribute('data-gt-carousel')) return;
+
+    var track = section.querySelector('[data-gt-carousel-track]');
+    var cards = Array.prototype.slice.call(section.querySelectorAll('[data-gt-carousel-card]'));
+    var dots = Array.prototype.slice.call(section.querySelectorAll('[data-gt-carousel-dots] .gt-car__dot'));
+    var footer = section.querySelector('[data-gt-carousel-footer]');
+    if (!track || !cards.length) return;
+
+    var hasQuotes = cards.some(function (c) { return c.getAttribute('data-quote'); });
+    var interval = parseInt(section.getAttribute('data-interval'), 10) || 5000;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var timer = null;
+    var activeIndex = 0;
+
+    function setActive(index) {
+      activeIndex = index;
+      dots.forEach(function (dot, i) {
+        dot.setAttribute('aria-pressed', i === index ? 'true' : 'false');
+      });
+      if (hasQuotes) {
+        var quote = cards[index].getAttribute('data-quote');
+        if (quote) {
+          footer.textContent = quote;
+          footer.hidden = false;
+        } else {
+          footer.hidden = true;
+        }
+      }
+    }
+
+    function scrollToIndex(index, smooth) {
+      var card = cards[index];
+      if (!card) return;
+      var trackRect = track.getBoundingClientRect();
+      var cardRect = card.getBoundingClientRect();
+      var delta = (cardRect.left + cardRect.width / 2) - (trackRect.left + trackRect.width / 2);
+      track.scrollBy({ left: delta, behavior: smooth === false ? 'auto' : 'smooth' });
+    }
+
+    function advance() {
+      var next = activeIndex + 1;
+      if (next >= cards.length) next = 0;
+      scrollToIndex(next);
+    }
+
+    function startAutoplay() {
+      if (reduceMotion || cards.length < 2) return;
+      stopAutoplay();
+      timer = setInterval(advance, interval);
+    }
+
+    function stopAutoplay() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }
+
+    dots.forEach(function (dot) {
+      dot.addEventListener('click', function () {
+        var index = parseInt(dot.getAttribute('data-index'), 10);
+        scrollToIndex(index);
+      });
+    });
+
+    if ('IntersectionObserver' in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+            var index = cards.indexOf(entry.target);
+            if (index !== -1) setActive(index);
+          }
+        });
+      }, { root: track, threshold: [0.6] });
+      cards.forEach(function (card) { observer.observe(card); });
+    }
+
+    section.addEventListener('mouseenter', stopAutoplay);
+    section.addEventListener('mouseleave', startAutoplay);
+    track.addEventListener('touchstart', stopAutoplay, { passive: true });
+
+    setActive(0);
+    startAutoplay();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GT Carousel (Vusi layout)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Accessible label",
+      "info": "Not displayed — used as the carousel's aria-label.",
+      "default": "GhostTint in action"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Video card",
+      "settings": [
+        {
+          "type": "text",
+          "id": "video_url",
+          "label": "Video URL (mp4)"
+        },
+        {
+          "type": "text",
+          "id": "poster_url",
+          "label": "Video poster image URL"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image (used only if no video URL is set)"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "Caption pill text",
+          "info": "Optional. Leave blank to show no caption — GhostTint doesn't tag clips by vehicle model the way this pill is designed for."
+        },
+        {
+          "type": "text",
+          "id": "quote",
+          "label": "Quote below carousel",
+          "info": "Optional. Leave blank until a real customer quote exists — never fill with an invented testimonial."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GT Carousel (Vusi layout)",
+      "blocks": [
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" }
+      ]
+    }
+  ]
+}
+{% endschema %}
