@@ -80,7 +80,7 @@
     align-items: center;
     justify-content: center;
     background: transparent;
-    color: {{ section.settings.heading_color }};
+    color: {{ section.settings.button_color }};
   }
 
   .gt-su-{{ section.id }} .gt-su__submit svg {
@@ -96,6 +96,14 @@
     margin-top: 12px;
     font-family: var(--font-body-family);
     font-size: 13px;
+  }
+
+  .gt-su-{{ section.id }} .gt-su__message--success {
+    color: {{ section.settings.success_color }};
+  }
+
+  .gt-su-{{ section.id }} .gt-su__message--error {
+    color: {{ section.settings.error_color }};
   }
 
   .gt-su-{{ section.id }} .gt-su__reveal {
@@ -161,12 +169,12 @@
           </button>
         </div>
         {%- if form.errors -%}
-          <p class="gt-su__message" id="GtSignup-error-{{ section.id }}">
+          <p class="gt-su__message gt-su__message--error" id="GtSignup-error-{{ section.id }}">
             {{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}
           </p>
         {%- endif -%}
         {%- if form.posted_successfully? -%}
-          <p class="gt-su__message" id="GtSignup-success-{{ section.id }}" tabindex="-1" autofocus>
+          <p class="gt-su__message gt-su__message--success" id="GtSignup-success-{{ section.id }}" tabindex="-1" autofocus>
             {{ 'newsletter.success' | t }}
           </p>
         {%- endif -%}
@@ -250,7 +258,7 @@
       "type": "color",
       "id": "desc_color",
       "label": "Description / placeholder",
-      "default": "#6f6f6f"
+      "default": "#858585"
     },
     {
       "type": "color",
@@ -262,7 +270,25 @@
       "type": "color",
       "id": "input_border",
       "label": "Input border",
-      "default": "#d6d6d6"
+      "default": "#b5b5b5"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Submit icon color",
+      "default": "#575757"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Success message color",
+      "default": "#246446"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Error message color",
+      "default": "#b42318"
     }
   ],
   "presets": [

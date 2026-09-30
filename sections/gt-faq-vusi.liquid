@@ -28,7 +28,7 @@
     margin: 0 0 16px;
     font-family: var(--font-body-family);
     font-size: 14px;
-    color: {{ section.settings.muted_color }};
+    color: {{ section.settings.eyebrow_color }};
   }
 
   .gt-faq-{{ section.id }} .gt-faq__heading {
@@ -38,7 +38,7 @@
     font-size: clamp(32px, 5vw, 64px);
     line-height: 1.1;
     letter-spacing: -0.03em;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.heading_color }};
   }
 
   .gt-faq-{{ section.id }} .gt-faq__subtext {
@@ -46,7 +46,7 @@
     font-family: var(--font-body-family);
     font-size: 14px;
     line-height: 1.5;
-    color: {{ section.settings.muted_color }};
+    color: {{ section.settings.eyebrow_color }};
   }
 
   .gt-faq-{{ section.id }} .gt-faq__category {
@@ -54,7 +54,7 @@
     font-family: var(--font-heading-family);
     font-weight: 500;
     font-size: 16px;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.category_color }};
   }
 
   .gt-faq-{{ section.id }} .gt-faq__list > .gt-faq__category:first-child {
@@ -86,12 +86,12 @@
   .gt-faq-{{ section.id }} .gt-faq__question {
     font-family: var(--font-body-family);
     font-size: 14px;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.question_color }};
     transition: color 0.15s ease;
   }
 
   .gt-faq-{{ section.id }} .gt-faq__summary:hover .gt-faq__question {
-    color: {{ section.settings.muted_color }};
+    color: {{ section.settings.question_hover_color }};
   }
 
   .gt-faq-{{ section.id }} .gt-faq__toggle {
@@ -105,7 +105,7 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    background: {{ section.settings.text_color }};
+    background: {{ section.settings.icon_color }};
     transform: translate(-50%, -50%);
   }
 
@@ -144,7 +144,7 @@
     font-family: var(--font-body-family);
     font-size: 13px;
     line-height: 1.6;
-    color: {{ section.settings.muted_color }};
+    color: {{ section.settings.answer_color }};
   }
 
   .gt-faq-{{ section.id }} .gt-faq__answer p {
@@ -305,15 +305,45 @@
     },
     {
       "type": "color",
-      "id": "text_color",
-      "label": "Question / heading text",
+      "id": "heading_color",
+      "label": "Heading",
       "default": "#0a0a0a"
     },
     {
       "type": "color",
-      "id": "muted_color",
-      "label": "Answer / eyebrow text",
+      "id": "eyebrow_color",
+      "label": "Eyebrow / subtext",
+      "default": "#858585"
+    },
+    {
+      "type": "color",
+      "id": "category_color",
+      "label": "Category label",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "Question text",
+      "default": "#212121"
+    },
+    {
+      "type": "color",
+      "id": "question_hover_color",
+      "label": "Question text (hover)",
+      "default": "#69696f"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "Answer text",
       "default": "#6b6b6b"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Toggle icon",
+      "default": "#020420"
     },
     {
       "type": "color",
