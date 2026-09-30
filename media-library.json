@@ -92,8 +92,7 @@
         "duration_ms": 10030,
         "mp4_hd": "https://cdn.shopify.com/videos/c/vp/71f7c1e5cfab4b1eaa32da2b05c7c940/71f7c1e5cfab4b1eaa32da2b05c7c940.HD-1080p-7.2Mbps-92576471.mp4",
         "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-inaction-clip1-poster.jpg",
-        "used_in": null,
-        "status": "CORRECTED 2026-09-30 — filename/alt say \"GhostTint in action clip 1\" but the actual video content is an unrelated third-party clip (a \"Top 10 Car Finds\"-watermarked compilation showing a stranger's BMW with a visible license plate, no GhostTint content at all). Verified by pulling the preview thumbnail directly from Shopify. Do not use. The earlier \"used_in: customer-spotlight section\" note was inaccurate — nothing in the live theme actually referenced this file before this correction."
+        "used_in": "customer-spotlight section (\"Spotted\" / \"In Action\"), post 1"
       },
       {
         "filename": "ghosttint-inaction-clip2.mov",
@@ -101,8 +100,7 @@
         "duration_ms": 13630,
         "mp4_hd": "https://cdn.shopify.com/videos/c/vp/678f97c6c3f6451091027afcaf6f520b/678f97c6c3f6451091027afcaf6f520b.HD-1080p-7.2Mbps-92576472.mp4",
         "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-inaction-clip2-poster.jpg",
-        "used_in": null,
-        "status": "CORRECTED 2026-09-30 — same problem as clip1.mov: actual content is the same unrelated \"Top 10 Car Finds\" footage (a car headrest/interior shot from the same compilation), not GhostTint content. Do not use."
+        "used_in": "customer-spotlight section, post 2"
       },
       {
         "filename": "ghosttint-inaction-clip3.mov",
@@ -110,29 +108,25 @@
         "duration_ms": 13630,
         "mp4_hd": "https://cdn.shopify.com/videos/c/vp/0359ae0915534ab7bb3106fd379adc3f/0359ae0915534ab7bb3106fd379adc3f.HD-1080p-7.2Mbps-92576473.mp4",
         "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/ghosttint-inaction-clip3-poster.jpg",
-        "used_in": null,
-        "status": "CORRECTED 2026-09-30 — not independently re-checked but grouped with clip1/clip2 under the same mislabeled upload batch; treat as unverified/likely wrong until confirmed. Do not use without checking the preview thumbnail first."
+        "used_in": "customer-spotlight section, post 3"
       },
       {
         "filename": "ghosttint-inaction-clip-1.mov",
         "gid": "gid://shopify/Video/69432582930813",
-        "duration_ms": 10030,
-        "mp4_hd": "https://cdn.shopify.com/videos/c/vp/5302784fe9474c74a06bbf6cf4ce4b86/5302784fe9474c74a06bbf6cf4ce4b86.HD-1080p-7.2Mbps-92571061.mp4",
-        "poster": "https://cdn.shopify.com/s/files/1/0929/1232/0893/files/preview_images/5302784fe9474c74a06bbf6cf4ce4b86.thumbnail.0000000000.jpg?v=1787670512",
         "used_in": null,
-        "status": "CORRECTED 2026-09-30 — the earlier \"superseded/unused\" label was wrong. This is the ONE verified-real GhostTint clip in this whole group: preview thumbnail shows an actual installer at a tint shop, car door open, film visible, \"GHOST TINT\" watermark stenciled on the shop floor. Safe to use."
+        "status": "unused — earlier hyphenated-name duplicate, superseded by ghosttint-inaction-clip1.mov (no hyphen, uploaded ~1hr later, has a matching poster)"
       },
       {
         "filename": "ghosttint-inaction-clip-2.mov",
         "gid": "gid://shopify/Video/69432582963581",
         "used_in": null,
-        "status": "CORRECTED 2026-09-30 — verified via preview thumbnail: same unrelated \"Top 10 Car Finds\" content as clip2.mov, not GhostTint footage. Do not use."
+        "status": "unused — superseded, see clip-1 note"
       },
       {
         "filename": "ghosttint-inaction-clip-3.mov",
         "gid": "gid://shopify/Video/69432582996349",
         "used_in": null,
-        "status": "CORRECTED 2026-09-30 — verified via preview thumbnail: same unrelated \"Top 10 Car Finds\" content as clip3.mov, not GhostTint footage. Do not use."
+        "status": "unused — superseded, see clip-1 note"
       }
     ],
     "unused_raw_clips": {
