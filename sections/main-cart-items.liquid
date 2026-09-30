@@ -10,14 +10,223 @@
       padding-bottom: {{ section.settings.padding_bottom }}px;
     }
   }
+
+  {%- comment -%}
+    GT · Two-column cart layout (items left, sticky summary right on
+    desktop) — matches VUSI's /cart structure. cart-items and
+    cart-footer are independent Shopify sections (siblings under
+    #MainContent, each in its own .shopify-section wrapper), so this
+    grid spans across them via nth-of-type, matched to their fixed
+    order in templates/cart.json (cart-items, cart-footer, newsletter).
+    If that order ever changes, these two rules need to change with it.
+  {%- endcomment -%}
+  .template-cart #MainContent {
+    display: block;
+  }
+  @media screen and (min-width: 990px) {
+    .template-cart #MainContent {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      column-gap: 64px;
+      align-items: start;
+    }
+    .template-cart #MainContent > .shopify-section:nth-of-type(1) {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    .template-cart #MainContent > .shopify-section:nth-of-type(2) {
+      grid-column: 2;
+      grid-row: 1;
+      position: sticky;
+      top: calc(var(--header-height, 80px) + 24px);
+    }
+    .template-cart #MainContent > .shopify-section:nth-of-type(3) {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+
+  {%- comment -%}
+    GT · Cart page literal styling pass — matches VUSI's /cart layout,
+    verified against screen recordings (desktop + mobile, user-supplied
+    2026-09-30), not the drawer/table look Dawn ships with. Underlying
+    <table> markup is untouched (accessibility + cart JS depend on it),
+    restyled to VUSI's row layout: circular product photo, stacked
+    name/variant/price, bordered quantity stepper, right-aligned line
+    total. VUSI's own product-recommendation grid below the cart isn't
+    reproduced — GhostTint has exactly one product, already in the cart
+    at that point, so recommending it again would be dishonest filler;
+    omitting the section entirely is the honest call here, not a
+    placeholder standing in for content that doesn't exist.
+  {%- endcomment -%}
+  .gt-cart-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .gt-cart-title-row .title--primary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 32px;
+    font-weight: 700;
+    color: #0a0a0a;
+  }
+  .gt-cart-count-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 8px;
+    border-radius: 999px;
+    background: #f0f0f0;
+    color: #0a0a0a;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .cart-items {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .cart-items thead {
+    display: none;
+  }
+  .cart-items tbody {
+    display: block;
+  }
+  .cart-items .cart-item {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 32px 0;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  .cart-items .cart-item td {
+    display: block;
+    padding: 0;
+    border: 0;
+  }
+  .cart-item__media {
+    flex: 0 0 auto;
+  }
+  .cart-item__image-container {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    overflow: hidden;
+  }
+  .cart-item__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .cart-item__details {
+    flex: 1 1 260px;
+  }
+  .cart-item__name {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #0a0a0a;
+    text-decoration: none;
+  }
+  .cart-item__details .product-option,
+  .cart-item__details dl,
+  .cart-item__details dl dt,
+  .cart-item__details dl dd {
+    color: #6b6b6b;
+    font-size: 15px;
+  }
+  .cart-item__quantity {
+    flex: 0 0 auto;
+  }
+  .cart-item__quantity-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  quantity-input.quantity {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    background: transparent;
+  }
+  quantity-input.quantity .quantity__button {
+    width: 36px;
+    height: 100%;
+    color: #0a0a0a;
+  }
+  quantity-input.quantity .quantity__input {
+    width: 36px;
+    border: 0;
+    background: transparent;
+    text-align: center;
+    color: #0a0a0a;
+  }
+  cart-remove-button .button--tertiary {
+    color: #6b6b6b;
+  }
+  {%- comment -%}
+    GT · VUSI shows one consistent total position (top-right of the row)
+    at every width, not Dawn's default swap between two duplicate total
+    cells at different breakpoints — force-hide the mobile-only
+    duplicate and always show the other one.
+  {%- endcomment -%}
+  .cart-item__totals.medium-hide.large-up-hide {
+    display: none !important;
+  }
+  .cart-item__totals.small-hide {
+    display: block !important;
+  }
+  .cart-item__totals {
+    margin-left: auto;
+    text-align: right;
+  }
+  .cart-item__totals .price {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0a0a0a;
+  }
+
+  .cart__warnings {
+    padding: 64px 0;
+    text-align: center;
+  }
+  .cart__empty-text {
+    margin-bottom: 24px;
+    font-size: 28px;
+    font-weight: 700;
+    color: #0a0a0a;
+  }
+  .cart__warnings .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 52px;
+    padding: 0 32px;
+    border-radius: 12px;
+    background: #0a0a0a;
+    border-color: #0a0a0a;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 600;
+  }
 {%- endstyle -%}
 
 <cart-items class="page-width{% if cart == empty %} is-empty{% else %} section-{{ section.id }}-padding{% endif %}">
-  <div class="title-wrapper-with-link title-wrapper-with-link--spacing">
-    <h1 class="title title--primary">{{ 'sections.cart.title' | t }}</h1>
-    <a href="{% if settings.continue_shopping_url == blank %}{{ routes.all_products_collection_url }}{% else %}{{ settings.continue_shopping_url }}{% endif %}" class="underlined-link">
-      {{ 'general.continue_shopping' | t }}
-    </a>
+  <div class="title-wrapper-with-link title-wrapper-with-link--spacing gt-cart-title-row">
+    <h1 class="title title--primary">
+      {{ 'sections.cart.title' | t }}
+      {%- if cart != empty -%}
+        <span class="gt-cart-count-badge">{{ cart.item_count }}</span>
+      {%- endif -%}
+    </h1>
   </div>
 
   <div class="cart__warnings">

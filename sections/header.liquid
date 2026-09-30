@@ -145,74 +145,120 @@
   }
 
   {%- comment -%}
-    GT · Site-wide header actions — VUSI's literal computed values
-    (https://vusistudios.com/, 1440px desktop).
+    GT · Header light/dark foreground swap — verified against screen
+    recordings of vusistudios.com at desktop/tablet/mobile (user-supplied,
+    2026-09-30), not inferred from code. Confirmed: as you scroll, EVERY
+    header element (nav text, icons, the Community outline pill, and the
+    solid Cart/Shop-style pill) inverts together as one unit — light text
+    + a light solid pill over dark sections, dark text + a dark solid
+    pill over light sections — via a ~0.45s crossfade, not instant and
+    not per-element independent. Desktop keeps both Community and Shop
+    Now visible at all times (only their colours swap); tablet and mobile
+    show exactly ONE of the two at a time, matching whichever one has
+    the correct contrast for the current section (Community over dark,
+    Shop Now over light) — confirmed identical at both narrower widths.
 
-    Community: radius 999px, transparent bg, inset ring
-    rgba(255,255,255,.15) 0 0 0 1px, padding 8px 16px, transition
-    color/background-color/box-shadow 0.45s (VUSI's own measured values,
-    header-dropdown-styling.json).
-
-    Shop Now: same #383838 fill / #4a4a4a hover / 999px pill / 36px height
-    already used by the existing installation-page-only .gt-header-shop-pill
-    above — confirmed against a fresh pixel sample of VUSI's own rendered
-    button (flat rgb(56,56,56) fill, rounded pill ends), not re-guessed.
+    Default (no [data-theme] yet, e.g. before JS runs) = dark-section
+    values, since the homepage always opens on the dark hero.
+    gt-header-theme.js sets [data-theme="light"|"dark"] on .header-wrapper
+    at runtime by reading each section's own real background colour, and
+    swaps these custom properties; every rule below just reads them.
   {%- endcomment -%}
+  .header-wrapper {
+    --gt-hdr-fg: #f5f5f5;
+    --gt-hdr-pill-ring: rgba(255, 255, 255, 0.15);
+    --gt-hdr-pill-hover: rgba(255, 255, 255, 0.08);
+    --gt-hdr-solid-bg: #ffffff;
+    --gt-hdr-solid-fg: #0a0a0a;
+    --gt-hdr-logo-filter: invert(1) brightness(2);
+  }
+  .header-wrapper[data-theme="light"] {
+    --gt-hdr-fg: #0a0a0a;
+    --gt-hdr-pill-ring: rgba(10, 10, 10, 0.15);
+    --gt-hdr-pill-hover: rgba(10, 10, 10, 0.06);
+    --gt-hdr-solid-bg: #0a0a0a;
+    --gt-hdr-solid-fg: #ffffff;
+    --gt-hdr-logo-filter: none;
+  }
+
+  .header__menu-item,
+  .header__icon,
+  .header__heading .h2 {
+    color: var(--gt-hdr-fg) !important;
+    transition: color 0.45s;
+  }
+  {%- comment -%}
+    GhostTint's logo file is a solid-black wordmark with no white variant
+    (checked settings — secondary_logo is unset). invert()+brightness()
+    renders it clean white over dark sections; the store owner should
+    still commission a real white logo file for a crisper result than a
+    filter can give.
+  {%- endcomment -%}
+  .header__heading-logo--main {
+    filter: var(--gt-hdr-logo-filter);
+    transition: filter 0.45s;
+  }
+
   .gt-header-actions {
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
   @media screen and (min-width: 990px) {
     .gt-header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
       margin-right: 12px;
     }
-    .gt-header-actions__community {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      height: 36px;
-      padding: 8px 16px;
-      border-radius: 999px;
-      box-shadow: rgba(255, 255, 255, 0.15) 0px 0px 0px 1px inset;
-      background: transparent;
-      color: inherit;
-      font-family: Inter, sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1;
-      white-space: nowrap;
-      text-decoration: none;
-      transition: color 0.45s, background-color 0.45s, box-shadow 0.45s;
-    }
-    .gt-header-actions__community:hover {
-      background-color: rgba(255, 255, 255, 0.08);
-    }
-    .gt-header-actions__community[aria-disabled="true"] {
-      cursor: default;
-      opacity: 0.6;
-    }
+  }
+  .gt-header-actions__community,
+  .gt-header-actions__shop {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    border-radius: 999px;
+    font-family: Inter, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  @media screen and (min-width: 990px) {
+    .gt-header-actions__community,
     .gt-header-actions__shop {
       display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      height: 36px;
-      padding: 8px 15px;
-      border-radius: 999px;
-      background: #383838;
-      color: #ffffff;
-      font-family: Inter, sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1;
-      white-space: nowrap;
-      text-decoration: none;
-      transition: background 0.15s;
     }
-    .gt-header-actions__shop:hover {
-      background: #4a4a4a;
+  }
+  @media screen and (max-width: 989px) {
+    .header-wrapper[data-theme="light"] .gt-header-actions__community {
+      display: inline-flex;
     }
+    .header-wrapper:not([data-theme="light"]) .gt-header-actions__shop {
+      display: inline-flex;
+    }
+  }
+  .gt-header-actions__community {
+    padding: 8px 16px;
+    box-shadow: var(--gt-hdr-pill-ring) 0px 0px 0px 1px inset;
+    background: transparent;
+    color: var(--gt-hdr-fg);
+    transition: color 0.45s, background-color 0.45s, box-shadow 0.45s;
+  }
+  .gt-header-actions__community:hover {
+    background-color: var(--gt-hdr-pill-hover);
+  }
+  .gt-header-actions__community[aria-disabled="true"] {
+    cursor: default;
+    opacity: 0.6;
+  }
+  .gt-header-actions__shop {
+    padding: 8px 15px;
+    background: var(--gt-hdr-solid-bg);
+    color: var(--gt-hdr-solid-fg);
+    transition: background-color 0.45s, color 0.45s;
+  }
+  .gt-header-actions__shop:hover {
+    opacity: 0.85;
   }
 
   {%- comment -%}
@@ -292,14 +338,9 @@
     scroll test against https://vusistudios.com/). Sitewide per the
     standing literal-mechanism rule, not scoped to one page.
 
-    Known gap, flagged rather than guessed: VUSI likely swaps its header's
-    light/dark foreground per section as you scroll past light vs dark
-    content underneath (their own --vh-header-foreground custom property
-    varies by hero) — that per-section switch was not re-verified this
-    session, so it is NOT replicated here. This header stays fixed to the
-    "inverse" (light-on-dark) scheme sitewide, which matches VUSI's own
-    homepage hero correctly but will read poorly if/when it scrolls over a
-    light-background section further down a page.
+    The per-section light/dark foreground swap (confirmed via recording,
+    see the .gt-header-actions comment below) means this transparent bar
+    is always readable regardless of what scrolls underneath it.
   {%- endcomment -%}
   .header-wrapper {
     background: transparent !important;
@@ -951,6 +992,8 @@
 {%- if settings.cart_type == "notification" -%}
   {%- render 'cart-notification', color_scheme: section.settings.color_scheme -%}
 {%- endif -%}
+
+<script src="{{ 'gt-header-theme.js' | asset_url }}" defer="defer"></script>
 
 {% javascript %}
   class StickyHeader extends HTMLElement {
