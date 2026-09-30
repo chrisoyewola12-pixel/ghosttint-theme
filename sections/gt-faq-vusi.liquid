@@ -1,0 +1,359 @@
+{%- comment -%}
+  Structural equivalent of Vusi's vusi-faq component: two-column grid on
+  desktop (eyebrow/heading/subtext on the left, category-grouped accordion on
+  the right) that collapses to a single stacked column on mobile — confirmed
+  as a real structural difference, not just a resize, from the mobile
+  recording review. Native <details>/<summary> per item, single-open
+  enforced by JS, smooth height animation, matching Vusi's data-single-open
+  mechanism. Content is GhostTint's own existing, already-approved FAQ copy.
+{%- endcomment -%}
+{%- style -%}
+  .gt-faq-{{ section.id }} {
+    background: {{ section.settings.background_color }};
+    padding: 72px 24px 96px;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__inner {
+    max-width: 1230px;
+    margin: 0 auto;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 400px) 1fr;
+    gap: 96px;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__eyebrow {
+    margin: 0 0 16px;
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    color: {{ section.settings.muted_color }};
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__heading {
+    margin: 0;
+    font-family: var(--font-heading-family);
+    font-weight: 700;
+    font-size: clamp(32px, 5vw, 64px);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: {{ section.settings.text_color }};
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__subtext {
+    margin: 16px 0 0;
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    line-height: 1.5;
+    color: {{ section.settings.muted_color }};
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__category {
+    margin: 56px 0 20px;
+    font-family: var(--font-heading-family);
+    font-weight: 500;
+    font-size: 16px;
+    color: {{ section.settings.text_color }};
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__list > .gt-faq__category:first-child {
+    margin-top: 0;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__item {
+    border-top: 1px solid {{ section.settings.divider_color }};
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__item:last-child {
+    border-bottom: 1px solid {{ section.settings.divider_color }};
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 28px 0;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__question {
+    font-family: var(--font-body-family);
+    font-size: 14px;
+    color: {{ section.settings.text_color }};
+    transition: color 0.15s ease;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__summary:hover .gt-faq__question {
+    color: {{ section.settings.muted_color }};
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__toggle {
+    position: relative;
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__toggle-line {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background: {{ section.settings.text_color }};
+    transform: translate(-50%, -50%);
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__toggle-line--horizontal {
+    width: 100%;
+    height: 1px;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__toggle-line--vertical {
+    width: 1px;
+    height: 100%;
+    transition: transform 0.2s ease;
+  }
+
+  .gt-faq-{{ section.id }} details[open] .gt-faq__toggle-line--vertical {
+    transform: translate(-50%, -50%) scaleY(0);
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__answer-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s ease;
+  }
+
+  .gt-faq-{{ section.id }} details[open] .gt-faq__answer-panel {
+    grid-template-rows: 1fr;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__answer-wrap {
+    overflow: hidden;
+    min-height: 0;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__answer {
+    padding: 0 0 28px;
+    font-family: var(--font-body-family);
+    font-size: 13px;
+    line-height: 1.6;
+    color: {{ section.settings.muted_color }};
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__answer p {
+    margin: 0;
+  }
+
+  .gt-faq-{{ section.id }} .gt-faq__answer p + p {
+    margin-top: 12px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gt-faq-{{ section.id }} .gt-faq__answer-panel,
+    .gt-faq-{{ section.id }} .gt-faq__toggle-line--vertical {
+      transition: none;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .gt-faq-{{ section.id }} {
+      padding: 36px 16px 64px;
+    }
+
+    .gt-faq-{{ section.id }} .gt-faq__layout {
+      display: block;
+    }
+
+    .gt-faq-{{ section.id }} .gt-faq__eyebrow {
+      font-size: 13px;
+    }
+
+    .gt-faq-{{ section.id }} .gt-faq__subtext {
+      font-size: 14px;
+    }
+
+    .gt-faq-{{ section.id }} .gt-faq__category {
+      margin: 0 0 16px;
+      font-size: 15px;
+    }
+
+    .gt-faq-{{ section.id }} .gt-faq__list {
+      margin-top: 64px;
+    }
+
+    .gt-faq-{{ section.id }} .gt-faq__list > .gt-faq__category:first-child {
+      margin-top: 0;
+    }
+
+    .gt-faq-{{ section.id }} .gt-faq__summary {
+      padding: 22px 0;
+    }
+
+    .gt-faq-{{ section.id }} .gt-faq__toggle {
+      flex-basis: 14px;
+      width: 14px;
+      height: 14px;
+    }
+  }
+{%- endstyle -%}
+
+<section class="gt-faq-{{ section.id }}" data-gt-faq data-single-open="true">
+  <div class="gt-faq__inner">
+    <div class="gt-faq__layout">
+      <header class="gt-faq__header">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="gt-faq__eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h2 class="gt-faq__heading">{{ section.settings.heading }}</h2>
+        {%- if section.settings.subtext != blank -%}
+          <div class="gt-faq__subtext">{{ section.settings.subtext }}</div>
+        {%- endif -%}
+      </header>
+
+      <div class="gt-faq__list">
+        {%- assign last_category = '' -%}
+        {%- for block in section.blocks -%}
+          {%- if block.settings.category != blank and block.settings.category != last_category -%}
+            <h3 class="gt-faq__category">{{ block.settings.category }}</h3>
+            {%- assign last_category = block.settings.category -%}
+          {%- endif -%}
+          <details class="gt-faq__item" data-gt-faq-item {{ block.shopify_attributes }}>
+            <summary class="gt-faq__summary">
+              <span class="gt-faq__question">{{ block.settings.question }}</span>
+              <span class="gt-faq__toggle" aria-hidden="true">
+                <span class="gt-faq__toggle-line gt-faq__toggle-line--horizontal"></span>
+                <span class="gt-faq__toggle-line gt-faq__toggle-line--vertical"></span>
+              </span>
+            </summary>
+            <div class="gt-faq__answer-panel">
+              <div class="gt-faq__answer-wrap">
+                <div class="gt-faq__answer">{{ block.settings.answer }}</div>
+              </div>
+            </div>
+          </details>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var section = document.currentScript.previousElementSibling;
+    if (!section || !section.hasAttribute('data-gt-faq')) return;
+
+    var singleOpen = section.getAttribute('data-single-open') === 'true';
+    var items = Array.prototype.slice.call(section.querySelectorAll('[data-gt-faq-item]'));
+
+    items.forEach(function (item) {
+      var summary = item.querySelector('summary');
+      summary.addEventListener('click', function (e) {
+        e.preventDefault();
+        var willOpen = !item.hasAttribute('open');
+        if (singleOpen && willOpen) {
+          items.forEach(function (other) {
+            if (other !== item) other.removeAttribute('open');
+          });
+        }
+        if (willOpen) {
+          item.setAttribute('open', '');
+        } else {
+          item.removeAttribute('open');
+        }
+      });
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GT FAQ (Vusi layout)",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Support"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Frequently asked questions"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Question / heading text",
+      "default": "#0a0a0a"
+    },
+    {
+      "type": "color",
+      "id": "muted_color",
+      "label": "Answer / eyebrow text",
+      "default": "#6b6b6b"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider lines",
+      "default": "#e5e7eb"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Category label",
+          "info": "Optional. Shown as a group heading above this question when it differs from the question before it. Leave blank to keep questions ungrouped."
+        },
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "GT FAQ (Vusi layout)",
+      "blocks": [
+        { "type": "question" }
+      ]
+    }
+  ]
+}
+{% endschema %}
