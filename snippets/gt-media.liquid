@@ -1,0 +1,115 @@
+{%- comment -%}
+  gt-media — one media slot.
+
+  Renders a silent looping background video when a source exists. When no
+  video is set it renders the labelled shot-brief placeholder ONLY inside
+  the theme editor — on the live storefront an unfilled slot renders
+  nothing at all, so customers never see production scaffolding.
+
+  Accepts:
+    video      {Video}   Shopify video object from a `video` setting
+    video_url  {String}  external/CDN .mp4 url, used when `video` is blank
+    poster     {Image}   poster frame painted before the video loads
+    ratio      {String}  css aspect-ratio, e.g. '16/9'. Ignored when fill.
+    dims       {String}  target shown on the placeholder
+    label      {String}  placeholder slot name
+    concept    {String}  the shot to film for this slot
+    lazy       {Boolean} defer the source until near the viewport
+    fill       {Boolean} absolutely fill the parent instead of using ratio
+    bleed      {Boolean} drop the corner radius
+    preview    {Boolean} overlay the live VLT tint simulation
+    max_width  {Number}  cap on rendition width, default 1280
+{%- endcomment -%}
+
+{%- liquid
+  assign gt_ratio = ratio | default: '16/9'
+  assign gt_lazy = lazy | default: false
+  assign gt_cap = max_width | default: 1280
+  assign gt_has_video = false
+  if video != blank or video_url != blank
+    assign gt_has_video = true
+  endif
+
+  assign gt_classes = 'gt-media'
+  if fill
+    assign gt_classes = gt_classes | append: ' gt-media--fill'
+  endif
+  if bleed
+    assign gt_classes = gt_classes | append: ' gt-media--bleed'
+  endif
+-%}
+
+{%- comment -%}
+  The Admin API lists 480p / 720p / 1080p renditions, but Liquid only ever
+  exposes two sources for a Shopify-hosted video: one HLS manifest and one
+  1080p mp4. So this picks the widest mp4 within max_width when there is a
+  choice, and otherwise takes the single mp4 on offer.
+
+  POSTER: only an explicitly supplied image is used. Shopify's own
+  auto-generated video thumbnail measured rgb(234,234,234) against source
+  footage of rgb(254,254,254) — its generator darkens the frame, so falling
+  back to it put a visibly grey card on a white page.
+{%- endcomment -%}
+{%- liquid
+  assign gt_src = blank
+  assign gt_best = 0
+  assign gt_any = blank
+  if video != blank
+    for s in video.sources
+      if s.format == 'mp4'
+        assign w = s.width | plus: 0
+        if gt_any == blank
+          assign gt_any = s
+        endif
+        if w <= gt_cap and w > gt_best
+          assign gt_src = s
+          assign gt_best = w
+        endif
+      endif
+    endfor
+    if gt_src == blank
+      assign gt_src = gt_any
+    endif
+  endif
+-%}
+
+{%- if gt_has_video -%}
+  <div class="{{ gt_classes }}"{% unless fill %} style="aspect-ratio: {{ gt_ratio }};"{% endunless %}>
+    <video
+      class="gt-media__v"
+      muted
+      loop
+      playsinline
+      autoplay
+      disablepictureinpicture
+      preload="{% if gt_lazy %}none{% else %}metadata{% endif %}"
+      aria-hidden="true"
+      tabindex="-1"
+      {% if gt_lazy %}data-gt-lazy{% endif %}
+      {% if poster != blank %}poster="{{ poster | image_url: width: 1400 }}"{% endif %}
+    >
+      {%- if gt_src != blank -%}
+        <source {% if gt_lazy %}data-src{% else %}src{% endif %}="{{ gt_src.url }}" type="{{ gt_src.mime_type }}">
+      {%- elsif video_url != blank -%}
+        <source {% if gt_lazy %}data-src{% else %}src{% endif %}="{{ video_url }}" type="video/mp4">
+      {%- endif -%}
+    </video>
+
+    {%- if preview -%}
+      <span data-gt-vlt-preview aria-hidden="true"
+        style="position:absolute;inset:0;background:#05141a;pointer-events:none;transition:opacity .35s ease;opacity:0;"></span>
+    {%- endif -%}
+  </div>
+
+{%- elsif request.design_mode -%}
+  {%- comment -%} editor only — never shown to customers {%- endcomment -%}
+  <div class="{{ gt_classes }}"{% unless fill %} style="aspect-ratio: {{ gt_ratio }};"{% endunless %}>
+    <div class="gt-ph">
+      <span class="gt-ph__tag">{{ label | default: 'Media' }}</span>
+      <span class="gt-ph__dim">{% if fill %}Full bleed{% else %}{{ gt_ratio | replace: '/', ' : ' }}{% endif %}{% if dims != blank %} &nbsp;·&nbsp; {{ dims }}{% endif %}</span>
+      {%- if concept != blank -%}
+        <span class="gt-ph__concept"><b>Shoot:</b> {{ concept }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}

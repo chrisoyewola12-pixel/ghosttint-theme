@@ -1,0 +1,136 @@
+{{ 'gt-pdp.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'gt-pdp.js' | asset_url }}" defer></script>
+
+{%- comment -%}
+  A standalone media band — a silent looping video, or the animated wiring
+  diagram. Deliberately plain: no CTA, no readout, no overlay. It reuses
+  .gt__wrap and the shared snippets, so it needs no stylesheet of its own
+  and cannot be caught by the cascade issue that affects per-section CSS.
+{%- endcomment -%}
+
+{%- liquid
+  assign is_bleed = section.settings.full_bleed
+  assign is_diagram = false
+  if section.settings.kind == 'diagram'
+    assign is_diagram = true
+    assign is_bleed = false
+  endif
+  assign has_copy = false
+  if section.settings.heading != blank or section.settings.eyebrow != blank
+    assign has_copy = true
+  endif
+-%}
+
+<div class="gt" id="gt-showcase-{{ section.id }}">
+  <section class="gt-section"{% if is_bleed %} style="padding-block: 0;"{% endif %}>
+
+    {%- if has_copy -%}
+      <div class="gt__wrap" style="margin-bottom: 34px;">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="gt-eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        {%- if section.settings.heading != blank -%}
+          <h2 class="gt-h2">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if is_diagram -%}
+      <div class="gt__wrap">
+        <div style="max-width: {{ section.settings.max_width }}px; margin: 0 auto;">
+          {%- render 'gt-wiring-diagram',
+            ratio: section.settings.media_ratio,
+            glass_label: section.settings.diagram_glass_label,
+            box_label: section.settings.diagram_box_label,
+            acc_label: section.settings.diagram_acc_label
+          -%}
+        </div>
+      </div>
+
+    {%- elsif is_bleed -%}
+      {%- render 'gt-media',
+        video: section.settings.video,
+        video_url: section.settings.video_url,
+        poster: section.settings.poster,
+        ratio: section.settings.media_ratio,
+        bleed: true,
+        lazy: true,
+        label: 'Showcase video',
+        dims: section.settings.media_ratio,
+        concept: section.settings.shot_note
+      -%}
+
+    {%- else -%}
+      <div class="gt__wrap">
+        <div style="max-width: {{ section.settings.max_width }}px; margin: 0 auto;">
+          {%- render 'gt-media',
+            video: section.settings.video,
+            video_url: section.settings.video_url,
+            poster: section.settings.poster,
+            ratio: section.settings.media_ratio,
+            lazy: true,
+            label: 'Showcase video',
+            dims: section.settings.media_ratio,
+            concept: section.settings.shot_note
+          -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.caption != blank -%}
+      <div class="gt__wrap" style="margin-top: 18px;">
+        <p class="gt-micro" style="text-align: center;">{{ section.settings.caption }}</p>
+      </div>
+    {%- endif -%}
+  </section>
+</div>
+
+{% schema %}
+{
+  "name": "GT · Media band",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "kind",
+      "label": "Content",
+      "options": [
+        { "value": "video", "label": "Video" },
+        { "value": "diagram", "label": "Animated wiring diagram" }
+      ],
+      "default": "video"
+    },
+    { "type": "header", "content": "Video" },
+    { "type": "video", "id": "video", "label": "Video" },
+    { "type": "text", "id": "video_url", "label": "…or MP4 URL", "info": "Used only when no video is picked above." },
+    { "type": "image_picker", "id": "poster", "label": "Poster frame" },
+    { "type": "textarea", "id": "shot_note", "label": "Placeholder shot note", "info": "Shown only while no video is set." },
+    { "type": "header", "content": "Layout" },
+    {
+      "type": "select",
+      "id": "media_ratio",
+      "label": "Aspect ratio",
+      "options": [
+        { "value": "21/9", "label": "21:9 ultrawide" },
+        { "value": "16/9", "label": "16:9 landscape" },
+        { "value": "16/10", "label": "16:10 landscape" },
+        { "value": "3/2", "label": "3:2 landscape" },
+        { "value": "1/1", "label": "1:1 square" },
+        { "value": "4/5", "label": "4:5 portrait" }
+      ],
+      "default": "3/2"
+    },
+    { "type": "checkbox", "id": "full_bleed", "label": "Full width, edge to edge", "default": false, "info": "Video only. The diagram always stays within the page width." },
+    { "type": "range", "id": "max_width", "label": "Max width (px)", "min": 500, "max": 1400, "step": 20, "default": 900 },
+    { "type": "header", "content": "Copy (all optional)" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading" },
+    { "type": "text", "id": "caption", "label": "Caption under the media" },
+    { "type": "header", "content": "Diagram labels" },
+    { "type": "text", "id": "diagram_glass_label", "label": "Glass label", "default": "SPD film" },
+    { "type": "text", "id": "diagram_box_label", "label": "Control box label", "default": "Control box" },
+    { "type": "text", "id": "diagram_acc_label", "label": "Power label", "default": "Vehicle power" }
+  ],
+  "presets": [{ "name": "GT · Media band" }]
+}
+{% endschema %}

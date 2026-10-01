@@ -26,6 +26,24 @@
       },
       "block_order": ["included", "specs"]
     },
+    "showcase": {
+      "type": "gt-showcase",
+      "settings": {
+        "kind": "video",
+        "video": "shopify://files/videos/0828.mp4",
+        "video_url": "",
+        "shot_note": "",
+        "media_ratio": "3/2",
+        "full_bleed": true,
+        "max_width": 900,
+        "eyebrow": "THE WHOLE CAR",
+        "heading": "Every window. One system.",
+        "caption": "The same tint, the same remote, on every window you fit it to.",
+        "diagram_glass_label": "SPD film",
+        "diagram_box_label": "Control box",
+        "diagram_acc_label": "Vehicle power"
+      }
+    },
     "faq": {
       "type": "gt-faq-vusi",
       "settings": {
@@ -88,5 +106,5 @@
       }
     }
   },
-  "order": ["main", "details", "faq", "allocation"]
+  "order": ["main", "details", "showcase", "faq", "allocation"]
 }
