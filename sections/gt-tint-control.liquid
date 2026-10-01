@@ -1,0 +1,599 @@
+{%- comment -%}
+  GT · Tint control
+  Interactive VLT slider + preset picker with a cross-fading glass preview.
+  Ported from the GhostTint simulator (chrisoyewola740) and rebuilt as a
+  reusable, theme-editor-driven section. Self-contained: scoped inline
+  <style>/<script> keyed to the section id, no external CSS/JS, no library.
+  Multiple instances are safe.
+{%- endcomment -%}
+
+{%- liquid
+  assign s = section.settings
+  assign uid = section.id
+  assign stages = section.blocks | where: 'type', 'stage'
+  assign states = section.blocks | where: 'type', 'state'
+
+  assign min_vlt = s.min_vlt | default: 5
+  assign max_vlt = s.max_vlt | default: 70
+  assign def_vlt = s.default_vlt | default: max_vlt
+  if def_vlt < min_vlt
+    assign def_vlt = min_vlt
+  endif
+  if def_vlt > max_vlt
+    assign def_vlt = max_vlt
+  endif
+  assign animate = s.enable_animation
+-%}
+
+<style>
+  #gt-tint-{{ uid }} {
+    /* Blend with the page: every large surface uses the theme's own
+       background-1 colour, not a near-white. */
+    --gtt-bg: rgb(var(--color-base-background-1, 255 255 255));
+    --gtt-ink: {{ s.ink | default: '#1d1d1f' }};
+    --gtt-copy: {{ s.copy | default: '#6e6e73' }};
+    --gtt-muted: {{ s.muted | default: '#86868b' }};
+    --gtt-line: rgba(0, 0, 0, .1);
+    --gtt-soft: #f0f1f3;
+    --gtt-accent: {{ s.accent | default: '#0071e3' }};
+    background: var(--gtt-bg);
+    color: var(--gtt-ink);
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding: {{ s.padding_top | default: 40 }}px 0 {{ s.padding_bottom | default: 52 }}px;
+  }
+  #gt-tint-{{ uid }} * { box-sizing: border-box; }
+  #gt-tint-{{ uid }} .gtt-wrap {
+    max-width: 1120px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 5vw, 40px);
+  }
+
+  /* No card: the panel is just a layout grid on the page background. */
+  #gt-tint-{{ uid }} .gtt-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(340px, .8fr);
+    gap: clamp(24px, 4vw, 56px);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  /* ---- visual ---- */
+  #gt-tint-{{ uid }} .gtt-visual {
+    position: relative;
+    min-height: 480px;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px 0;
+    background: transparent;
+  }
+  #gt-tint-{{ uid }} .gtt-stack {
+    position: relative; width: 100%; aspect-ratio: 1.5;
+  }
+  #gt-tint-{{ uid }} .gtt-stack img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;
+    transition: opacity .32s cubic-bezier(.22, 1, .36, 1);
+  }
+  #gt-tint-{{ uid }} .gtt-shadow {
+    position: absolute; left: 14%; right: 9%; bottom: 11%;
+    height: 8%; border-radius: 50%;
+    background: rgba(0, 0, 0, .12); filter: blur(22px);
+    pointer-events: none;
+  }
+  #gt-tint-{{ uid }} .gtt-pill {
+    position: absolute; left: 26px; top: 24px; z-index: 2;
+    padding: 9px 13px; border-radius: 999px;
+    background: #fff; border: 1px solid var(--gtt-line);
+    font-size: 12px; color: var(--gtt-copy); font-weight: 650;
+  }
+
+  /* ---- controls ---- */
+  #gt-tint-{{ uid }} .gtt-controls {
+    padding: 8px 0 8px clamp(24px, 4vw, 56px);
+    border-left: 1px solid rgba(0, 0, 0, .07); /* subtle divider (desktop) */
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  #gt-tint-{{ uid }} .gtt-eyebrow {
+    margin: 0 0 16px;
+    color: var(--gtt-muted);
+    font-size: 12px; line-height: 1.2; font-weight: 720;
+    letter-spacing: .14em; text-transform: uppercase;
+  }
+  #gt-tint-{{ uid }} .gtt-title {
+    margin: 0;
+    font-size: clamp(28px, 3.2vw, 34px);
+    line-height: 1.04; letter-spacing: -.04em; font-weight: 640;
+  }
+  #gt-tint-{{ uid }} .gtt-desc {
+    margin: 16px 0 0;
+    color: var(--gtt-copy);
+    font-size: 17px; line-height: 1.5;
+  }
+
+  #gt-tint-{{ uid }} .gtt-vlt {
+    display: flex; align-items: flex-end;
+    margin: 44px 0 26px;
+  }
+  #gt-tint-{{ uid }} .gtt-output {
+    font-size: clamp(64px, 8vw, 82px);
+    line-height: .76; font-weight: 650;
+    letter-spacing: -.075em;
+    font-variant-numeric: tabular-nums;
+  }
+  #gt-tint-{{ uid }} .gtt-unit {
+    padding: 0 0 3px 9px;
+    color: var(--gtt-muted); font-size: 15px; font-weight: 650;
+  }
+
+  /* range */
+  #gt-tint-{{ uid }} .gtt-range {
+    width: 100%; height: 44px;
+    -webkit-appearance: none; appearance: none;
+    background: transparent; cursor: pointer;
+    touch-action: none;
+    margin: 0;
+  }
+  #gt-tint-{{ uid }} .gtt-range::-webkit-slider-runnable-track {
+    height: 8px; border-radius: 999px;
+    background: linear-gradient(90deg, var(--gtt-ink) 0 var(--fill, 100%), #e6e6ea var(--fill, 100%));
+  }
+  #gt-tint-{{ uid }} .gtt-range::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 32px; height: 32px; margin-top: -12px;
+    border-radius: 50%;
+    background: #fff; border: 1px solid rgba(0, 0, 0, .08);
+    box-shadow: 0 3px 13px rgba(0, 0, 0, .2);
+  }
+  #gt-tint-{{ uid }} .gtt-range::-moz-range-track {
+    height: 8px; border-radius: 999px; background: #e6e6ea;
+  }
+  #gt-tint-{{ uid }} .gtt-range::-moz-range-progress {
+    height: 8px; border-radius: 999px; background: var(--gtt-ink);
+  }
+  #gt-tint-{{ uid }} .gtt-range::-moz-range-thumb {
+    width: 32px; height: 32px; border: 1px solid rgba(0, 0, 0, .08);
+    border-radius: 50%; background: #fff;
+    box-shadow: 0 3px 13px rgba(0, 0, 0, .2);
+  }
+  #gt-tint-{{ uid }} .gtt-range:focus-visible { outline: none; }
+  #gt-tint-{{ uid }} .gtt-range:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 3px 13px rgba(0, 0, 0, .2), 0 0 0 4px rgba(0, 113, 227, .35);
+  }
+  #gt-tint-{{ uid }} .gtt-range:focus-visible::-moz-range-thumb {
+    box-shadow: 0 3px 13px rgba(0, 0, 0, .2), 0 0 0 4px rgba(0, 113, 227, .35);
+  }
+  #gt-tint-{{ uid }} .gtt-ends {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--gtt-muted); font-weight: 650;
+    margin-top: 2px;
+  }
+
+  /* presets */
+  #gt-tint-{{ uid }} .gtt-presets {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px;
+  }
+  #gt-tint-{{ uid }} .gtt-preset {
+    min-width: 55px; min-height: 44px; padding: 0 14px;
+    border: 1px solid var(--gtt-line); border-radius: 999px;
+    background: #fff; color: var(--gtt-ink);
+    font-size: 14px; font-weight: 650;
+    transition: transform .15s ease, background .2s ease, color .2s ease, box-shadow .2s ease;
+  }
+  #gt-tint-{{ uid }} .gtt-preset:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 7px 16px rgba(0, 0, 0, .07);
+  }
+  #gt-tint-{{ uid }} .gtt-preset:active { transform: scale(.95); }
+  #gt-tint-{{ uid }} .gtt-preset:focus-visible {
+    outline: 2px solid var(--gtt-accent); outline-offset: 2px;
+  }
+  #gt-tint-{{ uid }} .gtt-preset[aria-pressed="true"] {
+    background: var(--gtt-ink); color: #fff; border-color: var(--gtt-ink);
+    box-shadow: inset 0 0 0 2px #fff, inset 0 0 0 3px var(--gtt-ink);
+  }
+
+  /* state — borderless on the page background, grouped only by a hairline */
+  #gt-tint-{{ uid }} .gtt-state {
+    margin-top: 22px; padding: 15px 16px; border-radius: 14px;
+    background: transparent; border: 1px solid rgba(0, 0, 0, .08);
+    display: flex; gap: 11px;
+  }
+  #gt-tint-{{ uid }} .gtt-state-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--gtt-accent); margin-top: 5px; flex: none;
+  }
+  #gt-tint-{{ uid }} .gtt-state strong {
+    display: block; font-size: 14px; margin-bottom: 3px;
+  }
+  #gt-tint-{{ uid }} .gtt-state span {
+    display: block; color: var(--gtt-copy); font-size: 13px; line-height: 1.4;
+  }
+
+  /* demo toggle */
+  #gt-tint-{{ uid }} .gtt-demo {
+    align-self: flex-start; margin-top: 18px;
+    border: 0; background: none; color: var(--gtt-accent);
+    font-weight: 650; font-size: 14px; padding: 8px 0; cursor: pointer;
+  }
+  #gt-tint-{{ uid }} .gtt-demo:focus-visible { outline: 2px solid var(--gtt-accent); outline-offset: 3px; }
+
+  /* entrance */
+  #gt-tint-{{ uid }} .gtt-reveal {
+    opacity: 0; transform: translateY(22px);
+    transition: opacity .7s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1);
+  }
+  #gt-tint-{{ uid }} .gtt-reveal.is-in { opacity: 1; transform: none; }
+
+  @media (max-width: 900px) {
+    #gt-tint-{{ uid }} .gtt-panel { grid-template-columns: 1fr; gap: 0; }
+    #gt-tint-{{ uid }} .gtt-visual { min-height: 260px; padding: 8px 0 24px; border-bottom: 1px solid rgba(0, 0, 0, .07); }
+    #gt-tint-{{ uid }} .gtt-controls { padding: 26px 0 4px; border-left: 0; }
+    #gt-tint-{{ uid }} .gtt-pill { left: 0; top: 8px; }
+    #gt-tint-{{ uid }} .gtt-vlt { margin: 34px 0 22px; }
+    #gt-tint-{{ uid }} .gtt-presets { gap: 7px; }
+    #gt-tint-{{ uid }} .gtt-preset { flex: 1 1 calc(25% - 6px); min-width: 0; padding: 0 8px; }
+  }
+  @media (max-width: 360px) {
+    #gt-tint-{{ uid }} .gtt-preset { flex-basis: calc(33.333% - 6px); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #gt-tint-{{ uid }} .gtt-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    #gt-tint-{{ uid }} .gtt-stack img,
+    #gt-tint-{{ uid }} .gtt-preset { transition: none !important; }
+  }
+
+  {% unless animate %}
+    #gt-tint-{{ uid }} .gtt-reveal { opacity: 1; transform: none; transition: none; }
+  {% endunless %}
+</style>
+
+<section
+  id="gt-tint-{{ uid }}"
+  class="gt-tint"
+  data-gt-tint
+  data-min="{{ min_vlt }}"
+  data-max="{{ max_vlt }}"
+  data-default="{{ def_vlt }}"
+  data-auto="{% if s.enable_auto_demo %}1{% else %}0{% endif %}"
+>
+  <div class="gtt-wrap">
+    <div class="gtt-panel gtt-reveal">
+
+      <div class="gtt-visual" data-gtt-media>
+        {%- if s.live_pill_text != blank -%}
+          <span class="gtt-pill">{{ s.live_pill_text }}</span>
+        {%- endif -%}
+        <span class="gtt-shadow" aria-hidden="true"></span>
+        <div class="gtt-stack" data-gtt-stack aria-hidden="true">
+          {%- for block in stages -%}
+            {%- assign bs = block.settings -%}
+            {%- liquid
+              assign src = ''
+              assign iw = 1600
+              assign ih = 1067
+              if bs.image != blank
+                assign src = bs.image | image_url: width: 1600
+                assign iw = bs.image.width
+                assign ih = bs.image.height
+              else
+                assign fname = bs.bundled_still | default: 'gt-glass-70.webp'
+                assign src = fname | asset_url
+              endif
+            -%}
+            <img
+              src="{{ src }}"
+              width="{{ iw }}" height="{{ ih }}"
+              alt=""
+              data-level="{{ bs.vlt }}"
+              loading="eager"
+              decoding="async"
+              {% if forloop.first %}fetchpriority="high"{% endif %}
+              style="opacity: {% if forloop.last %}1{% else %}0{% endif %};"
+              {{ block.shopify_attributes }}
+            >
+          {%- endfor -%}
+        </div>
+      </div>
+
+      <div class="gtt-controls">
+        {%- if s.eyebrow != blank -%}<p class="gtt-eyebrow">{{ s.eyebrow }}</p>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="gtt-title">{{ s.heading }}</h2>{%- endif -%}
+        {%- if s.description != blank -%}<p class="gtt-desc">{{ s.description }}</p>{%- endif -%}
+
+        <div class="gtt-vlt" aria-live="polite">
+          <output class="gtt-output" id="gtt-output-{{ uid }}" for="gtt-range-{{ uid }}">{{ def_vlt }}</output>
+          <span class="gtt-unit">% VLT</span>
+        </div>
+
+        <input
+          class="gtt-range"
+          id="gtt-range-{{ uid }}"
+          type="range"
+          min="{{ min_vlt }}" max="{{ max_vlt }}" step="1"
+          value="{{ def_vlt }}"
+          data-gtt-range
+          aria-label="{{ s.slider_label | default: 'Visible light transmission' | escape }}"
+          aria-valuetext="{{ def_vlt }} percent visible light transmission"
+        >
+        <div class="gtt-ends">
+          <span>{{ s.darker_label | default: 'Darker' }}</span>
+          <span>{{ s.clearer_label | default: 'Clearer' }}</span>
+        </div>
+
+        {%- if stages.size > 0 -%}
+          <div class="gtt-presets" role="group" aria-label="{{ s.presets_label | default: 'Tint level presets' | escape }}">
+            {%- for block in stages -%}
+              <button
+                type="button"
+                class="gtt-preset"
+                data-gtt-preset
+                data-vlt="{{ block.settings.vlt }}"
+                aria-pressed="false"
+              >{{ block.settings.vlt }}%</button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- if s.show_state and states.size > 0 -%}
+          <div class="gtt-state">
+            <span class="gtt-state-dot" aria-hidden="true"></span>
+            <div>
+              <strong data-gtt-state-title></strong>
+              <span data-gtt-state-copy></span>
+            </div>
+          </div>
+          <div hidden data-gtt-states>
+            {%- for block in states -%}
+              <i data-upto="{{ block.settings.upto_vlt }}"
+                 data-title="{{ block.settings.title | escape }}"
+                 data-copy="{{ block.settings.copy | escape }}"></i>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- if s.enable_auto_demo -%}
+          <button type="button" class="gtt-demo" data-gtt-demo aria-pressed="true">{{ s.pause_label | default: 'Pause demonstration' }}</button>
+        {%- endif -%}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    var root = document.getElementById('gt-tint-{{ uid }}');
+    if (!root || root.dataset.gttInit) return;
+    root.dataset.gttInit = '1';
+
+    var MIN = +root.dataset.min, MAX = +root.dataset.max, RANGE = Math.max(1, MAX - MIN);
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var range = root.querySelector('[data-gtt-range]');
+    var output = root.querySelector('.gtt-output');
+    var stack = root.querySelector('[data-gtt-stack]');
+    var imgs = [].slice.call(stack.querySelectorAll('img'));
+    var levels = imgs.map(function (i) { return +i.dataset.level; }).sort(function (a, b) { return a - b; });
+    var presets = [].slice.call(root.querySelectorAll('[data-gtt-preset]'));
+    var demo = root.querySelector('[data-gtt-demo]');
+    var stateTitle = root.querySelector('[data-gtt-state-title]');
+    var stateCopy = root.querySelector('[data-gtt-state-copy]');
+    var stateTiers = [].slice.call(root.querySelectorAll('[data-gtt-states] i')).map(function (n) {
+      return { upto: +n.dataset.upto, title: n.dataset.title, copy: n.dataset.copy };
+    }).sort(function (a, b) { return a.upto - b.upto; });
+
+    var PAUSE_LABEL = demo ? demo.textContent : '';
+    var PLAY_LABEL = '{{ s.play_label | default: "Play demonstration" | escape }}';
+
+    // cross-fade the glass stack to VLT value v
+    function setStack(v) {
+      var low = levels[0], high = levels[levels.length - 1];
+      for (var n = 0; n < levels.length - 1; n++) {
+        if (v >= levels[n] && v <= levels[n + 1]) { low = levels[n]; high = levels[n + 1]; break; }
+      }
+      var p = high === low ? 0 : (v - low) / (high - low);
+      imgs.forEach(function (img) {
+        var lvl = +img.dataset.level;
+        img.style.opacity = lvl === low ? String(1 - p) : (lvl === high ? String(p) : '0');
+      });
+    }
+
+    function stateFor(v) {
+      if (!stateTiers.length) return null;
+      for (var i = 0; i < stateTiers.length; i++) if (v <= stateTiers[i].upto) return stateTiers[i];
+      return stateTiers[stateTiers.length - 1];
+    }
+
+    function render(v) {
+      v = Math.max(MIN, Math.min(MAX, v));
+      var rounded = Math.round(v);
+      setStack(v);
+      output.value = rounded;
+      output.textContent = rounded;
+      range.value = rounded;
+      range.style.setProperty('--fill', ((v - MIN) / RANGE * 100) + '%');
+      range.setAttribute('aria-valuetext', rounded + ' percent visible light transmission');
+      if (stateTitle) {
+        var st = stateFor(rounded);
+        if (st) { stateTitle.textContent = st.title; stateCopy.textContent = st.copy; }
+      }
+      presets.forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.vlt === rounded)); });
+    }
+
+    // ---- auto demonstration (70 -> min -> 70 cosine loop) ----
+    var auto = false, raf = 0, resumeTimer = 0, start = 0, inView = true;
+    var wantsAuto = root.dataset.auto === '1' && !reduced;
+
+    function tick(t) {
+      if (!auto) return;
+      if (!start) start = t;
+      var x = (t - start) % 7000;
+      var v = MAX, span = MAX - MIN;
+      if (x < 900) v = MAX;
+      else if (x < 3100) { var p1 = (x - 900) / 2200; v = MAX - span * (0.5 - 0.5 * Math.cos(Math.PI * p1)); }
+      else if (x < 4000) v = MIN;
+      else if (x < 6200) { var p2 = (x - 4000) / 2200; v = MIN + span * (0.5 - 0.5 * Math.cos(Math.PI * p2)); }
+      render(v);
+      raf = requestAnimationFrame(tick);
+    }
+    function beginAuto() {
+      if (!wantsAuto || !inView) return;
+      auto = true; start = 0;
+      if (demo) { demo.textContent = PAUSE_LABEL; demo.setAttribute('aria-pressed', 'true'); }
+      raf = requestAnimationFrame(tick);
+    }
+    function stopAuto(schedule) {
+      auto = false;
+      cancelAnimationFrame(raf);
+      if (demo) { demo.textContent = PLAY_LABEL; demo.setAttribute('aria-pressed', 'false'); }
+      clearTimeout(resumeTimer);
+      if (schedule !== false && wantsAuto) resumeTimer = setTimeout(beginAuto, 8000);
+    }
+
+    range.addEventListener('input', function (e) { stopAuto(); render(+e.target.value); });
+    range.addEventListener('pointerdown', function () { stopAuto(); });
+    range.addEventListener('keydown', function () { stopAuto(); });
+    presets.forEach(function (b) {
+      b.addEventListener('click', function () { stopAuto(); render(+b.dataset.vlt); });
+    });
+    if (demo) demo.addEventListener('click', function () { auto ? stopAuto(false) : beginAuto(); });
+
+    // pause the demo while the section is off-screen (perf)
+    if (wantsAuto && 'IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        inView = entries[0].isIntersecting;
+        if (inView) { if (!auto && root.dataset.userPaused !== '1') beginAuto(); }
+        else { auto = false; cancelAnimationFrame(raf); }
+      }, { threshold: 0.25 }).observe(root);
+    }
+    // remember an explicit user pause so we don't auto-resume on re-entry
+    if (demo) demo.addEventListener('click', function () {
+      root.dataset.userPaused = auto ? '0' : '1';
+    });
+
+    // ---- entrance reveal ----
+    var panel = root.querySelector('.gtt-reveal');
+    var doAnimate = {{ animate | json }} && !reduced;
+    if (!doAnimate) { if (panel) panel.classList.add('is-in'); }
+    else if ('IntersectionObserver' in window && panel) {
+      var ro = new IntersectionObserver(function (es) {
+        es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('is-in'); ro.unobserve(e.target); } });
+      }, { threshold: .14 });
+      ro.observe(panel);
+    } else if (panel) { panel.classList.add('is-in'); }
+
+    // initial paint + kick the demo
+    render(+root.dataset.default);
+    if (wantsAuto) beginAuto();
+
+    // theme-editor: stop the loop when this section is torn out
+    document.addEventListener('shopify:section:unload', function (e) {
+      if (e.target === root || (e.target && e.target.contains(root))) {
+        auto = false;
+        cancelAnimationFrame(raf);
+        clearTimeout(resumeTimer);
+      }
+    });
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "GT · Tint control",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "header", "content": "Copy" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Tint control" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "From open to private. You decide." },
+    { "type": "text", "id": "description", "label": "Description", "default": "Choose a preset or move the control freely." },
+    { "type": "text", "id": "live_pill_text", "label": "Preview label", "default": "Live product preview" },
+    { "type": "text", "id": "darker_label", "label": "Slider start label", "default": "Darker" },
+    { "type": "text", "id": "clearer_label", "label": "Slider end label", "default": "Clearer" },
+    { "type": "text", "id": "slider_label", "label": "Slider accessible label", "default": "Visible light transmission" },
+
+    { "type": "header", "content": "Range" },
+    { "type": "range", "id": "min_vlt", "label": "Minimum VLT (%)", "min": 1, "max": 50, "step": 1, "default": 5 },
+    { "type": "range", "id": "max_vlt", "label": "Maximum VLT (%)", "min": 50, "max": 100, "step": 1, "default": 70 },
+    { "type": "range", "id": "default_vlt", "label": "Default VLT (%)", "min": 1, "max": 100, "step": 1, "default": 70 },
+
+    { "type": "header", "content": "State readout" },
+    { "type": "checkbox", "id": "show_state", "label": "Show the state description block", "default": true },
+
+    { "type": "header", "content": "Demonstration" },
+    { "type": "checkbox", "id": "enable_auto_demo", "label": "Auto-demonstrate on load", "default": true, "info": "Slowly cycles the glass while the section is on screen. Stops on any interaction and after user pause. Never runs for reduced-motion visitors." },
+    { "type": "text", "id": "pause_label", "label": "Pause button label", "default": "Pause demonstration" },
+    { "type": "text", "id": "play_label", "label": "Play button label", "default": "Play demonstration" },
+
+    { "type": "header", "content": "Motion" },
+    { "type": "checkbox", "id": "enable_animation", "label": "Entrance animation", "default": true },
+
+    { "type": "header", "content": "Colours", "info": "Backgrounds always follow the theme's page colour so the section blends in." },
+    { "type": "color", "id": "ink", "label": "Primary text", "default": "#1d1d1f" },
+    { "type": "color", "id": "copy", "label": "Body text", "default": "#6e6e73" },
+    { "type": "color", "id": "muted", "label": "Muted text", "default": "#86868b" },
+    { "type": "color", "id": "accent", "label": "Accent", "default": "#0071e3" },
+
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 0, "max": 160, "step": 4, "unit": "px", "default": 52 }
+  ],
+  "blocks": [
+    {
+      "type": "stage",
+      "name": "Tint stage",
+      "settings": [
+        { "type": "range", "id": "vlt", "label": "VLT (%)", "min": 1, "max": 100, "step": 1, "default": 70, "info": "Also used as the preset button label. Order stages lightest → darkest or darkest → lightest; the slider spans the min/max above." },
+        {
+          "type": "select",
+          "id": "bundled_still",
+          "label": "Bundled glass still",
+          "default": "gt-glass-70.webp",
+          "options": [
+            { "value": "gt-glass-5.webp", "label": "≈ 5% (darkest)" },
+            { "value": "gt-glass-12.webp", "label": "≈ 12%" },
+            { "value": "gt-glass-20.webp", "label": "≈ 20%" },
+            { "value": "gt-glass-30.webp", "label": "≈ 30%" },
+            { "value": "gt-glass-42.webp", "label": "≈ 42%" },
+            { "value": "gt-glass-55.webp", "label": "≈ 55%" },
+            { "value": "gt-glass-70.webp", "label": "≈ 70% (clear)" }
+          ]
+        },
+        { "type": "image_picker", "id": "image", "label": "Custom image (overrides the bundled still)" }
+      ]
+    },
+    {
+      "type": "state",
+      "name": "State tier",
+      "settings": [
+        { "type": "range", "id": "upto_vlt", "label": "Applies up to VLT (%)", "min": 1, "max": 100, "step": 1, "default": 30 },
+        { "type": "text", "id": "title", "label": "Title", "default": "Focused privacy" },
+        { "type": "text", "id": "copy", "label": "Description", "default": "A darker setting when more privacy is needed." }
+      ]
+    }
+  ],
+  "max_blocks": 16,
+  "presets": [
+    {
+      "name": "GT · Tint control",
+      "blocks": [
+        { "type": "stage", "settings": { "vlt": 5, "bundled_still": "gt-glass-5.webp" } },
+        { "type": "stage", "settings": { "vlt": 12, "bundled_still": "gt-glass-12.webp" } },
+        { "type": "stage", "settings": { "vlt": 20, "bundled_still": "gt-glass-20.webp" } },
+        { "type": "stage", "settings": { "vlt": 30, "bundled_still": "gt-glass-30.webp" } },
+        { "type": "stage", "settings": { "vlt": 42, "bundled_still": "gt-glass-42.webp" } },
+        { "type": "stage", "settings": { "vlt": 55, "bundled_still": "gt-glass-55.webp" } },
+        { "type": "stage", "settings": { "vlt": 70, "bundled_still": "gt-glass-70.webp" } },
+        { "type": "state", "settings": { "upto_vlt": 12, "title": "Private", "copy": "Maximum shade while the surface remains recognisably glass." } },
+        { "type": "state", "settings": { "upto_vlt": 30, "title": "Focused privacy", "copy": "A darker setting when more privacy is needed." } },
+        { "type": "state", "settings": { "upto_vlt": 55, "title": "Balanced", "copy": "Reduced light with a clear view through the glass." } },
+        { "type": "state", "settings": { "upto_vlt": 70, "title": "Open", "copy": "Maximum visibility with a bright, open feel." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

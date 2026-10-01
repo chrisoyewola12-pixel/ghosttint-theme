@@ -44,6 +44,39 @@
         "diagram_acc_label": "Vehicle power"
       }
     },
+    "tint_control": {
+      "type": "gt-tint-control",
+      "blocks": {
+        "st5": { "type": "stage", "settings": { "vlt": 5, "bundled_still": "gt-glass-5.webp" } },
+        "st12": { "type": "stage", "settings": { "vlt": 12, "bundled_still": "gt-glass-12.webp" } },
+        "st20": { "type": "stage", "settings": { "vlt": 20, "bundled_still": "gt-glass-20.webp" } },
+        "st30": { "type": "stage", "settings": { "vlt": 30, "bundled_still": "gt-glass-30.webp" } },
+        "st42": { "type": "stage", "settings": { "vlt": 42, "bundled_still": "gt-glass-42.webp" } },
+        "st55": { "type": "stage", "settings": { "vlt": 55, "bundled_still": "gt-glass-55.webp" } },
+        "st70": { "type": "stage", "settings": { "vlt": 70, "bundled_still": "gt-glass-70.webp" } },
+        "sta": { "type": "state", "settings": { "upto_vlt": 12, "title": "Private", "copy": "Maximum shade while the surface remains recognisably glass." } },
+        "stb": { "type": "state", "settings": { "upto_vlt": 30, "title": "Focused privacy", "copy": "A darker setting when more privacy is needed." } },
+        "stc": { "type": "state", "settings": { "upto_vlt": 55, "title": "Balanced", "copy": "Reduced light with a clear view through the glass." } },
+        "std": { "type": "state", "settings": { "upto_vlt": 70, "title": "Open", "copy": "Maximum visibility with a bright, open feel." } }
+      },
+      "block_order": ["st5", "st12", "st20", "st30", "st42", "st55", "st70", "sta", "stb", "stc", "std"],
+      "settings": {
+        "eyebrow": "Tint control",
+        "heading": "From open to private. You decide.",
+        "description": "Choose a preset or move the control freely.",
+        "live_pill_text": "Live product preview",
+        "darker_label": "Darker",
+        "clearer_label": "Clearer",
+        "min_vlt": 5,
+        "max_vlt": 70,
+        "default_vlt": 70,
+        "show_state": true,
+        "enable_auto_demo": true,
+        "enable_animation": true,
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
+    },
     "faq": {
       "type": "gt-faq-vusi",
       "settings": {
@@ -106,5 +139,5 @@
       }
     }
   },
-  "order": ["main", "details", "showcase", "faq", "allocation"]
+  "order": ["main", "details", "showcase", "tint_control", "faq", "allocation"]
 }
